@@ -1,0 +1,4 @@
+# 默认忽略的文件
+.idea
+.DS_Store
+b2-committer

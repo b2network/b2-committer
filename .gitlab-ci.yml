@@ -1,0 +1,54 @@
+stages:
+  - build
+  - deploy
+
+build-image-dev:
+  stage: build
+  tags: [ ikey-shell ]
+  only: 
+    - develop
+  script:
+    - GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./build/main main.go
+    - docker buildx build -f Dockerfile.slim -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:dev --push .
+
+build-image-prod:
+  stage: build
+  tags: [ ikey-shell ]
+  only:
+    - tags
+  script:
+    - GIT_TERMINAL_PROMPT=1 GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./build/main main.go
+    - docker buildx build -f Dockerfile.slim -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_TAG} --push .
+
+
+deploy-to-dev:
+  stage: deploy
+  tags: [ ikey-shell ]
+  only:
+    - develop
+  dependencies:
+    - build-image-dev
+  before_script:
+   - git config --global user.email "gitlab@gitlab.com"
+   - git config --global user.name "GitLab CI/CD"
+  script:
+    - git clone -b main ${GIT_SSH_REPO}
+    - cd argocd && sed -i "s/gitTag:.*/gitTag:\ '$CI_COMMIT_SHORT_SHA'/g"  $PROJECT/dev-values.yaml
+    - git commit -am "update image tag to $CI_COMMIT_SHORT_SHA"
+    - git push origin main
+
+deploy-to-prod:
+  stage: deploy
+  tags: [ ikey-shell ]
+  only:
+    - tags
+  dependencies:
+    - build-image-prod
+  before_script:
+    - git config --global user.email "gitlab@gitlab.com"
+    - git config --global user.name "GitLab CI/CD"
+  script:
+    - git clone -b main ${GIT_SSH_REPO}
+    - cd argocd && sed -i "s/tag:.*/tag:\ '$CI_COMMIT_TAG'/g"  $PROJECT/prod-values.yaml
+    - git commit -am "update image tag to $CI_COMMIT_TAG"
+    - git push origin main

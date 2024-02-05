@@ -1,0 +1,54 @@
+version: "3"
+
+services:
+  node0:
+    image: ${ETHERMINT_IMAGE}
+
+  node1:
+    environment:
+      LOG_LEVEL: "info"
+      LOG_FORMAT: "console"
+      MYSQL_DATA_SOURCE: "root:root@tcp(127.0.0.1:3306)/b2_committer?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"
+      MYSQL_MAX_IDLE_CONNS: 10
+      MYSQL_MAX_OPEN_CONNS: 20
+      MYSQL_CONN_MAX_LIFETIME: 3600
+      RPC_URL: "http://haven-b2-nodes.bsquared.network"
+      BLOCKCHAIN: "b2-node"
+      INIT_BLOCK_NUMBER: 10
+      POLYGON_ZKEVM_ADDRESS: "0x67d269191c92Caf3cD7723F116c85e6E9bf55933"
+      PROPOSAL_BATCHES_LIMITNUM: 10
+      B2NODE_PRIVATE_KEY_HEX: "5982c7d494163e8ac80a059debcd33856e64e9409e825568be4666458df93875"
+      B2NODE_ADDRESS: "ethm169pg4vapqw2lpevkz3lclhfkkdpzcaeg2sru8m"
+      B2NODE_CHAIN_ID: "ethermint_9000-1"
+      B2NODE_GRPC_HOST: "127.0.0.1"
+      B2NODE_GRPC_PORT: "9090"
+      B2NODE_RPC_URL: "http://localhost:8545"
+      BITCOIN_NETWORK_NAME: "testnet3"
+      BITCOIN_PRIVATE_KEY: "c545a409ff7f2e66b4bc863a59dcccf0f4387668a92152a058446bcb58a57027"
+      COMMITTER_DESTINATION_ADDRESS: "tb1pvhr4e58yatk9uve22rr5umxs0jh9g0j0gtcj0ry2wf23lddhjptsf6c360"
+    image: ${ETHERMINT_IMAGE}
+
+
+  node2:
+    environment:
+      LOG_LEVEL: "info"
+      LOG_FORMAT: "console"
+      MYSQL_DATA_SOURCE: "root:root@tcp(127.0.0.1:3306)/b2_committer?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"
+      MYSQL_MAX_IDLE_CONNS: 10
+      MYSQL_MAX_OPEN_CONNS: 20
+      MYSQL_CONN_MAX_LIFETIME: 3600
+      RPC_URL: "http://haven-b2-nodes.bsquared.network"
+      BLOCKCHAIN: "b2-node"
+      INIT_BLOCK_NUMBER: 10
+      POLYGON_ZKEVM_ADDRESS: "0x67d269191c92Caf3cD7723F116c85e6E9bf55933"
+      PROPOSAL_BATCHES_LIMITNUM: 10
+      B2NODE_PRIVATE_KEY_HEX: "5982c7d494163e8ac80a059debcd33856e64e9409e825568be4666458df93875"
+      B2NODE_ADDRESS: "ethm169pg4vapqw2lpevkz3lclhfkkdpzcaeg2sru8m"
+      B2NODE_CHAIN_ID: "ethermint_9000-1"
+      B2NODE_GRPC_HOST: "127.0.0.1"
+      B2NODE_GRPC_PORT: "9090"
+      B2NODE_RPC_URL: "http://localhost:8545"
+      BITCOIN_NETWORK_NAME: "testnet3"
+      BITCOIN_PRIVATE_KEY: "c545a409ff7f2e66b4bc863a59dcccf0f4387668a92152a058446bcb58a57027"
+      COMMITTER_DESTINATION_ADDRESS: "tb1pvhr4e58yatk9uve22rr5umxs0jh9g0j0gtcj0ry2wf23lddhjptsf6c360"
+    image: ${ETHERMINT_IMAGE}
