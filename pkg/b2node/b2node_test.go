@@ -3,9 +3,10 @@ package b2node
 import (
 	"encoding/hex"
 	"fmt"
+	"testing"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 
 	"github.com/b2network/b2committer/internal/types"
 	xcommitterTypes "github.com/evmos/ethermint/x/committer/types"
@@ -45,8 +46,8 @@ func TestSubmitProof(t *testing.T) {
 
 func TestDecodeTxResponseData(t *testing.T) {
 	byteData, _ := hex.DecodeString("12370A312F65766D6F732E65746865726D696E742E636F6D6D69747465722E4D73675375626D697450726F6F66526573706F6E736512020808")
-	var pbMsg = &sdk.TxMsgData{}
-	//proto.Marshal(&sdk.TxMsgData{MsgResponses: msgResponses})
+	pbMsg := &sdk.TxMsgData{}
+	// proto.Marshal(&sdk.TxMsgData{MsgResponses: msgResponses})
 	pbMsg.Unmarshal(byteData)
 	fmt.Println(pbMsg.MsgResponses[0].TypeUrl)
 	resMsgRes := &xcommitterTypes.MsgSubmitProofResponse{}
@@ -125,16 +126,16 @@ func TestGetGasPrice(t *testing.T) {
 }
 
 func TestAddCommitter(t *testing.T) {
-	privateKeHex := "0bca05e42968d16e52c1ea996068fa3cfa3a08a8b6afdf506f19c46b56caea04"
+	privateKeHex := "37927fcde10259a7114a58487cb6303d04c33291ba29bbb8e488eef150e6a59a"
 	chainID := "ethermint_9000-1"
-	address := "ethm1jcf9exvr970jjc4efzsdh4y4pa698mmkpn5y6m"
+	address := "ethm1nexknt73vdv6cm3h6ep6u7pe9vg8kr6kqwyl0a"
 	rpcUrl := "http://localhost:8545"
 	grpcConn, err := types.GetClientConnection("127.0.0.1", types.WithClientPortOption(9090))
 	if err != nil {
 		panic(err)
 	}
 	nodeClient := NewNodeClient(privateKeHex, chainID, address, grpcConn, rpcUrl)
-	add, err := nodeClient.AddCommitter("ethm1yz4g5svztygcvsen5whhlsa40uccwwtg3c9pdk")
+	add, err := nodeClient.AddCommitter("ethm1c3csplac80qt22p5qwx3l5telv6ge9ycmzwe3w")
 	require.NoError(t, err)
 	fmt.Println(add)
 }

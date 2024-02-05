@@ -30,12 +30,13 @@ func CheckStatus(ctx *svc.ServiceContext) {
 			dbProposal.BlockHeight = proposal.BlockHight
 			ctx.DB.Save(dbProposal)
 		}
-		time.Sleep(2 * time.Second)
+		time.Sleep(3 * time.Second)
 	}
 }
 
 func CheckStatusTimeOut(ctx *svc.ServiceContext) {
 	for {
+		time.Sleep(30 * time.Second)
 		var dbProposal schema.Proposal
 		err := ctx.DB.Where("status!=?", schema.SucceedStatus).Order("end_batch_num asc").First(&dbProposal).Error
 		if err != nil {

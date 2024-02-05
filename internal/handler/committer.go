@@ -170,7 +170,7 @@ func GetMerkleStateRootsAndProofs(params []*VerifyBatchesTrustedAggregatorParams
 func GetVerifyBatchesFromStartBatchNum(ctx *svc.ServiceContext, startBatchNum uint64, limit int) ([]*VerifyBatchesAndTxHash, error) {
 	events := make([]schema.SyncEvent, 0, limit)
 	err := ctx.DB.Table("sync_events").Select("*, JSON_EXTRACT(data, '$.numBatch') as numBatch").
-		Where("JSON_EXTRACT(data, '$.numBatch') > ?", startBatchNum).Order("numBatch").Limit(limit).Find(&events).Error
+		Where("JSON_EXTRACT(data, '$.numBatch') >= ?", startBatchNum).Order("numBatch").Limit(limit).Find(&events).Error
 	if err != nil {
 		return nil, fmt.Errorf("[GetVerifyBatchesFromStartBatchNum] dbbase err: %s", err)
 	}

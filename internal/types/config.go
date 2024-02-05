@@ -10,7 +10,7 @@ type Config struct {
 	LogLevel string `env:"LOG_LEVEL" envDefault:"info"`
 	// "console","json"
 	LogFormat            string `env:"LOG_FORMAT" envDefault:"console"`
-	MySQLDataSource      string `env:"MYSQL_DATA_SOURCE" envDefault:"root:root@tcp(127.0.0.1:3306)/b2_committer2?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"`
+	MySQLDataSource      string `env:"MYSQL_DATA_SOURCE" envDefault:"root:root@tcp(127.0.0.1:3306)/b2_committer?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"`
 	MySQLMaxIdleConns    int    `env:"MYSQL_MAX_IDLE_CONNS" envDefault:"10"`
 	MySQLMaxOpenConns    int    `env:"MYSQL_MAX_OPEN_CONNS" envDefault:"20"`
 	MySQLConnMaxLifetime int    `env:"MYSQL_CONN_MAX_LIFETIME" envDefault:"3600"`
@@ -20,11 +20,12 @@ type Config struct {
 	InitBlockHash        string `env:"INIT_BLOCK_HASH" envDefault:"0x1810ba2a2f66977cc45ad0ef6895393eff479ccfbb854bc8f4aa8154787c1144"`
 	PolygonZKEVMAddress  string `env:"POLYGON_ZKEVM_ADDRESS" envDefault:"0x67d269191c92Caf3cD7723F116c85e6E9bf55933"`
 	LimitNum             int    `evn:"PROPOSAL_BATCHES_LIMITNUM" envDefault:"10"`
+	InitProposalID       uint64 `evn:"INIT_PROPOSAL_ID" envDefault:"1"`
 }
 
 type B2NODEConfig struct {
-	PrivateKeyHex string `evn:"B2NODE_PRIVATE_KEY_HEX" envDefault:"7cf553484271fedfa04b8dab3c4b7a06f1ed10bfda24dbde615ed22c890afbc3"`
-	Address       string `env:"B2NODE_ADDRESS" envDefault:"ethm1yz4g5svztygcvsen5whhlsa40uccwwtg3c9pdk"`
+	PrivateKeyHex string `evn:"B2NODE_PRIVATE_KEY_HEX" envDefault:"37927fcde10259a7114a58487cb6303d04c33291ba29bbb8e488eef150e6a59a"`
+	Address       string `env:"B2NODE_ADDRESS" envDefault:"ethm1nexknt73vdv6cm3h6ep6u7pe9vg8kr6kqwyl0a"`
 	ChainID       string `env:"B2NODE_CHAIN_ID" envDefault:"ethermint_9000-1"`
 	GRPCHost      string `env:"B2NODE_GRPC_HOST" envDefault:"127.0.0.1"`
 	GRPCPort      uint32 `env:"B2NODE_GRPC_PORT" envDefault:"9090"`

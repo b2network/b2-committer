@@ -5,29 +5,20 @@ import (
 )
 
 func Run(ctx *svc.ServiceContext) {
-	//// 最新高度
-	//go LatestBlackNumber(ctx)
-	//// 同步区块
-	//go SyncBlock(ctx)
-	//// 同步事件
-	//go SyncEvent(ctx)
-	//// 执行committer
-	//go Committer(ctx)
-	//// 检查vote状态
-	//go CheckStatus(ctx)
-	//// 检查并铭刻
-	//go Inscribe(ctx)
-	//// check time out
-	//go CheckStatusTimeOut(ctx)
+	// query last block number
+	go LatestBlackNumber(ctx)
+	// sync blocks
+	go SyncBlock(ctx)
+	// sync events
+	go SyncEvent(ctx)
+	// execute committer
+	go Committer(ctx)
 
+	go CheckStatus(ctx)
+	// check and inscribe
+	go Inscribe(ctx)
+	// check time out
+	go CheckStatusTimeOut(ctx)
+	// sync proposal
 	go SyncProposal(ctx)
-
-	//// 检查
-	// go CheckBlock(ctx)
-	//// 迁移Block
-	// go MigrateBlock(ctx)
-	//// 迁移Event
-	// go MigrateEvent(ctx)
-	//// 处理syncTask
-	// go SyncTask(ctx)
 }

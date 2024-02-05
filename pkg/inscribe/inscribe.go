@@ -99,6 +99,7 @@ func Inscribe(privateKeyHex string, stateRootHash string, proofRootHash string, 
 		Body:        []byte(stateRootHash + proofRootHash),
 		Destination: destination,
 	})
+	fmt.Println(utxoTaprootAddress.EncodeAddress())
 	req, err := NewInscriptionRequest(btcAPIClient, utxoTaprootAddress, utxoPrivateKey, dataList)
 	if err != nil {
 		return nil, fmt.Errorf("create inscription request error: %w", err)

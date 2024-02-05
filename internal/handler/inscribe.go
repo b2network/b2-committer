@@ -18,6 +18,7 @@ import (
 
 // Inscribe check proposal statues. process pending proposal.
 func Inscribe(ctx *svc.ServiceContext) {
+	time.Sleep(30 * time.Second)
 	for {
 		var dbProposal schema.Proposal
 		err := ctx.DB.Where("status=?", schema.PendingStatus).Order("end_batch_num asc").First(&dbProposal).Error
@@ -52,7 +53,7 @@ func Inscribe(ctx *svc.ServiceContext) {
 			log.Infof("[Handler.Inscribe] inscribe result: %s", str)
 			bitcoinTxHash := rs.RevealTxHashList[0].String()
 
-			_, err = ctx.NodeClient.BitcoinTx(proposal.Id, proposal.Proposer, bitcoinTxHash)
+			_, err = ctx.NodeClient.BitcoinTx(proposal.Id, proposal.Winner, bitcoinTxHash)
 			if err != nil {
 				log.Errorf("[Handler.Inscribe] BitcoinTx err: %s\n", errors.WithStack(err))
 				continue
@@ -78,5 +79,6 @@ func Inscribe(ctx *svc.ServiceContext) {
 				}
 			}
 		}
+		time.Sleep(10 * time.Second)
 	}
 }

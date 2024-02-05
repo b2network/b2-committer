@@ -139,6 +139,11 @@ func (n NodeClient) BitcoinTx(proposalID uint64, from string, bitcoinTxHash stri
 	if err != nil {
 		return 0, fmt.Errorf("[BitcoinTx] err: %s", err)
 	}
+	code := msgResponse.TxResponse.Code
+	rawLog := msgResponse.TxResponse.RawLog
+	if code != 0 {
+		return 0, fmt.Errorf("[BitcoinTx][msgResponse.TxResponse.Code] err: %s", rawLog)
+	}
 	hexData := msgResponse.TxResponse.Data
 	byteData, err := hex.DecodeString(hexData)
 	if err != nil {
@@ -248,7 +253,7 @@ func (n NodeClient) buildSimTx(gasPrice uint64, msgs ...sdk.Msg) ([]byte, error)
 
 func (n NodeClient) QueryLastProposalID() (uint64, uint64, error) {
 	queryClient := committerTypes.NewQueryClient(n.GrpcConn)
-	res, err := queryClient.LastProposalId(context.Background(), &committerTypes.QueryLastProposalIdRequest{})
+	res, err := queryClient.LastProposalID(context.Background(), &committerTypes.QueryLastProposalIdRequest{})
 	if err != nil {
 		return 0, 0, fmt.Errorf("[QueryLastProposalID] err: %s", err)
 	}
