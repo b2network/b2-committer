@@ -33,12 +33,21 @@ type Transaction struct {
 	} `json:"status"`
 }
 
+type RecommendedFees struct {
+	FastestFee  int64 `json:"fastestFee"`
+	HalfHourFee int64 `json:"halfHourFee"`
+	HourFee     int64 `json:"hourFee"`
+	EconomyFee  int64 `json:"economyFee"`
+	MinimumFee  int64 `json:"minimumFee"`
+}
+
 type Client interface {
 	GetRawTransaction(txHash *chainhash.Hash) (*wire.MsgTx, error)
 	BroadcastTx(tx *wire.MsgTx) (*chainhash.Hash, error)
 	ListUnspent(address btcutil.Address) ([]*UnspentOutput, error)
 	GetTransactionByID(ID string) (*Transaction, error)
 	GetCurrentBlockHash() (int64, error)
+	GetRecommendedFees() (*RecommendedFees, error)
 }
 
 func Request(method, baseURL, subPath string, requestBody io.Reader) ([]byte, error) {

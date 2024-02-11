@@ -30,6 +30,7 @@ type B2NODEConfig struct {
 	GRPCHost      string `env:"B2NODE_GRPC_HOST" envDefault:"127.0.0.1"`
 	GRPCPort      uint32 `env:"B2NODE_GRPC_PORT" envDefault:"9090"`
 	RPCUrl        string `env:"B2NODE_RPC_URL" envDefault:"http://localhost:8545"`
+	CoinDenom     string `env:"B2NODE_COIN_DENOM" envDefault:"aphoton" `
 }
 
 type BitcoinRPCConfig struct {
@@ -42,7 +43,6 @@ type BitcoinRPCConfig struct {
 var (
 	config       *Config
 	btcRPCConfig *BitcoinRPCConfig
-
 	b2nodeConfig *B2NODEConfig
 )
 

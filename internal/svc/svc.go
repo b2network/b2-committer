@@ -61,7 +61,7 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 	if err != nil {
 		log.Panicf("[svc] init b2node grpc panic: %s\n", err)
 	}
-	nodeClient := b2node.NewNodeClient(privateKeHex, chainID, address, grpcConn, b2nodeConfig.RPCUrl)
+	nodeClient := b2node.NewNodeClient(privateKeHex, chainID, address, grpcConn, b2nodeConfig.RPCUrl, b2nodeConfig.CoinDenom)
 
 	svc = &ServiceContext{
 		BTCConfig:         bitcoinCfg,

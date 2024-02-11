@@ -129,11 +129,13 @@ func NewInscriptionRequest(btcAPIClient btcapi.Client, address btcutil.Address, 
 		commitTxOutPointList = append(commitTxOutPointList, unspentList[i].Outpoint)
 		commitTxPrivateKeyList = append(commitTxPrivateKeyList, privateKey)
 	}
+	recommendedFees, err := btcAPIClient.GetRecommendedFees()
+
 	return &InscriptionRequest{
 		CommitTxOutPointList:   commitTxOutPointList,
 		CommitTxPrivateKeyList: commitTxPrivateKeyList,
-		CommitFeeRate:          18,
-		FeeRate:                19,
+		CommitFeeRate:          recommendedFees.FastestFee,
+		FeeRate:                recommendedFees.FastestFee + 1,
 		DataList:               dataList,
 		SingleRevealTxOnly:     false,
 	}, nil

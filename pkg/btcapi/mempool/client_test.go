@@ -36,3 +36,11 @@ func TestGetCurrentBlockHash(t *testing.T) {
 	require.NoError(t, err)
 	fmt.Print(hash)
 }
+
+func TestGetRecommendedFees(t *testing.T) {
+	client := NewClient(&chaincfg.MainNetParams)
+	recommendedFees, err := client.GetRecommendedFees()
+	require.NoError(t, err)
+	fmt.Println(recommendedFees.FastestFee)
+	fmt.Println(recommendedFees.HalfHourFee)
+}

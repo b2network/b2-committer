@@ -21,6 +21,7 @@ import (
 	"github.com/evmos/ethermint/crypto/ethsecp256k1"
 	eTypes "github.com/evmos/ethermint/types"
 	committerTypes "github.com/evmos/ethermint/x/committer/types"
+	feeTypes "github.com/evmos/ethermint/x/feemarket/types"
 	"google.golang.org/grpc"
 )
 
@@ -34,6 +35,7 @@ type NodeClient struct {
 	ChainID    string
 	GrpcConn   *grpc.ClientConn
 	RPCUrl     string
+	Denom      string
 }
 
 type GasPriceRsp struct {
@@ -42,7 +44,8 @@ type GasPriceRsp struct {
 	Result  string `json:"result"`
 }
 
-func NewNodeClient(privateKeyHex string, chainID string, address string, grpcConn *grpc.ClientConn, rpcURL string) *NodeClient {
+func NewNodeClient(privateKeyHex string, chainID string, address string, grpcConn *grpc.ClientConn,
+	rpcURL string, denom string) *NodeClient {
 	privatekeyBytes, err := hex.DecodeString(privateKeyHex)
 	if nil != err {
 		panic(err)
@@ -55,6 +58,7 @@ func NewNodeClient(privateKeyHex string, chainID string, address string, grpcCon
 		ChainID:  chainID,
 		GrpcConn: grpcConn,
 		RPCUrl:   rpcURL,
+		Denom:    denom,
 	}
 }
 
@@ -179,10 +183,19 @@ func (n NodeClient) GetEthGasPrice() (uint64, error) {
 	return parseUint, nil
 }
 
-func (n NodeClient) broadcastTx(msgs ...sdk.Msg) (*tx.BroadcastTxResponse, error) {
-	gasPrice, err := n.GetEthGasPrice()
+func (n NodeClient) GetGasPrice() (uint64, error) {
+	queryClient := feeTypes.NewQueryClient(n.GrpcConn)
+	res, err := queryClient.Params(context.Background(), &feeTypes.QueryParamsRequest{})
 	if err != nil {
-		return nil, fmt.Errorf("[broadcastTx][GetEthGasPrice] err: %s", err)
+		return 0, fmt.Errorf("[GetGasPrice] err: %s", err)
+	}
+	return res.Params.BaseFee.Uint64(), nil
+}
+
+func (n NodeClient) broadcastTx(msgs ...sdk.Msg) (*tx.BroadcastTxResponse, error) {
+	gasPrice, err := n.GetGasPrice()
+	if err != nil {
+		return nil, fmt.Errorf("[broadcastTx][GetGasPrice] err: %s", err)
 	}
 	txBytes, err := n.buildSimTx(gasPrice, msgs...)
 	if err != nil {
@@ -223,7 +236,7 @@ func (n NodeClient) buildSimTx(gasPrice uint64, msgs ...sdk.Msg) ([]byte, error)
 	}
 	txBuilder.SetGasLimit(DefaultBaseGasPrice)
 	txBuilder.SetFeeAmount(sdk.NewCoins(sdk.Coin{
-		Denom:  "aphoton",
+		Denom:  n.Denom,
 		Amount: sdkmath.NewIntFromUint64(gasPrice * DefaultBaseGasPrice),
 	}))
 
@@ -270,7 +283,11 @@ func (n NodeClient) QueryProposalByID(id uint64) (*committerTypes.Proposal, erro
 }
 
 func (n NodeClient) CommitterBitcoinTx(msg *committerTypes.MsgBitcoinTx) (*tx.BroadcastTxResponse, error) {
-	txBytes, err := n.buildSimTx(7, msg)
+	gasPrice, err := n.GetGasPrice()
+	if err != nil {
+		return nil, fmt.Errorf("[CommitterBitcoinTx][GetGasPrice] err: %s", err)
+	}
+	txBytes, err := n.buildSimTx(gasPrice, msg)
 	if err != nil {
 		return nil, fmt.Errorf("[SubmitProof] err: %s", err)
 	}

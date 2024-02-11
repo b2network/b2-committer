@@ -99,4 +99,17 @@ func (c *Client) GetCurrentBlockHash() (int64, error) {
 	return blockHeight, nil
 }
 
+func (c *Client) GetRecommendedFees() (*btcapi.RecommendedFees, error) {
+	res, err := c.request(http.MethodGet, "/v1/fees/recommended", nil)
+	if err != nil {
+		return nil, err
+	}
+	var recommendedFees btcapi.RecommendedFees
+	err = json.Unmarshal(res, &recommendedFees)
+	if err != nil {
+		return nil, err
+	}
+	return &recommendedFees, nil
+}
+
 var _ btcapi.Client = (*Client)(nil)
