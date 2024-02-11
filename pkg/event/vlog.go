@@ -149,9 +149,9 @@ func StartAndEndTokenIDToString(startTokenID, endTokenID int64) (string, int64) 
 	return str, count
 }
 
-func TokenIDsToString(tokenIds []int64) string {
+func TokenIDsToString(tokenIDs []int64) string {
 	str := ""
-	for _, tokenID := range tokenIds {
+	for _, tokenID := range tokenIDs {
 		if str == "" {
 			str = fmt.Sprintf("%s%d", str, tokenID)
 		} else {
