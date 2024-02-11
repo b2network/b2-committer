@@ -149,7 +149,7 @@ func StartAndEndTokenIDToString(startTokenID, endTokenID int64) (string, int64) 
 	return str, count
 }
 
-func TokenIdsToString(tokenIds []int64) string {
+func TokenIDsToString(tokenIds []int64) string {
 	str := ""
 	for _, tokenID := range tokenIds {
 		if str == "" {
