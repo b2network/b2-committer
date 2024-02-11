@@ -45,7 +45,8 @@ type GasPriceRsp struct {
 }
 
 func NewNodeClient(privateKeyHex string, chainID string, address string, grpcConn *grpc.ClientConn,
-	rpcURL string, denom string) *NodeClient {
+	rpcURL string, denom string,
+) *NodeClient {
 	privatekeyBytes, err := hex.DecodeString(privateKeyHex)
 	if nil != err {
 		panic(err)
