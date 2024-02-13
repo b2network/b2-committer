@@ -24,13 +24,13 @@ type Config struct {
 }
 
 type B2NODEConfig struct {
-	PrivateKeyHex string `evn:"B2NODE_PRIVATE_KEY_HEX" envDefault:"37927fcde10259a7114a58487cb6303d04c33291ba29bbb8e488eef150e6a59a"`
-	Address       string `env:"B2NODE_ADDRESS" envDefault:"ethm1nexknt73vdv6cm3h6ep6u7pe9vg8kr6kqwyl0a"`
-	ChainID       string `env:"B2NODE_CHAIN_ID" envDefault:"ethermint_9000-1"`
-	GRPCHost      string `env:"B2NODE_GRPC_HOST" envDefault:"127.0.0.1"`
-	GRPCPort      uint32 `env:"B2NODE_GRPC_PORT" envDefault:"9090"`
-	RPCUrl        string `env:"B2NODE_RPC_URL" envDefault:"http://localhost:8545"`
-	CoinDenom     string `env:"B2NODE_COIN_DENOM" envDefault:"aphoton" `
+	Address    string `env:"B2NODE_ADDRESS" envDefault:"ethm1nexknt73vdv6cm3h6ep6u7pe9vg8kr6kqwyl0a"`
+	ChainID    string `env:"B2NODE_CHAIN_ID" envDefault:"ethermint_9000-1"`
+	GRPCHost   string `env:"B2NODE_GRPC_HOST" envDefault:"127.0.0.1"`
+	GRPCPort   uint32 `env:"B2NODE_GRPC_PORT" envDefault:"9090"`
+	RPCUrl     string `env:"B2NODE_RPC_URL" envDefault:"http://localhost:8545"`
+	CoinDenom  string `env:"B2NODE_COIN_DENOM" envDefault:"aphoton"`
+	PrivateKey string `env:"B2NODE_PRIVATE_KEY" envDefault:"b2dd35d83b69d0d572616713148e83ba7d7f02fb14f442ffc4246319c61a3fa3"`
 }
 
 type BitcoinRPCConfig struct {

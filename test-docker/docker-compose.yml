@@ -2,6 +2,7 @@ version: "3"
 
 services:
   mysql1:
+    container_name: mysql1
     image: mysql:8.0.28
     environment:
       MYSQL_ROOT_PASSWORD: "root"
@@ -10,7 +11,6 @@ services:
     volumes:
       - ./mysql.sql:/docker-entrypoint-initdb.d/init.sql
       - ./mysql1/datadir:/var/lib/mysql
-
 
 #  mysql2:
 #    image: mysql:8.0.28
@@ -28,25 +28,28 @@ services:
     environment:
       LOG_LEVEL: "info"
       LOG_FORMAT: "console"
-      MYSQL_DATA_SOURCE: "root:root@tcp(127.0.0.1:3366)/b2_committer?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"
-      MYSQL_MAX_IDLE_CONNS: 10
-      MYSQL_MAX_OPEN_CONNS: 20
-      MYSQL_CONN_MAX_LIFETIME: 3600
+      MYSQL_DATA_SOURCE: "root:root@tcp(mysql1:3306)/b2_committer?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"
+      MYSQL_MAX_IDLE_CONNS: "10"
+      MYSQL_MAX_OPEN_CONNS: "20"
+      MYSQL_CONN_MAX_LIFETIME: "3600"
       RPC_URL: "https://habitat-b2-nodes.bsquared.network"
       BLOCKCHAIN: "b2-node"
-      INIT_BLOCK_NUMBER: 10
+      INIT_BLOCK_NUMBER: "70000"
+      INIT_BLOCK_HASH: "0xb2fa3c8011ce25bb1d261403107b58b6aeda8a2af3827e86ad70ee081966d99c"
       POLYGON_ZKEVM_ADDRESS: "0xd9571Aaf414b0F51d40D6738813FA4eA782d18B7"
-      PROPOSAL_BATCHES_LIMITNUM: 10
-      B2NODE_PRIVATE_KEY_HEX: "0cb6df36e675f96b41f33018a66d7ef075fb047e7295ac06c4233c9fd164ae6c"
-      B2NODE_ADDRESS: "ethm120w06zgwpa03kwywf9a4rm760x9pnj3l7nz704"
+      PROPOSAL_BATCHES_LIMITNUM: "10"
+      INIT_PROPOSAL_ID: "1"
+      B2NODE_PRIVATE_KEY_HEX: "b2dd35d83b69d0d572616713148e83ba7d7f02fb14f442ffc4246319c61a3fa3"
+      B2NODE_ADDRESS: "ethm1nns7nx6cjkrcr9nxwmct4paxjw9md4c9ct6x75"
       B2NODE_CHAIN_ID: "ethermint_9000-1"
-      B2NODE_GRPC_HOST: "127.0.0.1"
+      B2NODE_GRPC_HOST: "host.docker.internal"
       B2NODE_GRPC_PORT: "9090"
-      B2NODE_RPC_URL: "http://localhost:8545"
+      B2NODE_RPC_URL: "http://host.docker.internal:8545"
+      B2NODE_COIN_DENOM: "aphoton"
       BITCOIN_NETWORK_NAME: "testnet3"
       BITCOIN_PRIVATE_KEY: "55968c09fb90a496096bafdeaac0f791f527b17324d1d0e63d3550e68a7b0cc5"
       COMMITTER_DESTINATION_ADDRESS: "tb1ptlp06cp6da4quje623ne8ataf2d4jy80m3jyjqr34c6dp6s5jddqtusute"
-    image: ${ETHERMINT_IMAGE}
+    image: ghcr.io/b2network/b2-committer:sha-0a6e6ff
 #
 #
 #  node2:

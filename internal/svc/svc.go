@@ -54,7 +54,7 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 		log.Panicf("[svc] get eth client panic: %s\n", err)
 	}
 
-	privateKeHex := b2nodeConfig.PrivateKeyHex
+	privateKeHex := b2nodeConfig.PrivateKey
 	chainID := b2nodeConfig.ChainID
 	address := b2nodeConfig.Address
 	grpcConn, err := types.GetClientConnection(b2nodeConfig.GRPCHost, types.WithClientPortOption(b2nodeConfig.GRPCPort))
