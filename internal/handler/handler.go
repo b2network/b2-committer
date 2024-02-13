@@ -12,13 +12,13 @@ func Run(ctx *svc.ServiceContext) {
 	// sync events
 	go SyncEvent(ctx)
 	// execute committer
-	// go Committer(ctx)
+	go Committer(ctx)
 	// check status
-	//go CheckStatus(ctx)
-	//// check and inscribe
-	//go Inscribe(ctx)
-	//// check time out
-	//go CheckStatusTimeOut(ctx)
-	//// sync proposal
-	//go SyncProposal(ctx)
+	go CheckStatus(ctx)
+	// check and inscribe
+	go Inscribe(ctx)
+	// check time out
+	go CheckStatusTimeOut(ctx)
+	// sync proposal
+	go SyncProposal(ctx)
 }
