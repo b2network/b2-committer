@@ -14,18 +14,13 @@ type Config struct {
 	MySQLMaxIdleConns    int    `env:"MYSQL_MAX_IDLE_CONNS" envDefault:"10"`
 	MySQLMaxOpenConns    int    `env:"MYSQL_MAX_OPEN_CONNS" envDefault:"20"`
 	MySQLConnMaxLifetime int    `env:"MYSQL_CONN_MAX_LIFETIME" envDefault:"3600"`
-	//RPCUrl               string `env:"RPC_URL" envDefault:"http://haven-b2-nodes.bsquared.network"`
-	RPCUrl     string `env:"RPC_URL" envDefault:"https://habitat-b2-nodes.bsquared.network"`
-	Blockchain string `env:"BLOCKCHAIN" envDefault:"b2-node"`
-	//InitBlockNumber     int64  `env:"INIT_BLOCK_NUMBER" envDefault:"30277"`
-	//InitBlockHash       string `env:"INIT_BLOCK_HASH" envDefault:"0x1810ba2a2f66977cc45ad0ef6895393eff479ccfbb854bc8f4aa8154787c1144"`
-	InitBlockNumber int64  `env:"INIT_BLOCK_NUMBER" envDefault:"70000"`
-	InitBlockHash   string `env:"INIT_BLOCK_HASH" envDefault:"0xb2fa3c8011ce25bb1d261403107b58b6aeda8a2af3827e86ad70ee081966d99c"`
-	//PolygonZKEVMAddress string `env:"POLYGON_ZKEVM_ADDRESS" envDefault:"0x67d269191c92Caf3cD7723F116c85e6E9bf55933"`
-	PolygonZKEVMAddress string `env:"POLYGON_ZKEVM_ADDRESS" envDefault:"0xd9571Aaf414b0F51d40D6738813FA4eA782d18B7"`
-	//0xD347b5ccFb14f0a1F674bBC9067FE7bcbC39d4dE
-	LimitNum       int    `evn:"PROPOSAL_BATCHES_LIMITNUM" envDefault:"10"`
-	InitProposalID uint64 `evn:"INIT_PROPOSAL_ID" envDefault:"1"`
+	RPCUrl               string `env:"RPC_URL" envDefault:"https://habitat-b2-nodes.bsquared.network"`
+	Blockchain           string `env:"BLOCKCHAIN" envDefault:"b2-node"`
+	InitBlockNumber      int64  `env:"INIT_BLOCK_NUMBER" envDefault:"70000"`
+	InitBlockHash        string `env:"INIT_BLOCK_HASH" envDefault:"0xb2fa3c8011ce25bb1d261403107b58b6aeda8a2af3827e86ad70ee081966d99c"`
+	PolygonZKEVMAddress  string `env:"POLYGON_ZKEVM_ADDRESS" envDefault:"0xd9571Aaf414b0F51d40D6738813FA4eA782d18B7"`
+	LimitNum             int    `evn:"PROPOSAL_BATCHES_LIMITNUM" envDefault:"10"`
+	InitProposalID       uint64 `evn:"INIT_PROPOSAL_ID" envDefault:"1"`
 }
 
 type B2NODEConfig struct {
@@ -39,9 +34,8 @@ type B2NODEConfig struct {
 }
 
 type BitcoinRPCConfig struct {
-	NetworkName string `env:"BITCOIN_NETWORK_NAME" envDefault:"signet"`
-	PrivateKey  string `env:"BITCOIN_PRIVATE_KEY" envDefault:"c545a409ff7f2e66b4bc863a59dcccf0f4387668a92152a058446bcb58a57027"`
-	// signet tb1p2rfzw7mdyvkashtls5z6y7e5wlwdfzvjyay9mk2xgsdmzt5zwykq2e0rq8
+	NetworkName        string `env:"BITCOIN_NETWORK_NAME" envDefault:"signet"`
+	PrivateKey         string `env:"BITCOIN_PRIVATE_KEY" envDefault:"c545a409ff7f2e66b4bc863a59dcccf0f4387668a92152a058446bcb58a57027"`
 	DestinationAddress string `env:"COMMITTER_DESTINATION_ADDRESS" envDefault:"tb1pvhr4e58yatk9uve22rr5umxs0jh9g0j0gtcj0ry2wf23lddhjptsf6c360"`
 }
 
