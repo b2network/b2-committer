@@ -2,3 +2,5 @@
 .idea
 .DS_Store
 b2-committer
+test-docker/mysql1
+test-docker/mysql2
