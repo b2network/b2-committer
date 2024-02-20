@@ -79,6 +79,6 @@ func Inscribe(ctx *svc.ServiceContext) {
 				}
 			}
 		}
-		time.Sleep(10 * time.Second)
+		time.Sleep(3 * time.Second)
 	}
 }

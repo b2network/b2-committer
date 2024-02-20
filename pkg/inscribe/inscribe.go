@@ -137,8 +137,8 @@ func NewInscriptionRequest(btcAPIClient btcapi.Client, address btcutil.Address, 
 	return &InscriptionRequest{
 		CommitTxOutPointList:   commitTxOutPointList,
 		CommitTxPrivateKeyList: commitTxPrivateKeyList,
-		CommitFeeRate:          recommendedFees.FastestFee + 1,
-		FeeRate:                recommendedFees.FastestFee + 2,
+		CommitFeeRate:          recommendedFees.FastestFee,
+		FeeRate:                recommendedFees.FastestFee,
 		DataList:               dataList,
 		SingleRevealTxOnly:     false,
 	}, nil
@@ -330,8 +330,9 @@ func (tool *InscriptionTool) buildCommitTx(commitTxOutPointList []*wire.OutPoint
 		tx.AddTxOut(tool.txCtxDataList[i].revealTxPrevOutput)
 	}
 
+	witnessSize := len(tx.TxIn)*66 + 2
 	tx.AddTxOut(wire.NewTxOut(0, *changePkScript))
-	fee := btcutil.Amount(mempool.GetTxVirtualSize(btcutil.NewTx(tx))) * btcutil.Amount(commitFeeRate)
+	fee := (btcutil.Amount(mempool.GetTxVirtualSize(btcutil.NewTx(tx))) + btcutil.Amount(witnessSize)) * btcutil.Amount(commitFeeRate)
 	changeAmount := totalSenderAmount - btcutil.Amount(totalRevealPrevOutput) - fee
 	if changeAmount > 0 {
 		tx.TxOut[len(tx.TxOut)-1].Value = int64(changeAmount)

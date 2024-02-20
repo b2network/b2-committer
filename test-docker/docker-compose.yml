@@ -49,7 +49,7 @@ services:
       BITCOIN_NETWORK_NAME: "testnet3"
       BITCOIN_PRIVATE_KEY: "55968c09fb90a496096bafdeaac0f791f527b17324d1d0e63d3550e68a7b0cc5"
       COMMITTER_DESTINATION_ADDRESS: "tb1ptlp06cp6da4quje623ne8ataf2d4jy80m3jyjqr34c6dp6s5jddqtusute"
-    image: ghcr.io/b2network/b2-committer:sha-0a6e6ff
+    image: ghcr.io/b2network/b2-committer:sha-6bb326e
 #
 #
 #  node2:
