@@ -23,13 +23,13 @@ func Inscribe(ctx *svc.ServiceContext) {
 		var dbProposal schema.Proposal
 		err := ctx.DB.Where("status=?", schema.PendingStatus).Order("end_batch_num asc").First(&dbProposal).Error
 		if err != nil {
-			log.Errorf("[Handler.Inscribe] Pending and timeout proposal err: %s\n", errors.WithStack(err))
+			log.Errorf("[Handler.Inscribe] Pending and timeout proposal err: %s\n", errors.WithStack(err).Error())
 			time.Sleep(5 * time.Second)
 			continue
 		}
 		proposal, err := ctx.NodeClient.QueryProposalByID(dbProposal.ProposalID)
 		if err != nil {
-			log.Errorf("[CheckProposalPending] QueryProposalByID err: %s\n", errors.WithStack(err))
+			log.Errorf("[CheckProposalPending] QueryProposalByID err: %s\n", errors.WithStack(err).Error())
 			continue
 		}
 		if proposal.Status == schema.SucceedStatus {
@@ -42,12 +42,12 @@ func Inscribe(ctx *svc.ServiceContext) {
 			proposal.Winner == ctx.B2NodeConfig.Address && proposal.BitcoinTxHash == "" {
 			rs, err := inscribe.Inscribe(ctx.BTCConfig.PrivateKey, proposal.StateRootHash, proposal.ProofHash, ctx.BTCConfig.DestinationAddress, btcapi.ChainParams(ctx.BTCConfig.NetworkName))
 			if err != nil {
-				log.Errorf("[Handler.Inscribe] Inscribe err: %s\n", errors.WithStack(err))
+				log.Errorf("[Handler.Inscribe] Inscribe err: %s\n", errors.WithStack(err).Error())
 				continue
 			}
 			str, err := json.Marshal(rs)
 			if err != nil {
-				log.Errorf("[Handler.Inscribe] Marshal result err: %s\n", errors.WithStack(err))
+				log.Errorf("[Handler.Inscribe] Marshal result err: %s\n", errors.WithStack(err).Error())
 				continue
 			}
 			log.Infof("[Handler.Inscribe] inscribe result: %s", str)
@@ -55,7 +55,7 @@ func Inscribe(ctx *svc.ServiceContext) {
 
 			_, err = ctx.NodeClient.BitcoinTx(proposal.Id, proposal.Winner, bitcoinTxHash)
 			if err != nil {
-				log.Errorf("[Handler.Inscribe] BitcoinTx err: %s\n", errors.WithStack(err))
+				log.Errorf("[Handler.Inscribe] BitcoinTx err: %s\n", errors.WithStack(err).Error())
 				continue
 			}
 			dbProposal.BtcRevealTxHash = bitcoinTxHash
@@ -68,13 +68,13 @@ func Inscribe(ctx *svc.ServiceContext) {
 			btcAPIClient := btcmempool.NewClient(btcapi.ChainParams(ctx.BTCConfig.NetworkName))
 			transaction, err := btcAPIClient.GetTransactionByID(proposal.BitcoinTxHash)
 			if err != nil {
-				log.Errorf("[Handler.Inscribe] GetTransactionByID err: %s\n", errors.WithStack(err))
+				log.Errorf("[Handler.Inscribe] GetTransactionByID err: %s\n", errors.WithStack(err).Error())
 				continue
 			}
 			if transaction.Status.Confirmed && (ctx.LatestBTCBlockNumber-transaction.Status.BlockHeight) >= 6 {
 				_, err = ctx.NodeClient.BitcoinTx(proposal.Id, proposal.Proposer, proposal.BitcoinTxHash)
 				if err != nil {
-					log.Errorf("[Handler.Inscribe] BitcoinTx err: %s\n", errors.WithStack(err))
+					log.Errorf("[Handler.Inscribe] BitcoinTx err: %s\n", errors.WithStack(err).Error())
 					continue
 				}
 			}

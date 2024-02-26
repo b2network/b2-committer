@@ -17,7 +17,7 @@ func SyncProposal(ctx *svc.ServiceContext) {
 	for {
 		lastProposalID, _, err := ctx.NodeClient.QueryLastProposalID()
 		if err != nil {
-			log.Errorf("[Handler.Committer][QueryLastProposalID] error info:", errors.WithStack(err))
+			log.Errorf("[Handler.Committer][QueryLastProposalID] error info: %s", errors.WithStack(err).Error())
 			time.Sleep(3 * time.Second)
 			continue
 		}

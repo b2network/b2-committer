@@ -52,7 +52,7 @@ func Committer(ctx *svc.ServiceContext) {
 		}
 		err = ctx.DB.Where("end_batch_num > ?", lastFinalBatchNum).Find(&proposals).Error
 		if err != nil {
-			log.Errorf("[Handler.Committer][DB] error info:", errors.WithStack(err))
+			log.Errorf("[Handler.Committer][DB] error info: %s", errors.WithStack(err).Error())
 			time.Sleep(10 * time.Second)
 			continue
 		}
@@ -62,17 +62,17 @@ func Committer(ctx *svc.ServiceContext) {
 		}
 		verifyBatchInfo, err := GetVerifyBatchInfoByLastBatchNum(ctx, lastFinalBatchNum)
 		if err != nil {
-			log.Errorf("[Handler.Committer] error info:", errors.WithStack(err))
+			log.Errorf("[Handler.Committer] error info: %s", errors.WithStack(err).Error())
 			time.Sleep(10 * time.Second)
 			continue
 		}
 		err = committerProposal(ctx, verifyBatchInfo, lastProposalID)
 		if err != nil {
-			log.Errorf("[Handler.Committer] error info:", errors.WithStack(err))
+			log.Errorf("[Handler.Committer] error info: %s", errors.WithStack(err).Error())
 			time.Sleep(10 * time.Second)
 			continue
 		}
-		time.Sleep(10 * time.Second)
+		time.Sleep(3 * time.Second)
 	}
 }
 
@@ -170,7 +170,7 @@ func GetMerkleStateRootsAndProofs(params []*VerifyBatchesTrustedAggregatorParams
 func GetVerifyBatchesFromStartBatchNum(ctx *svc.ServiceContext, startBatchNum uint64, limit int) ([]*VerifyBatchesAndTxHash, error) {
 	events := make([]schema.SyncEvent, 0, limit)
 	err := ctx.DB.Table("sync_events").Select("*, JSON_EXTRACT(data, '$.numBatch') as numBatch").
-		Where("JSON_EXTRACT(data, '$.numBatch') >= ?", startBatchNum).Order("numBatch").Limit(limit).Find(&events).Error
+		Where("JSON_EXTRACT(data, '$.numBatch') > ?", startBatchNum).Order("numBatch").Limit(limit).Find(&events).Error
 	if err != nil {
 		return nil, fmt.Errorf("[GetVerifyBatchesFromStartBatchNum] dbbase err: %s", err)
 	}

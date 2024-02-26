@@ -15,13 +15,13 @@ func CheckStatus(ctx *svc.ServiceContext) {
 		var dbProposal schema.Proposal
 		err := ctx.DB.Where("status=?", schema.VotingStatus).Order("end_batch_num asc").First(&dbProposal).Error
 		if err != nil {
-			log.Errorf("[Handler.CheckStatus] find Voting proposal err: %s\n", errors.WithStack(err))
+			log.Errorf("[Handler.CheckStatus] find Voting proposal err: %s\n", errors.WithStack(err).Error())
 			time.Sleep(5 * time.Second)
 			continue
 		}
 		proposal, err := ctx.NodeClient.QueryProposalByID(dbProposal.ProposalID)
 		if err != nil {
-			log.Errorf("[Handler.CheckStatus] QueryProposalByID err: %s\n", errors.WithStack(err))
+			log.Errorf("[Handler.CheckStatus] QueryProposalByID err: %s\n", errors.WithStack(err).Error())
 			continue
 		}
 		if proposal.Status != schema.VotingStatus && proposal.Winner != "" {

@@ -11,7 +11,7 @@ func Run(ctx *svc.ServiceContext) {
 	go SyncBlock(ctx)
 	// sync events
 	go SyncEvent(ctx)
-	// execute committer
+	//execute committer
 	go Committer(ctx)
 	// check status
 	go CheckStatus(ctx)
