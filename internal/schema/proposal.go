@@ -1,16 +1,15 @@
 package schema
 
 const (
-	VotingStatus  = 0
-	PendingStatus = 1
-	SucceedStatus = 2
-	TimeoutStatus = 3
+	ProposalVotingStatus  = 0
+	ProposalPendingStatus = 1
+	ProposalSucceedStatus = 2
+	ProposalTimeoutStatus = 3
 )
 
 type Proposal struct {
 	Base
 	ProposalID      uint64 `json:"proposal_id"`
-	Proposer        string `json:"proposer"`
 	StateRootHash   string `json:"state_root_hash"`
 	ProofRootHash   string `json:"proof_root_hash"`
 	StartBatchNum   uint64 `json:"start_batch_num"`

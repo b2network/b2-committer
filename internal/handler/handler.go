@@ -5,6 +5,7 @@ import (
 )
 
 func Run(ctx *svc.ServiceContext) {
+
 	// query last block number
 	go LatestBlackNumber(ctx)
 	// sync blocks
@@ -21,4 +22,6 @@ func Run(ctx *svc.ServiceContext) {
 	go CheckStatusTimeOut(ctx)
 	// sync proposal
 	go SyncProposal(ctx)
+	// sequence batches
+	go SequenceBatches(ctx)
 }

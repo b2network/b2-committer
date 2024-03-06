@@ -2,12 +2,10 @@ package handler
 
 import (
 	"encoding/json"
-	"time"
-
 	"github.com/b2network/b2committer/pkg/btcapi"
 	btcmempool "github.com/b2network/b2committer/pkg/btcapi/mempool"
-
 	"github.com/b2network/b2committer/pkg/inscribe"
+	"time"
 
 	"github.com/b2network/b2committer/pkg/log"
 
@@ -21,7 +19,7 @@ func Inscribe(ctx *svc.ServiceContext) {
 	time.Sleep(30 * time.Second)
 	for {
 		var dbProposal schema.Proposal
-		err := ctx.DB.Where("status=?", schema.PendingStatus).Order("end_batch_num asc").First(&dbProposal).Error
+		err := ctx.DB.Where("status=?", schema.ProposalPendingStatus).Order("end_batch_num asc").First(&dbProposal).Error
 		if err != nil {
 			log.Errorf("[Handler.Inscribe] Pending and timeout proposal err: %s\n", errors.WithStack(err).Error())
 			time.Sleep(5 * time.Second)
@@ -32,15 +30,16 @@ func Inscribe(ctx *svc.ServiceContext) {
 			log.Errorf("[CheckProposalPending] QueryProposalByID err: %s\n", errors.WithStack(err).Error())
 			continue
 		}
-		if proposal.Status == schema.SucceedStatus {
-			dbProposal.Status = proposal.Status
-			dbProposal.Winner = proposal.Winner
-			dbProposal.BtcRevealTxHash = proposal.BitcoinTxHash
+		if proposal.Status == schema.ProposalSucceedStatus {
+			dbProposal.Status = uint64(proposal.Status)
+			dbProposal.Winner = proposal.Winner.String()
+			dbProposal.BtcRevealTxHash = proposal.TxHash
 			ctx.DB.Save(dbProposal)
 		}
-		if proposal.Status == schema.PendingStatus &&
-			proposal.Winner == ctx.B2NodeConfig.Address && proposal.BitcoinTxHash == "" {
-			rs, err := inscribe.Inscribe(ctx.BTCConfig.PrivateKey, proposal.StateRootHash, proposal.ProofHash, ctx.BTCConfig.DestinationAddress, btcapi.ChainParams(ctx.BTCConfig.NetworkName))
+		if proposal.Status == schema.ProposalPendingStatus &&
+			proposal.Winner.String() == ctx.B2NodeConfig.Address && proposal.TxHash == "" {
+			rs, err := inscribe.Inscribe(ctx.BTCConfig.PrivateKey, proposal.StateRootHash,
+				proposal.ProofHash, ctx.BTCConfig.DestinationAddress, btcapi.ChainParams(ctx.BTCConfig.NetworkName))
 			if err != nil {
 				log.Errorf("[Handler.Inscribe] Inscribe err: %s\n", errors.WithStack(err).Error())
 				continue
@@ -53,7 +52,7 @@ func Inscribe(ctx *svc.ServiceContext) {
 			log.Infof("[Handler.Inscribe] inscribe result: %s", str)
 			bitcoinTxHash := rs.RevealTxHashList[0].String()
 
-			_, err = ctx.NodeClient.BitcoinTx(proposal.Id, proposal.Winner, bitcoinTxHash)
+			_, err = ctx.NodeClient.BitcoinTxHash(proposal.Id, bitcoinTxHash)
 			if err != nil {
 				log.Errorf("[Handler.Inscribe] BitcoinTx err: %s\n", errors.WithStack(err).Error())
 				continue
@@ -63,16 +62,16 @@ func Inscribe(ctx *svc.ServiceContext) {
 
 			ctx.DB.Save(dbProposal)
 		}
-		if proposal.Status == schema.PendingStatus && proposal.BitcoinTxHash != "" && proposal.Winner != ctx.B2NodeConfig.Address {
-			// 拿到bitcoin 去btc network query一下 确认状态 对比大于6个高度后 确认后就提交提案
+		if proposal.Status == schema.ProposalPendingStatus && proposal.TxHash != "" && proposal.Winner.String() != ctx.B2NodeConfig.Address {
+			// Get bitcoin txHash and query on btc network  confirm status If the comparison is greater than 6 heights, submit the proposal after confirmation
 			btcAPIClient := btcmempool.NewClient(btcapi.ChainParams(ctx.BTCConfig.NetworkName))
-			transaction, err := btcAPIClient.GetTransactionByID(proposal.BitcoinTxHash)
+			transaction, err := btcAPIClient.GetTransactionByID(proposal.TxHash)
 			if err != nil {
 				log.Errorf("[Handler.Inscribe] GetTransactionByID err: %s\n", errors.WithStack(err).Error())
 				continue
 			}
 			if transaction.Status.Confirmed && (ctx.LatestBTCBlockNumber-transaction.Status.BlockHeight) >= 6 {
-				_, err = ctx.NodeClient.BitcoinTx(proposal.Id, proposal.Proposer, proposal.BitcoinTxHash)
+				_, err = ctx.NodeClient.BitcoinTxHash(proposal.Id, proposal.TxHash)
 				if err != nil {
 					log.Errorf("[Handler.Inscribe] BitcoinTx err: %s\n", errors.WithStack(err).Error())
 					continue

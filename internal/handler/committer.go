@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/b2network/b2committer/pkg/contract"
 	"strings"
 	"time"
 
@@ -44,7 +45,8 @@ type VerifyRangBatchInfo struct {
 func Committer(ctx *svc.ServiceContext) {
 	for {
 		var proposals []schema.Proposal
-		lastProposalID, lastFinalBatchNum, err := ctx.NodeClient.QueryLastProposalID()
+		proposal, err := ctx.NodeClient.QueryLastProposal()
+		lastProposalID, lastFinalBatchNum := proposal.Id, proposal.EndIndex
 		if err != nil {
 			log.Errorf("[Handler.Committer][QueryLastProposalID] error info: %s", errors.WithStack(err).Error())
 			time.Sleep(10 * time.Second)
@@ -79,31 +81,31 @@ func Committer(ctx *svc.ServiceContext) {
 func GetVerifyBatchInfoByLastBatchNum(ctx *svc.ServiceContext, lastFinalBatchNum uint64) (*VerifyRangBatchInfo, error) {
 	verifyBatchesAndTxHashs, err := GetVerifyBatchesFromStartBatchNum(ctx, lastFinalBatchNum, ctx.Config.LimitNum)
 	if err != nil || len(verifyBatchesAndTxHashs) != ctx.Config.LimitNum {
-		return nil, fmt.Errorf("[GetVerifyBatchInfo] error info: %s", errors.WithStack(err))
+		return nil, fmt.Errorf("[GetVerifyBatchInfoByLastBatchNum] error info: %s", errors.WithStack(err))
 	}
 	verifyBatchesParams := make([]*VerifyBatchesTrustedAggregatorParams, 0, ctx.Config.LimitNum)
 	for _, verifyBatch := range verifyBatchesAndTxHashs {
 		verifyBatchParam, err := GetVerifyBatchesParamsByTxHash(ctx, common.HexToHash(verifyBatch.txHash))
 		if err != nil {
-			return nil, fmt.Errorf("[GetVerifyBatchInfo] error info: %s", errors.WithStack(err))
+			return nil, fmt.Errorf("[GetVerifyBatchInfoByLastBatchNum] error info: %s", errors.WithStack(err))
 		}
 		verifyBatchesParams = append(verifyBatchesParams, verifyBatchParam)
 	}
 	verifyBatchInfo, err := GetMerkleStateRootsAndProofs(verifyBatchesParams)
 	if err != nil {
-		return nil, fmt.Errorf("[GetVerifyBatchInfo] error info: %s", errors.WithStack(err))
+		return nil, fmt.Errorf("[GetVerifyBatchInfoByLastBatchNum] error info: %s", errors.WithStack(err))
 	}
 	return verifyBatchInfo, nil
 }
 
 // CommitterProposal committer transaction to b2-node
 func committerProposal(ctx *svc.ServiceContext, verifyBatchInfo *VerifyRangBatchInfo, lastProposalID uint64) error {
-	proposalID, err := ctx.NodeClient.SubmitProof(lastProposalID+1, ctx.B2NodeConfig.Address, verifyBatchInfo.proofRootHash, verifyBatchInfo.stateRootHash,
+	proposalID := lastProposalID + 1
+	_, err := ctx.NodeClient.SubmitProof(proposalID, verifyBatchInfo.proofRootHash, verifyBatchInfo.stateRootHash,
 		verifyBatchInfo.startBatchNum, verifyBatchInfo.endBatchNum)
 	if err != nil {
 		return fmt.Errorf("[committerProposal] submit proof error info: %s", errors.WithStack(err))
 	}
-
 	dbProposal := &schema.Proposal{
 		Base: schema.Base{
 			CreatedAt: time.Now(),
@@ -111,8 +113,7 @@ func committerProposal(ctx *svc.ServiceContext, verifyBatchInfo *VerifyRangBatch
 		},
 		EndBatchNum:   verifyBatchInfo.endBatchNum,
 		ProposalID:    proposalID,
-		Proposer:      ctx.B2NodeConfig.Address,
-		Status:        schema.VotingStatus,
+		Status:        schema.ProposalVotingStatus,
 		StateRootHash: verifyBatchInfo.stateRootHash,
 		ProofRootHash: verifyBatchInfo.proofRootHash,
 		StartBatchNum: verifyBatchInfo.startBatchNum,
@@ -170,14 +171,15 @@ func GetMerkleStateRootsAndProofs(params []*VerifyBatchesTrustedAggregatorParams
 func GetVerifyBatchesFromStartBatchNum(ctx *svc.ServiceContext, startBatchNum uint64, limit int) ([]*VerifyBatchesAndTxHash, error) {
 	events := make([]schema.SyncEvent, 0, limit)
 	err := ctx.DB.Table("sync_events").Select("*, JSON_EXTRACT(data, '$.numBatch') as numBatch").
-		Where("JSON_EXTRACT(data, '$.numBatch') > ?", startBatchNum).Order("numBatch").Limit(limit).Find(&events).Error
+		Where(" event_name = ? and JSON_EXTRACT(data, '$.numBatch') > ?", "verifyBatchesTrustedAggregator",
+			startBatchNum).Order("numBatch").Limit(limit).Find(&events).Error
 	if err != nil {
 		return nil, fmt.Errorf("[GetVerifyBatchesFromStartBatchNum] dbbase err: %s", err)
 	}
 	if len(events) != 10 {
 		return nil, fmt.Errorf("[GetVerifyBatchesFromStartBatchNum] sync_events find event is not enough %s", err)
 	}
-	verifyBatchesAndTxHashs := make([]*VerifyBatchesAndTxHash, 0, limit)
+	verifyBatchesAndTxHashes := make([]*VerifyBatchesAndTxHash, 0, limit)
 	for _, event := range events {
 		verifyBatch := &zkevm.VerifyBatches{}
 		err = verifyBatch.ToObj(event.Data)
@@ -188,9 +190,9 @@ func GetVerifyBatchesFromStartBatchNum(ctx *svc.ServiceContext, startBatchNum ui
 			verifyBatches: verifyBatch,
 			txHash:        event.TxHash,
 		}
-		verifyBatchesAndTxHashs = append(verifyBatchesAndTxHashs, verifyBatchesAndTxHash)
+		verifyBatchesAndTxHashes = append(verifyBatchesAndTxHashes, verifyBatchesAndTxHash)
 	}
-	return verifyBatchesAndTxHashs, nil
+	return verifyBatchesAndTxHashes, nil
 }
 
 func DecodeTransactionInputData(contractABI abi.ABI, data []byte) (map[string]interface{}, string) {
@@ -211,7 +213,7 @@ func DecodeTransactionInputData(contractABI abi.ABI, data []byte) (map[string]in
 }
 
 func GetVerifyBatchesParamsByTxHash(ctx *svc.ServiceContext, txHash common.Hash) (*VerifyBatchesTrustedAggregatorParams, error) {
-	abiObject, err := abi.JSON(strings.NewReader(ZkEVMMetaData.ABI))
+	abiObject, err := abi.JSON(strings.NewReader(contract.ZkEVMMetaData.ABI))
 	if err != nil {
 		return nil, fmt.Errorf("[GetVerifyBatchesParamsByTxHash] parse abi error: %s", errors.WithStack(err))
 	}

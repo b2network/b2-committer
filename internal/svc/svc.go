@@ -1,9 +1,8 @@
 package svc
 
 import (
-	"time"
-
 	"github.com/b2network/b2committer/pkg/b2node"
+	"time"
 
 	"github.com/b2network/b2committer/pkg/log"
 
@@ -57,11 +56,12 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 	privateKeHex := b2nodeConfig.PrivateKey
 	chainID := b2nodeConfig.ChainID
 	address := b2nodeConfig.Address
-	grpcConn, err := types.GetClientConnection(b2nodeConfig.GRPCHost, types.WithClientPortOption(b2nodeConfig.GRPCPort))
+	contractAddress := b2nodeConfig.CommitterAddress
+	b2rpc, err := ethclient.Dial(b2nodeConfig.RPCUrl)
 	if err != nil {
 		log.Panicf("[svc] init b2node grpc panic: %s\n", err)
 	}
-	nodeClient := b2node.NewNodeClient(privateKeHex, chainID, address, grpcConn, b2nodeConfig.RPCUrl, b2nodeConfig.CoinDenom)
+	nodeClient := b2node.NewNodeClient(privateKeHex, chainID, address, contractAddress, b2rpc)
 
 	svc = &ServiceContext{
 		BTCConfig:         bitcoinCfg,

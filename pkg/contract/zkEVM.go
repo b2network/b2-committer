@@ -1,7 +1,7 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package handler
+package contract
 
 import (
 	"errors"
@@ -210,6 +210,7 @@ func (_ZkEVM *ZkEVMTransactorRaw) Transact(opts *bind.TransactOpts, method strin
 func (_ZkEVM *ZkEVMCaller) Admin(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "admin")
+
 	if err != nil {
 		return *new(common.Address), err
 	}
@@ -217,6 +218,7 @@ func (_ZkEVM *ZkEVMCaller) Admin(opts *bind.CallOpts) (common.Address, error) {
 	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 
 	return out0, err
+
 }
 
 // Admin is a free data retrieval call binding the contract method 0xf851a440.
@@ -239,6 +241,7 @@ func (_ZkEVM *ZkEVMCallerSession) Admin() (common.Address, error) {
 func (_ZkEVM *ZkEVMCaller) BatchFee(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "batchFee")
+
 	if err != nil {
 		return *new(*big.Int), err
 	}
@@ -246,6 +249,7 @@ func (_ZkEVM *ZkEVMCaller) BatchFee(opts *bind.CallOpts) (*big.Int, error) {
 	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
 
 	return out0, err
+
 }
 
 // BatchFee is a free data retrieval call binding the contract method 0xf8b823e4.
@@ -268,6 +272,7 @@ func (_ZkEVM *ZkEVMCallerSession) BatchFee() (*big.Int, error) {
 func (_ZkEVM *ZkEVMCaller) BatchNumToStateRoot(opts *bind.CallOpts, arg0 uint64) ([32]byte, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "batchNumToStateRoot", arg0)
+
 	if err != nil {
 		return *new([32]byte), err
 	}
@@ -275,6 +280,7 @@ func (_ZkEVM *ZkEVMCaller) BatchNumToStateRoot(opts *bind.CallOpts, arg0 uint64)
 	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
 
 	return out0, err
+
 }
 
 // BatchNumToStateRoot is a free data retrieval call binding the contract method 0x5392c5e0.
@@ -297,6 +303,7 @@ func (_ZkEVM *ZkEVMCallerSession) BatchNumToStateRoot(arg0 uint64) ([32]byte, er
 func (_ZkEVM *ZkEVMCaller) BridgeAddress(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "bridgeAddress")
+
 	if err != nil {
 		return *new(common.Address), err
 	}
@@ -304,6 +311,7 @@ func (_ZkEVM *ZkEVMCaller) BridgeAddress(opts *bind.CallOpts) (common.Address, e
 	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 
 	return out0, err
+
 }
 
 // BridgeAddress is a free data retrieval call binding the contract method 0xa3c573eb.
@@ -326,6 +334,7 @@ func (_ZkEVM *ZkEVMCallerSession) BridgeAddress() (common.Address, error) {
 func (_ZkEVM *ZkEVMCaller) CalculateRewardPerBatch(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "calculateRewardPerBatch")
+
 	if err != nil {
 		return *new(*big.Int), err
 	}
@@ -333,6 +342,7 @@ func (_ZkEVM *ZkEVMCaller) CalculateRewardPerBatch(opts *bind.CallOpts) (*big.In
 	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
 
 	return out0, err
+
 }
 
 // CalculateRewardPerBatch is a free data retrieval call binding the contract method 0x99f5634e.
@@ -355,6 +365,7 @@ func (_ZkEVM *ZkEVMCallerSession) CalculateRewardPerBatch() (*big.Int, error) {
 func (_ZkEVM *ZkEVMCaller) ChainID(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "chainID")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -362,6 +373,7 @@ func (_ZkEVM *ZkEVMCaller) ChainID(opts *bind.CallOpts) (uint64, error) {
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // ChainID is a free data retrieval call binding the contract method 0xadc879e9.
@@ -384,6 +396,7 @@ func (_ZkEVM *ZkEVMCallerSession) ChainID() (uint64, error) {
 func (_ZkEVM *ZkEVMCaller) CheckStateRootInsidePrime(opts *bind.CallOpts, newStateRoot *big.Int) (bool, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "checkStateRootInsidePrime", newStateRoot)
+
 	if err != nil {
 		return *new(bool), err
 	}
@@ -391,6 +404,7 @@ func (_ZkEVM *ZkEVMCaller) CheckStateRootInsidePrime(opts *bind.CallOpts, newSta
 	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
 
 	return out0, err
+
 }
 
 // CheckStateRootInsidePrime is a free data retrieval call binding the contract method 0xba58ae39.
@@ -413,6 +427,7 @@ func (_ZkEVM *ZkEVMCallerSession) CheckStateRootInsidePrime(newStateRoot *big.In
 func (_ZkEVM *ZkEVMCaller) ForceBatchTimeout(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "forceBatchTimeout")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -420,6 +435,7 @@ func (_ZkEVM *ZkEVMCaller) ForceBatchTimeout(opts *bind.CallOpts) (uint64, error
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // ForceBatchTimeout is a free data retrieval call binding the contract method 0xc754c7ed.
@@ -442,6 +458,7 @@ func (_ZkEVM *ZkEVMCallerSession) ForceBatchTimeout() (uint64, error) {
 func (_ZkEVM *ZkEVMCaller) ForcedBatches(opts *bind.CallOpts, arg0 uint64) ([32]byte, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "forcedBatches", arg0)
+
 	if err != nil {
 		return *new([32]byte), err
 	}
@@ -449,6 +466,7 @@ func (_ZkEVM *ZkEVMCaller) ForcedBatches(opts *bind.CallOpts, arg0 uint64) ([32]
 	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
 
 	return out0, err
+
 }
 
 // ForcedBatches is a free data retrieval call binding the contract method 0x6b8616ce.
@@ -471,6 +489,7 @@ func (_ZkEVM *ZkEVMCallerSession) ForcedBatches(arg0 uint64) ([32]byte, error) {
 func (_ZkEVM *ZkEVMCaller) ForkID(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "forkID")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -478,6 +497,7 @@ func (_ZkEVM *ZkEVMCaller) ForkID(opts *bind.CallOpts) (uint64, error) {
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // ForkID is a free data retrieval call binding the contract method 0x831c7ead.
@@ -500,6 +520,7 @@ func (_ZkEVM *ZkEVMCallerSession) ForkID() (uint64, error) {
 func (_ZkEVM *ZkEVMCaller) GetForcedBatchFee(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "getForcedBatchFee")
+
 	if err != nil {
 		return *new(*big.Int), err
 	}
@@ -507,6 +528,7 @@ func (_ZkEVM *ZkEVMCaller) GetForcedBatchFee(opts *bind.CallOpts) (*big.Int, err
 	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
 
 	return out0, err
+
 }
 
 // GetForcedBatchFee is a free data retrieval call binding the contract method 0x60469169.
@@ -529,6 +551,7 @@ func (_ZkEVM *ZkEVMCallerSession) GetForcedBatchFee() (*big.Int, error) {
 func (_ZkEVM *ZkEVMCaller) GetInputSnarkBytes(opts *bind.CallOpts, initNumBatch uint64, finalNewBatch uint64, newLocalExitRoot [32]byte, oldStateRoot [32]byte, newStateRoot [32]byte) ([]byte, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "getInputSnarkBytes", initNumBatch, finalNewBatch, newLocalExitRoot, oldStateRoot, newStateRoot)
+
 	if err != nil {
 		return *new([]byte), err
 	}
@@ -536,6 +559,7 @@ func (_ZkEVM *ZkEVMCaller) GetInputSnarkBytes(opts *bind.CallOpts, initNumBatch 
 	out0 := *abi.ConvertType(out[0], new([]byte)).(*[]byte)
 
 	return out0, err
+
 }
 
 // GetInputSnarkBytes is a free data retrieval call binding the contract method 0x220d7899.
@@ -558,6 +582,7 @@ func (_ZkEVM *ZkEVMCallerSession) GetInputSnarkBytes(initNumBatch uint64, finalN
 func (_ZkEVM *ZkEVMCaller) GetLastVerifiedBatch(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "getLastVerifiedBatch")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -565,6 +590,7 @@ func (_ZkEVM *ZkEVMCaller) GetLastVerifiedBatch(opts *bind.CallOpts) (uint64, er
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // GetLastVerifiedBatch is a free data retrieval call binding the contract method 0xc0ed84e0.
@@ -587,6 +613,7 @@ func (_ZkEVM *ZkEVMCallerSession) GetLastVerifiedBatch() (uint64, error) {
 func (_ZkEVM *ZkEVMCaller) GlobalExitRootManager(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "globalExitRootManager")
+
 	if err != nil {
 		return *new(common.Address), err
 	}
@@ -594,6 +621,7 @@ func (_ZkEVM *ZkEVMCaller) GlobalExitRootManager(opts *bind.CallOpts) (common.Ad
 	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 
 	return out0, err
+
 }
 
 // GlobalExitRootManager is a free data retrieval call binding the contract method 0xd02103ca.
@@ -616,6 +644,7 @@ func (_ZkEVM *ZkEVMCallerSession) GlobalExitRootManager() (common.Address, error
 func (_ZkEVM *ZkEVMCaller) IsEmergencyState(opts *bind.CallOpts) (bool, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "isEmergencyState")
+
 	if err != nil {
 		return *new(bool), err
 	}
@@ -623,6 +652,7 @@ func (_ZkEVM *ZkEVMCaller) IsEmergencyState(opts *bind.CallOpts) (bool, error) {
 	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
 
 	return out0, err
+
 }
 
 // IsEmergencyState is a free data retrieval call binding the contract method 0x15064c96.
@@ -645,6 +675,7 @@ func (_ZkEVM *ZkEVMCallerSession) IsEmergencyState() (bool, error) {
 func (_ZkEVM *ZkEVMCaller) IsForcedBatchDisallowed(opts *bind.CallOpts) (bool, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "isForcedBatchDisallowed")
+
 	if err != nil {
 		return *new(bool), err
 	}
@@ -652,6 +683,7 @@ func (_ZkEVM *ZkEVMCaller) IsForcedBatchDisallowed(opts *bind.CallOpts) (bool, e
 	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
 
 	return out0, err
+
 }
 
 // IsForcedBatchDisallowed is a free data retrieval call binding the contract method 0xed6b0104.
@@ -674,6 +706,7 @@ func (_ZkEVM *ZkEVMCallerSession) IsForcedBatchDisallowed() (bool, error) {
 func (_ZkEVM *ZkEVMCaller) IsPendingStateConsolidable(opts *bind.CallOpts, pendingStateNum uint64) (bool, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "isPendingStateConsolidable", pendingStateNum)
+
 	if err != nil {
 		return *new(bool), err
 	}
@@ -681,6 +714,7 @@ func (_ZkEVM *ZkEVMCaller) IsPendingStateConsolidable(opts *bind.CallOpts, pendi
 	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
 
 	return out0, err
+
 }
 
 // IsPendingStateConsolidable is a free data retrieval call binding the contract method 0x383b3be8.
@@ -703,6 +737,7 @@ func (_ZkEVM *ZkEVMCallerSession) IsPendingStateConsolidable(pendingStateNum uin
 func (_ZkEVM *ZkEVMCaller) LastBatchSequenced(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "lastBatchSequenced")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -710,6 +745,7 @@ func (_ZkEVM *ZkEVMCaller) LastBatchSequenced(opts *bind.CallOpts) (uint64, erro
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // LastBatchSequenced is a free data retrieval call binding the contract method 0x423fa856.
@@ -732,6 +768,7 @@ func (_ZkEVM *ZkEVMCallerSession) LastBatchSequenced() (uint64, error) {
 func (_ZkEVM *ZkEVMCaller) LastForceBatch(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "lastForceBatch")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -739,6 +776,7 @@ func (_ZkEVM *ZkEVMCaller) LastForceBatch(opts *bind.CallOpts) (uint64, error) {
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // LastForceBatch is a free data retrieval call binding the contract method 0xe7a7ed02.
@@ -761,6 +799,7 @@ func (_ZkEVM *ZkEVMCallerSession) LastForceBatch() (uint64, error) {
 func (_ZkEVM *ZkEVMCaller) LastForceBatchSequenced(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "lastForceBatchSequenced")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -768,6 +807,7 @@ func (_ZkEVM *ZkEVMCaller) LastForceBatchSequenced(opts *bind.CallOpts) (uint64,
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // LastForceBatchSequenced is a free data retrieval call binding the contract method 0x45605267.
@@ -790,6 +830,7 @@ func (_ZkEVM *ZkEVMCallerSession) LastForceBatchSequenced() (uint64, error) {
 func (_ZkEVM *ZkEVMCaller) LastPendingState(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "lastPendingState")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -797,6 +838,7 @@ func (_ZkEVM *ZkEVMCaller) LastPendingState(opts *bind.CallOpts) (uint64, error)
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // LastPendingState is a free data retrieval call binding the contract method 0x458c0477.
@@ -819,6 +861,7 @@ func (_ZkEVM *ZkEVMCallerSession) LastPendingState() (uint64, error) {
 func (_ZkEVM *ZkEVMCaller) LastPendingStateConsolidated(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "lastPendingStateConsolidated")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -826,6 +869,7 @@ func (_ZkEVM *ZkEVMCaller) LastPendingStateConsolidated(opts *bind.CallOpts) (ui
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // LastPendingStateConsolidated is a free data retrieval call binding the contract method 0x4a1a89a7.
@@ -848,6 +892,7 @@ func (_ZkEVM *ZkEVMCallerSession) LastPendingStateConsolidated() (uint64, error)
 func (_ZkEVM *ZkEVMCaller) LastTimestamp(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "lastTimestamp")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -855,6 +900,7 @@ func (_ZkEVM *ZkEVMCaller) LastTimestamp(opts *bind.CallOpts) (uint64, error) {
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // LastTimestamp is a free data retrieval call binding the contract method 0x19d8ac61.
@@ -877,6 +923,7 @@ func (_ZkEVM *ZkEVMCallerSession) LastTimestamp() (uint64, error) {
 func (_ZkEVM *ZkEVMCaller) LastVerifiedBatch(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "lastVerifiedBatch")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -884,6 +931,7 @@ func (_ZkEVM *ZkEVMCaller) LastVerifiedBatch(opts *bind.CallOpts) (uint64, error
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // LastVerifiedBatch is a free data retrieval call binding the contract method 0x7fcb3653.
@@ -906,6 +954,7 @@ func (_ZkEVM *ZkEVMCallerSession) LastVerifiedBatch() (uint64, error) {
 func (_ZkEVM *ZkEVMCaller) Matic(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "matic")
+
 	if err != nil {
 		return *new(common.Address), err
 	}
@@ -913,6 +962,7 @@ func (_ZkEVM *ZkEVMCaller) Matic(opts *bind.CallOpts) (common.Address, error) {
 	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 
 	return out0, err
+
 }
 
 // Matic is a free data retrieval call binding the contract method 0xb6b0b097.
@@ -935,6 +985,7 @@ func (_ZkEVM *ZkEVMCallerSession) Matic() (common.Address, error) {
 func (_ZkEVM *ZkEVMCaller) MultiplierBatchFee(opts *bind.CallOpts) (uint16, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "multiplierBatchFee")
+
 	if err != nil {
 		return *new(uint16), err
 	}
@@ -942,6 +993,7 @@ func (_ZkEVM *ZkEVMCaller) MultiplierBatchFee(opts *bind.CallOpts) (uint16, erro
 	out0 := *abi.ConvertType(out[0], new(uint16)).(*uint16)
 
 	return out0, err
+
 }
 
 // MultiplierBatchFee is a free data retrieval call binding the contract method 0xafd23cbe.
@@ -964,6 +1016,7 @@ func (_ZkEVM *ZkEVMCallerSession) MultiplierBatchFee() (uint16, error) {
 func (_ZkEVM *ZkEVMCaller) NetworkName(opts *bind.CallOpts) (string, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "networkName")
+
 	if err != nil {
 		return *new(string), err
 	}
@@ -971,6 +1024,7 @@ func (_ZkEVM *ZkEVMCaller) NetworkName(opts *bind.CallOpts) (string, error) {
 	out0 := *abi.ConvertType(out[0], new(string)).(*string)
 
 	return out0, err
+
 }
 
 // NetworkName is a free data retrieval call binding the contract method 0x107bf28c.
@@ -993,6 +1047,7 @@ func (_ZkEVM *ZkEVMCallerSession) NetworkName() (string, error) {
 func (_ZkEVM *ZkEVMCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "owner")
+
 	if err != nil {
 		return *new(common.Address), err
 	}
@@ -1000,6 +1055,7 @@ func (_ZkEVM *ZkEVMCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
 	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 
 	return out0, err
+
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -1022,6 +1078,7 @@ func (_ZkEVM *ZkEVMCallerSession) Owner() (common.Address, error) {
 func (_ZkEVM *ZkEVMCaller) PendingAdmin(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "pendingAdmin")
+
 	if err != nil {
 		return *new(common.Address), err
 	}
@@ -1029,6 +1086,7 @@ func (_ZkEVM *ZkEVMCaller) PendingAdmin(opts *bind.CallOpts) (common.Address, er
 	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 
 	return out0, err
+
 }
 
 // PendingAdmin is a free data retrieval call binding the contract method 0x26782247.
@@ -1051,6 +1109,7 @@ func (_ZkEVM *ZkEVMCallerSession) PendingAdmin() (common.Address, error) {
 func (_ZkEVM *ZkEVMCaller) PendingStateTimeout(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "pendingStateTimeout")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -1058,6 +1117,7 @@ func (_ZkEVM *ZkEVMCaller) PendingStateTimeout(opts *bind.CallOpts) (uint64, err
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // PendingStateTimeout is a free data retrieval call binding the contract method 0xd939b315.
@@ -1082,8 +1142,7 @@ func (_ZkEVM *ZkEVMCaller) PendingStateTransitions(opts *bind.CallOpts, arg0 *bi
 	LastVerifiedBatch uint64
 	ExitRoot          [32]byte
 	StateRoot         [32]byte
-}, error,
-) {
+}, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "pendingStateTransitions", arg0)
 
@@ -1103,6 +1162,7 @@ func (_ZkEVM *ZkEVMCaller) PendingStateTransitions(opts *bind.CallOpts, arg0 *bi
 	outstruct.StateRoot = *abi.ConvertType(out[3], new([32]byte)).(*[32]byte)
 
 	return *outstruct, err
+
 }
 
 // PendingStateTransitions is a free data retrieval call binding the contract method 0x837a4738.
@@ -1113,8 +1173,7 @@ func (_ZkEVM *ZkEVMSession) PendingStateTransitions(arg0 *big.Int) (struct {
 	LastVerifiedBatch uint64
 	ExitRoot          [32]byte
 	StateRoot         [32]byte
-}, error,
-) {
+}, error) {
 	return _ZkEVM.Contract.PendingStateTransitions(&_ZkEVM.CallOpts, arg0)
 }
 
@@ -1126,8 +1185,7 @@ func (_ZkEVM *ZkEVMCallerSession) PendingStateTransitions(arg0 *big.Int) (struct
 	LastVerifiedBatch uint64
 	ExitRoot          [32]byte
 	StateRoot         [32]byte
-}, error,
-) {
+}, error) {
 	return _ZkEVM.Contract.PendingStateTransitions(&_ZkEVM.CallOpts, arg0)
 }
 
@@ -1137,6 +1195,7 @@ func (_ZkEVM *ZkEVMCallerSession) PendingStateTransitions(arg0 *big.Int) (struct
 func (_ZkEVM *ZkEVMCaller) RollupVerifier(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "rollupVerifier")
+
 	if err != nil {
 		return *new(common.Address), err
 	}
@@ -1144,6 +1203,7 @@ func (_ZkEVM *ZkEVMCaller) RollupVerifier(opts *bind.CallOpts) (common.Address, 
 	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 
 	return out0, err
+
 }
 
 // RollupVerifier is a free data retrieval call binding the contract method 0xe8bf92ed.
@@ -1167,8 +1227,7 @@ func (_ZkEVM *ZkEVMCaller) SequencedBatches(opts *bind.CallOpts, arg0 uint64) (s
 	AccInputHash               [32]byte
 	SequencedTimestamp         uint64
 	PreviousLastBatchSequenced uint64
-}, error,
-) {
+}, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "sequencedBatches", arg0)
 
@@ -1186,6 +1245,7 @@ func (_ZkEVM *ZkEVMCaller) SequencedBatches(opts *bind.CallOpts, arg0 uint64) (s
 	outstruct.PreviousLastBatchSequenced = *abi.ConvertType(out[2], new(uint64)).(*uint64)
 
 	return *outstruct, err
+
 }
 
 // SequencedBatches is a free data retrieval call binding the contract method 0xb4d63f58.
@@ -1195,8 +1255,7 @@ func (_ZkEVM *ZkEVMSession) SequencedBatches(arg0 uint64) (struct {
 	AccInputHash               [32]byte
 	SequencedTimestamp         uint64
 	PreviousLastBatchSequenced uint64
-}, error,
-) {
+}, error) {
 	return _ZkEVM.Contract.SequencedBatches(&_ZkEVM.CallOpts, arg0)
 }
 
@@ -1207,8 +1266,7 @@ func (_ZkEVM *ZkEVMCallerSession) SequencedBatches(arg0 uint64) (struct {
 	AccInputHash               [32]byte
 	SequencedTimestamp         uint64
 	PreviousLastBatchSequenced uint64
-}, error,
-) {
+}, error) {
 	return _ZkEVM.Contract.SequencedBatches(&_ZkEVM.CallOpts, arg0)
 }
 
@@ -1218,6 +1276,7 @@ func (_ZkEVM *ZkEVMCallerSession) SequencedBatches(arg0 uint64) (struct {
 func (_ZkEVM *ZkEVMCaller) TrustedAggregator(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "trustedAggregator")
+
 	if err != nil {
 		return *new(common.Address), err
 	}
@@ -1225,6 +1284,7 @@ func (_ZkEVM *ZkEVMCaller) TrustedAggregator(opts *bind.CallOpts) (common.Addres
 	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 
 	return out0, err
+
 }
 
 // TrustedAggregator is a free data retrieval call binding the contract method 0x29878983.
@@ -1247,6 +1307,7 @@ func (_ZkEVM *ZkEVMCallerSession) TrustedAggregator() (common.Address, error) {
 func (_ZkEVM *ZkEVMCaller) TrustedAggregatorTimeout(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "trustedAggregatorTimeout")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -1254,6 +1315,7 @@ func (_ZkEVM *ZkEVMCaller) TrustedAggregatorTimeout(opts *bind.CallOpts) (uint64
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // TrustedAggregatorTimeout is a free data retrieval call binding the contract method 0x841b24d7.
@@ -1276,6 +1338,7 @@ func (_ZkEVM *ZkEVMCallerSession) TrustedAggregatorTimeout() (uint64, error) {
 func (_ZkEVM *ZkEVMCaller) TrustedSequencer(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "trustedSequencer")
+
 	if err != nil {
 		return *new(common.Address), err
 	}
@@ -1283,6 +1346,7 @@ func (_ZkEVM *ZkEVMCaller) TrustedSequencer(opts *bind.CallOpts) (common.Address
 	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 
 	return out0, err
+
 }
 
 // TrustedSequencer is a free data retrieval call binding the contract method 0xcfa8ed47.
@@ -1305,6 +1369,7 @@ func (_ZkEVM *ZkEVMCallerSession) TrustedSequencer() (common.Address, error) {
 func (_ZkEVM *ZkEVMCaller) TrustedSequencerURL(opts *bind.CallOpts) (string, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "trustedSequencerURL")
+
 	if err != nil {
 		return *new(string), err
 	}
@@ -1312,6 +1377,7 @@ func (_ZkEVM *ZkEVMCaller) TrustedSequencerURL(opts *bind.CallOpts) (string, err
 	out0 := *abi.ConvertType(out[0], new(string)).(*string)
 
 	return out0, err
+
 }
 
 // TrustedSequencerURL is a free data retrieval call binding the contract method 0x542028d5.
@@ -1334,6 +1400,7 @@ func (_ZkEVM *ZkEVMCallerSession) TrustedSequencerURL() (string, error) {
 func (_ZkEVM *ZkEVMCaller) VerifyBatchTimeTarget(opts *bind.CallOpts) (uint64, error) {
 	var out []interface{}
 	err := _ZkEVM.contract.Call(opts, &out, "verifyBatchTimeTarget")
+
 	if err != nil {
 		return *new(uint64), err
 	}
@@ -1341,6 +1408,7 @@ func (_ZkEVM *ZkEVMCaller) VerifyBatchTimeTarget(opts *bind.CallOpts) (uint64, e
 	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
 
 	return out0, err
+
 }
 
 // VerifyBatchTimeTarget is a free data retrieval call binding the contract method 0x0a0d9fbe.
@@ -1938,6 +2006,7 @@ type ZkEVMAcceptAdminRole struct {
 //
 // Solidity: event AcceptAdminRole(address newAdmin)
 func (_ZkEVM *ZkEVMFilterer) FilterAcceptAdminRole(opts *bind.FilterOpts) (*ZkEVMAcceptAdminRoleIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "AcceptAdminRole")
 	if err != nil {
 		return nil, err
@@ -1949,6 +2018,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterAcceptAdminRole(opts *bind.FilterOpts) (*ZkEV
 //
 // Solidity: event AcceptAdminRole(address newAdmin)
 func (_ZkEVM *ZkEVMFilterer) WatchAcceptAdminRole(opts *bind.WatchOpts, sink chan<- *ZkEVMAcceptAdminRole) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "AcceptAdminRole")
 	if err != nil {
 		return nil, err
@@ -2069,6 +2139,7 @@ type ZkEVMActivateForceBatches struct {
 //
 // Solidity: event ActivateForceBatches()
 func (_ZkEVM *ZkEVMFilterer) FilterActivateForceBatches(opts *bind.FilterOpts) (*ZkEVMActivateForceBatchesIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "ActivateForceBatches")
 	if err != nil {
 		return nil, err
@@ -2080,6 +2151,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterActivateForceBatches(opts *bind.FilterOpts) (
 //
 // Solidity: event ActivateForceBatches()
 func (_ZkEVM *ZkEVMFilterer) WatchActivateForceBatches(opts *bind.WatchOpts, sink chan<- *ZkEVMActivateForceBatches) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "ActivateForceBatches")
 	if err != nil {
 		return nil, err
@@ -2203,6 +2275,7 @@ type ZkEVMConsolidatePendingState struct {
 //
 // Solidity: event ConsolidatePendingState(uint64 indexed numBatch, bytes32 stateRoot, uint64 indexed pendingStateNum)
 func (_ZkEVM *ZkEVMFilterer) FilterConsolidatePendingState(opts *bind.FilterOpts, numBatch []uint64, pendingStateNum []uint64) (*ZkEVMConsolidatePendingStateIterator, error) {
+
 	var numBatchRule []interface{}
 	for _, numBatchItem := range numBatch {
 		numBatchRule = append(numBatchRule, numBatchItem)
@@ -2224,6 +2297,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterConsolidatePendingState(opts *bind.FilterOpts
 //
 // Solidity: event ConsolidatePendingState(uint64 indexed numBatch, bytes32 stateRoot, uint64 indexed pendingStateNum)
 func (_ZkEVM *ZkEVMFilterer) WatchConsolidatePendingState(opts *bind.WatchOpts, sink chan<- *ZkEVMConsolidatePendingState, numBatch []uint64, pendingStateNum []uint64) (event.Subscription, error) {
+
 	var numBatchRule []interface{}
 	for _, numBatchItem := range numBatch {
 		numBatchRule = append(numBatchRule, numBatchItem)
@@ -2354,6 +2428,7 @@ type ZkEVMEmergencyStateActivated struct {
 //
 // Solidity: event EmergencyStateActivated()
 func (_ZkEVM *ZkEVMFilterer) FilterEmergencyStateActivated(opts *bind.FilterOpts) (*ZkEVMEmergencyStateActivatedIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "EmergencyStateActivated")
 	if err != nil {
 		return nil, err
@@ -2365,6 +2440,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterEmergencyStateActivated(opts *bind.FilterOpts
 //
 // Solidity: event EmergencyStateActivated()
 func (_ZkEVM *ZkEVMFilterer) WatchEmergencyStateActivated(opts *bind.WatchOpts, sink chan<- *ZkEVMEmergencyStateActivated) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "EmergencyStateActivated")
 	if err != nil {
 		return nil, err
@@ -2485,6 +2561,7 @@ type ZkEVMEmergencyStateDeactivated struct {
 //
 // Solidity: event EmergencyStateDeactivated()
 func (_ZkEVM *ZkEVMFilterer) FilterEmergencyStateDeactivated(opts *bind.FilterOpts) (*ZkEVMEmergencyStateDeactivatedIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "EmergencyStateDeactivated")
 	if err != nil {
 		return nil, err
@@ -2496,6 +2573,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterEmergencyStateDeactivated(opts *bind.FilterOp
 //
 // Solidity: event EmergencyStateDeactivated()
 func (_ZkEVM *ZkEVMFilterer) WatchEmergencyStateDeactivated(opts *bind.WatchOpts, sink chan<- *ZkEVMEmergencyStateDeactivated) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "EmergencyStateDeactivated")
 	if err != nil {
 		return nil, err
@@ -2620,6 +2698,7 @@ type ZkEVMForceBatch struct {
 //
 // Solidity: event ForceBatch(uint64 indexed forceBatchNum, bytes32 lastGlobalExitRoot, address sequencer, bytes transactions)
 func (_ZkEVM *ZkEVMFilterer) FilterForceBatch(opts *bind.FilterOpts, forceBatchNum []uint64) (*ZkEVMForceBatchIterator, error) {
+
 	var forceBatchNumRule []interface{}
 	for _, forceBatchNumItem := range forceBatchNum {
 		forceBatchNumRule = append(forceBatchNumRule, forceBatchNumItem)
@@ -2636,6 +2715,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterForceBatch(opts *bind.FilterOpts, forceBatchN
 //
 // Solidity: event ForceBatch(uint64 indexed forceBatchNum, bytes32 lastGlobalExitRoot, address sequencer, bytes transactions)
 func (_ZkEVM *ZkEVMFilterer) WatchForceBatch(opts *bind.WatchOpts, sink chan<- *ZkEVMForceBatch, forceBatchNum []uint64) (event.Subscription, error) {
+
 	var forceBatchNumRule []interface{}
 	for _, forceBatchNumItem := range forceBatchNum {
 		forceBatchNumRule = append(forceBatchNumRule, forceBatchNumItem)
@@ -2762,6 +2842,7 @@ type ZkEVMInitialized struct {
 //
 // Solidity: event Initialized(uint8 version)
 func (_ZkEVM *ZkEVMFilterer) FilterInitialized(opts *bind.FilterOpts) (*ZkEVMInitializedIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "Initialized")
 	if err != nil {
 		return nil, err
@@ -2773,6 +2854,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterInitialized(opts *bind.FilterOpts) (*ZkEVMIni
 //
 // Solidity: event Initialized(uint8 version)
 func (_ZkEVM *ZkEVMFilterer) WatchInitialized(opts *bind.WatchOpts, sink chan<- *ZkEVMInitialized) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "Initialized")
 	if err != nil {
 		return nil, err
@@ -2896,6 +2978,7 @@ type ZkEVMOverridePendingState struct {
 //
 // Solidity: event OverridePendingState(uint64 indexed numBatch, bytes32 stateRoot, address indexed aggregator)
 func (_ZkEVM *ZkEVMFilterer) FilterOverridePendingState(opts *bind.FilterOpts, numBatch []uint64, aggregator []common.Address) (*ZkEVMOverridePendingStateIterator, error) {
+
 	var numBatchRule []interface{}
 	for _, numBatchItem := range numBatch {
 		numBatchRule = append(numBatchRule, numBatchItem)
@@ -2917,6 +3000,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterOverridePendingState(opts *bind.FilterOpts, n
 //
 // Solidity: event OverridePendingState(uint64 indexed numBatch, bytes32 stateRoot, address indexed aggregator)
 func (_ZkEVM *ZkEVMFilterer) WatchOverridePendingState(opts *bind.WatchOpts, sink chan<- *ZkEVMOverridePendingState, numBatch []uint64, aggregator []common.Address) (event.Subscription, error) {
+
 	var numBatchRule []interface{}
 	for _, numBatchItem := range numBatch {
 		numBatchRule = append(numBatchRule, numBatchItem)
@@ -3049,6 +3133,7 @@ type ZkEVMOwnershipTransferred struct {
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_ZkEVM *ZkEVMFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*ZkEVMOwnershipTransferredIterator, error) {
+
 	var previousOwnerRule []interface{}
 	for _, previousOwnerItem := range previousOwner {
 		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
@@ -3069,6 +3154,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, p
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_ZkEVM *ZkEVMFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *ZkEVMOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
+
 	var previousOwnerRule []interface{}
 	for _, previousOwnerItem := range previousOwner {
 		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
@@ -3200,6 +3286,7 @@ type ZkEVMProveNonDeterministicPendingState struct {
 //
 // Solidity: event ProveNonDeterministicPendingState(bytes32 storedStateRoot, bytes32 provedStateRoot)
 func (_ZkEVM *ZkEVMFilterer) FilterProveNonDeterministicPendingState(opts *bind.FilterOpts) (*ZkEVMProveNonDeterministicPendingStateIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "ProveNonDeterministicPendingState")
 	if err != nil {
 		return nil, err
@@ -3211,6 +3298,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterProveNonDeterministicPendingState(opts *bind.
 //
 // Solidity: event ProveNonDeterministicPendingState(bytes32 storedStateRoot, bytes32 provedStateRoot)
 func (_ZkEVM *ZkEVMFilterer) WatchProveNonDeterministicPendingState(opts *bind.WatchOpts, sink chan<- *ZkEVMProveNonDeterministicPendingState) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "ProveNonDeterministicPendingState")
 	if err != nil {
 		return nil, err
@@ -3332,6 +3420,7 @@ type ZkEVMSequenceBatches struct {
 //
 // Solidity: event SequenceBatches(uint64 indexed numBatch)
 func (_ZkEVM *ZkEVMFilterer) FilterSequenceBatches(opts *bind.FilterOpts, numBatch []uint64) (*ZkEVMSequenceBatchesIterator, error) {
+
 	var numBatchRule []interface{}
 	for _, numBatchItem := range numBatch {
 		numBatchRule = append(numBatchRule, numBatchItem)
@@ -3348,6 +3437,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterSequenceBatches(opts *bind.FilterOpts, numBat
 //
 // Solidity: event SequenceBatches(uint64 indexed numBatch)
 func (_ZkEVM *ZkEVMFilterer) WatchSequenceBatches(opts *bind.WatchOpts, sink chan<- *ZkEVMSequenceBatches, numBatch []uint64) (event.Subscription, error) {
+
 	var numBatchRule []interface{}
 	for _, numBatchItem := range numBatch {
 		numBatchRule = append(numBatchRule, numBatchItem)
@@ -3474,6 +3564,7 @@ type ZkEVMSequenceForceBatches struct {
 //
 // Solidity: event SequenceForceBatches(uint64 indexed numBatch)
 func (_ZkEVM *ZkEVMFilterer) FilterSequenceForceBatches(opts *bind.FilterOpts, numBatch []uint64) (*ZkEVMSequenceForceBatchesIterator, error) {
+
 	var numBatchRule []interface{}
 	for _, numBatchItem := range numBatch {
 		numBatchRule = append(numBatchRule, numBatchItem)
@@ -3490,6 +3581,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterSequenceForceBatches(opts *bind.FilterOpts, n
 //
 // Solidity: event SequenceForceBatches(uint64 indexed numBatch)
 func (_ZkEVM *ZkEVMFilterer) WatchSequenceForceBatches(opts *bind.WatchOpts, sink chan<- *ZkEVMSequenceForceBatches, numBatch []uint64) (event.Subscription, error) {
+
 	var numBatchRule []interface{}
 	for _, numBatchItem := range numBatch {
 		numBatchRule = append(numBatchRule, numBatchItem)
@@ -3616,6 +3708,7 @@ type ZkEVMSetForceBatchTimeout struct {
 //
 // Solidity: event SetForceBatchTimeout(uint64 newforceBatchTimeout)
 func (_ZkEVM *ZkEVMFilterer) FilterSetForceBatchTimeout(opts *bind.FilterOpts) (*ZkEVMSetForceBatchTimeoutIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "SetForceBatchTimeout")
 	if err != nil {
 		return nil, err
@@ -3627,6 +3720,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterSetForceBatchTimeout(opts *bind.FilterOpts) (
 //
 // Solidity: event SetForceBatchTimeout(uint64 newforceBatchTimeout)
 func (_ZkEVM *ZkEVMFilterer) WatchSetForceBatchTimeout(opts *bind.WatchOpts, sink chan<- *ZkEVMSetForceBatchTimeout) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "SetForceBatchTimeout")
 	if err != nil {
 		return nil, err
@@ -3748,6 +3842,7 @@ type ZkEVMSetMultiplierBatchFee struct {
 //
 // Solidity: event SetMultiplierBatchFee(uint16 newMultiplierBatchFee)
 func (_ZkEVM *ZkEVMFilterer) FilterSetMultiplierBatchFee(opts *bind.FilterOpts) (*ZkEVMSetMultiplierBatchFeeIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "SetMultiplierBatchFee")
 	if err != nil {
 		return nil, err
@@ -3759,6 +3854,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterSetMultiplierBatchFee(opts *bind.FilterOpts) 
 //
 // Solidity: event SetMultiplierBatchFee(uint16 newMultiplierBatchFee)
 func (_ZkEVM *ZkEVMFilterer) WatchSetMultiplierBatchFee(opts *bind.WatchOpts, sink chan<- *ZkEVMSetMultiplierBatchFee) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "SetMultiplierBatchFee")
 	if err != nil {
 		return nil, err
@@ -3880,6 +3976,7 @@ type ZkEVMSetPendingStateTimeout struct {
 //
 // Solidity: event SetPendingStateTimeout(uint64 newPendingStateTimeout)
 func (_ZkEVM *ZkEVMFilterer) FilterSetPendingStateTimeout(opts *bind.FilterOpts) (*ZkEVMSetPendingStateTimeoutIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "SetPendingStateTimeout")
 	if err != nil {
 		return nil, err
@@ -3891,6 +3988,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterSetPendingStateTimeout(opts *bind.FilterOpts)
 //
 // Solidity: event SetPendingStateTimeout(uint64 newPendingStateTimeout)
 func (_ZkEVM *ZkEVMFilterer) WatchSetPendingStateTimeout(opts *bind.WatchOpts, sink chan<- *ZkEVMSetPendingStateTimeout) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "SetPendingStateTimeout")
 	if err != nil {
 		return nil, err
@@ -4012,6 +4110,7 @@ type ZkEVMSetTrustedAggregator struct {
 //
 // Solidity: event SetTrustedAggregator(address newTrustedAggregator)
 func (_ZkEVM *ZkEVMFilterer) FilterSetTrustedAggregator(opts *bind.FilterOpts) (*ZkEVMSetTrustedAggregatorIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "SetTrustedAggregator")
 	if err != nil {
 		return nil, err
@@ -4023,6 +4122,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterSetTrustedAggregator(opts *bind.FilterOpts) (
 //
 // Solidity: event SetTrustedAggregator(address newTrustedAggregator)
 func (_ZkEVM *ZkEVMFilterer) WatchSetTrustedAggregator(opts *bind.WatchOpts, sink chan<- *ZkEVMSetTrustedAggregator) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "SetTrustedAggregator")
 	if err != nil {
 		return nil, err
@@ -4144,6 +4244,7 @@ type ZkEVMSetTrustedAggregatorTimeout struct {
 //
 // Solidity: event SetTrustedAggregatorTimeout(uint64 newTrustedAggregatorTimeout)
 func (_ZkEVM *ZkEVMFilterer) FilterSetTrustedAggregatorTimeout(opts *bind.FilterOpts) (*ZkEVMSetTrustedAggregatorTimeoutIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "SetTrustedAggregatorTimeout")
 	if err != nil {
 		return nil, err
@@ -4155,6 +4256,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterSetTrustedAggregatorTimeout(opts *bind.Filter
 //
 // Solidity: event SetTrustedAggregatorTimeout(uint64 newTrustedAggregatorTimeout)
 func (_ZkEVM *ZkEVMFilterer) WatchSetTrustedAggregatorTimeout(opts *bind.WatchOpts, sink chan<- *ZkEVMSetTrustedAggregatorTimeout) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "SetTrustedAggregatorTimeout")
 	if err != nil {
 		return nil, err
@@ -4276,6 +4378,7 @@ type ZkEVMSetTrustedSequencer struct {
 //
 // Solidity: event SetTrustedSequencer(address newTrustedSequencer)
 func (_ZkEVM *ZkEVMFilterer) FilterSetTrustedSequencer(opts *bind.FilterOpts) (*ZkEVMSetTrustedSequencerIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "SetTrustedSequencer")
 	if err != nil {
 		return nil, err
@@ -4287,6 +4390,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterSetTrustedSequencer(opts *bind.FilterOpts) (*
 //
 // Solidity: event SetTrustedSequencer(address newTrustedSequencer)
 func (_ZkEVM *ZkEVMFilterer) WatchSetTrustedSequencer(opts *bind.WatchOpts, sink chan<- *ZkEVMSetTrustedSequencer) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "SetTrustedSequencer")
 	if err != nil {
 		return nil, err
@@ -4408,6 +4512,7 @@ type ZkEVMSetTrustedSequencerURL struct {
 //
 // Solidity: event SetTrustedSequencerURL(string newTrustedSequencerURL)
 func (_ZkEVM *ZkEVMFilterer) FilterSetTrustedSequencerURL(opts *bind.FilterOpts) (*ZkEVMSetTrustedSequencerURLIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "SetTrustedSequencerURL")
 	if err != nil {
 		return nil, err
@@ -4419,6 +4524,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterSetTrustedSequencerURL(opts *bind.FilterOpts)
 //
 // Solidity: event SetTrustedSequencerURL(string newTrustedSequencerURL)
 func (_ZkEVM *ZkEVMFilterer) WatchSetTrustedSequencerURL(opts *bind.WatchOpts, sink chan<- *ZkEVMSetTrustedSequencerURL) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "SetTrustedSequencerURL")
 	if err != nil {
 		return nil, err
@@ -4540,6 +4646,7 @@ type ZkEVMSetVerifyBatchTimeTarget struct {
 //
 // Solidity: event SetVerifyBatchTimeTarget(uint64 newVerifyBatchTimeTarget)
 func (_ZkEVM *ZkEVMFilterer) FilterSetVerifyBatchTimeTarget(opts *bind.FilterOpts) (*ZkEVMSetVerifyBatchTimeTargetIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "SetVerifyBatchTimeTarget")
 	if err != nil {
 		return nil, err
@@ -4551,6 +4658,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterSetVerifyBatchTimeTarget(opts *bind.FilterOpt
 //
 // Solidity: event SetVerifyBatchTimeTarget(uint64 newVerifyBatchTimeTarget)
 func (_ZkEVM *ZkEVMFilterer) WatchSetVerifyBatchTimeTarget(opts *bind.WatchOpts, sink chan<- *ZkEVMSetVerifyBatchTimeTarget) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "SetVerifyBatchTimeTarget")
 	if err != nil {
 		return nil, err
@@ -4672,6 +4780,7 @@ type ZkEVMTransferAdminRole struct {
 //
 // Solidity: event TransferAdminRole(address newPendingAdmin)
 func (_ZkEVM *ZkEVMFilterer) FilterTransferAdminRole(opts *bind.FilterOpts) (*ZkEVMTransferAdminRoleIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "TransferAdminRole")
 	if err != nil {
 		return nil, err
@@ -4683,6 +4792,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterTransferAdminRole(opts *bind.FilterOpts) (*Zk
 //
 // Solidity: event TransferAdminRole(address newPendingAdmin)
 func (_ZkEVM *ZkEVMFilterer) WatchTransferAdminRole(opts *bind.WatchOpts, sink chan<- *ZkEVMTransferAdminRole) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "TransferAdminRole")
 	if err != nil {
 		return nil, err
@@ -4806,6 +4916,7 @@ type ZkEVMUpdateZkEVMVersion struct {
 //
 // Solidity: event UpdateZkEVMVersion(uint64 numBatch, uint64 forkID, string version)
 func (_ZkEVM *ZkEVMFilterer) FilterUpdateZkEVMVersion(opts *bind.FilterOpts) (*ZkEVMUpdateZkEVMVersionIterator, error) {
+
 	logs, sub, err := _ZkEVM.contract.FilterLogs(opts, "UpdateZkEVMVersion")
 	if err != nil {
 		return nil, err
@@ -4817,6 +4928,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterUpdateZkEVMVersion(opts *bind.FilterOpts) (*Z
 //
 // Solidity: event UpdateZkEVMVersion(uint64 numBatch, uint64 forkID, string version)
 func (_ZkEVM *ZkEVMFilterer) WatchUpdateZkEVMVersion(opts *bind.WatchOpts, sink chan<- *ZkEVMUpdateZkEVMVersion) (event.Subscription, error) {
+
 	logs, sub, err := _ZkEVM.contract.WatchLogs(opts, "UpdateZkEVMVersion")
 	if err != nil {
 		return nil, err
@@ -4940,6 +5052,7 @@ type ZkEVMVerifyBatches struct {
 //
 // Solidity: event VerifyBatches(uint64 indexed numBatch, bytes32 stateRoot, address indexed aggregator)
 func (_ZkEVM *ZkEVMFilterer) FilterVerifyBatches(opts *bind.FilterOpts, numBatch []uint64, aggregator []common.Address) (*ZkEVMVerifyBatchesIterator, error) {
+
 	var numBatchRule []interface{}
 	for _, numBatchItem := range numBatch {
 		numBatchRule = append(numBatchRule, numBatchItem)
@@ -4961,6 +5074,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterVerifyBatches(opts *bind.FilterOpts, numBatch
 //
 // Solidity: event VerifyBatches(uint64 indexed numBatch, bytes32 stateRoot, address indexed aggregator)
 func (_ZkEVM *ZkEVMFilterer) WatchVerifyBatches(opts *bind.WatchOpts, sink chan<- *ZkEVMVerifyBatches, numBatch []uint64, aggregator []common.Address) (event.Subscription, error) {
+
 	var numBatchRule []interface{}
 	for _, numBatchItem := range numBatch {
 		numBatchRule = append(numBatchRule, numBatchItem)
@@ -5094,6 +5208,7 @@ type ZkEVMVerifyBatchesTrustedAggregator struct {
 //
 // Solidity: event VerifyBatchesTrustedAggregator(uint64 indexed numBatch, bytes32 stateRoot, address indexed aggregator)
 func (_ZkEVM *ZkEVMFilterer) FilterVerifyBatchesTrustedAggregator(opts *bind.FilterOpts, numBatch []uint64, aggregator []common.Address) (*ZkEVMVerifyBatchesTrustedAggregatorIterator, error) {
+
 	var numBatchRule []interface{}
 	for _, numBatchItem := range numBatch {
 		numBatchRule = append(numBatchRule, numBatchItem)
@@ -5115,6 +5230,7 @@ func (_ZkEVM *ZkEVMFilterer) FilterVerifyBatchesTrustedAggregator(opts *bind.Fil
 //
 // Solidity: event VerifyBatchesTrustedAggregator(uint64 indexed numBatch, bytes32 stateRoot, address indexed aggregator)
 func (_ZkEVM *ZkEVMFilterer) WatchVerifyBatchesTrustedAggregator(opts *bind.WatchOpts, sink chan<- *ZkEVMVerifyBatchesTrustedAggregator, numBatch []uint64, aggregator []common.Address) (event.Subscription, error) {
+
 	var numBatchRule []interface{}
 	for _, numBatchItem := range numBatch {
 		numBatchRule = append(numBatchRule, numBatchItem)

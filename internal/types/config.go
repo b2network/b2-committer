@@ -18,19 +18,17 @@ type Config struct {
 	Blockchain           string `env:"BLOCKCHAIN" envDefault:"b2-node"`
 	InitBlockNumber      int64  `env:"INIT_BLOCK_NUMBER" envDefault:"70000"`
 	InitBlockHash        string `env:"INIT_BLOCK_HASH" envDefault:"0xb2fa3c8011ce25bb1d261403107b58b6aeda8a2af3827e86ad70ee081966d99c"`
-	PolygonZKEVMAddress  string `env:"POLYGON_ZKEVM_ADDRESS" envDefault:"0xd9571Aaf414b0F51d40D6738813FA4eA782d18B7"`
+	PolygonZKEVMAddress  string `env:"POLYGON_ZKEVM_ADDRESS" envDefault:"0xa997cfD539E703921fD1e3Cf25b4c241a27a4c7A"`
 	LimitNum             int    `evn:"PROPOSAL_BATCHES_LIMITNUM" envDefault:"10"`
 	InitProposalID       uint64 `evn:"INIT_PROPOSAL_ID" envDefault:"1"`
 }
 
 type B2NODEConfig struct {
-	Address    string `env:"B2NODE_ADDRESS" envDefault:"ethm1nexknt73vdv6cm3h6ep6u7pe9vg8kr6kqwyl0a"`
-	ChainID    string `env:"B2NODE_CHAIN_ID" envDefault:"ethermint_9000-1"`
-	GRPCHost   string `env:"B2NODE_GRPC_HOST" envDefault:"127.0.0.1"`
-	GRPCPort   uint32 `env:"B2NODE_GRPC_PORT" envDefault:"9090"`
-	RPCUrl     string `env:"B2NODE_RPC_URL" envDefault:"http://localhost:8545"`
-	CoinDenom  string `env:"B2NODE_COIN_DENOM" envDefault:"aphoton"`
-	PrivateKey string `env:"B2NODE_PRIVATE_KEY" envDefault:"b2dd35d83b69d0d572616713148e83ba7d7f02fb14f442ffc4246319c61a3fa3"`
+	ChainID          int64  `env:"B2NODE_CHAIN_ID" envDefault:"11155111"`
+	RPCUrl           string `env:"B2NODE_RPC_URL" envDefault:"https://eth-sepolia.g.alchemy.com/v2/lV2e-64nNnEMUA7UG0IT0uwjzlxEI512"`
+	CommitterAddress string `env:"B2NODE_COMMITTER_ADDRESS" envDefault:"0xBf0Fe27C50f7cf155888bf24Bf0a5104Db926661"`
+	Address          string `env:"B2NODE_CREATOR_ADDRESS" envDefault:"0x0DD3684F0C7e6b383C7bEc2901dCDa4b5360D893"`
+	PrivateKey       string `env:"B2NODE_CREATOR_PRIVATE_KEY" envDefault:"0a81baab0ca0b65d406d68c79945054b092cbe77499ca55c57b3ecfd33f1d551"`
 }
 
 type BitcoinRPCConfig struct {

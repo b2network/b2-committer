@@ -1,13 +1,13 @@
 package handler
 
 import (
-	"time"
-
 	"github.com/b2network/b2committer/internal/schema"
-	"github.com/b2network/b2committer/internal/svc"
 	"github.com/b2network/b2committer/pkg/log"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"time"
+
+	"github.com/b2network/b2committer/internal/svc"
 )
 
 // SyncProposal sync proposal and process voting status
@@ -15,13 +15,13 @@ func SyncProposal(ctx *svc.ServiceContext) {
 	time.Sleep(10 * time.Second)
 	proposalID := ctx.Config.InitProposalID
 	for {
-		lastProposalID, _, err := ctx.NodeClient.QueryLastProposalID()
+		lastProposal, err := ctx.NodeClient.QueryLastProposal()
 		if err != nil {
 			log.Errorf("[Handler.Committer][QueryLastProposalID] error info: %s", errors.WithStack(err).Error())
 			time.Sleep(3 * time.Second)
 			continue
 		}
-		if lastProposalID < proposalID {
+		if lastProposal.Id < proposalID {
 			log.Infof("[Handler.SyncProposal] Current proposalId is latest")
 			time.Sleep(30 * time.Second)
 			continue
@@ -51,7 +51,7 @@ func SyncProposal(ctx *svc.ServiceContext) {
 			continue
 		}
 
-		if proposal.Status == schema.VotingStatus {
+		if proposal.Status == schema.ProposalVotingStatus {
 			// voting
 			verifyBatchInfo, err := GetVerifyBatchInfoByLastBatchNum(ctx, proposal.StartIndex)
 			if err != nil {
@@ -60,7 +60,7 @@ func SyncProposal(ctx *svc.ServiceContext) {
 				continue
 			}
 
-			_, err = ctx.NodeClient.SubmitProof(proposal.Id, ctx.B2NodeConfig.Address, verifyBatchInfo.proofRootHash, verifyBatchInfo.stateRootHash,
+			_, err = ctx.NodeClient.SubmitProof(proposal.Id, verifyBatchInfo.proofRootHash, verifyBatchInfo.stateRootHash,
 				verifyBatchInfo.startBatchNum, verifyBatchInfo.endBatchNum)
 			if err != nil {
 				log.Errorf("[Handler.SyncProposal] vote proposal error info", errors.WithStack(err))
@@ -75,8 +75,7 @@ func SyncProposal(ctx *svc.ServiceContext) {
 				},
 				EndBatchNum:   verifyBatchInfo.endBatchNum,
 				ProposalID:    proposal.Id,
-				Proposer:      proposal.Proposer,
-				Status:        schema.VotingStatus,
+				Status:        schema.ProposalVotingStatus,
 				StateRootHash: verifyBatchInfo.stateRootHash,
 				ProofRootHash: verifyBatchInfo.proofRootHash,
 				StartBatchNum: verifyBatchInfo.startBatchNum,
