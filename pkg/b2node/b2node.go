@@ -124,6 +124,16 @@ func (n NodeClient) TimeoutProposal(id uint64) (*types.Transaction, error) {
 	return tx, nil
 }
 
+func (n NodeClient) IsProposalTimeout(id uint64) (bool, error) {
+	res, err := n.Committer.IsProposalTimeout(&bind.CallOpts{
+		From: common.HexToAddress(n.Address),
+	}, id)
+	if err != nil {
+		return false, fmt.Errorf("[IsProposalTimeout] err: %s", err)
+	}
+	return res, nil
+}
+
 //
 //func (n NodeClient) GetAccountInfo(address string) (*eTypes.EthAccount, error) {
 //	authClient := authTypes.NewQueryClient(n.GrpcConn)

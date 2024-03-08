@@ -45,7 +45,28 @@ func SyncProposal(ctx *svc.ServiceContext) {
 			time.Sleep(3 * time.Second)
 			continue
 		}
-		if dbProposal.ProposalID != 0 {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			dbProposal = schema.Proposal{
+				Base: schema.Base{
+					CreatedAt: time.Now(),
+					UpdatedAt: time.Now(),
+				},
+				ProposalID:      proposal.Id,
+				StateRootHash:   proposal.StateRootHash,
+				ProofRootHash:   proposal.ProofHash,
+				StartBatchNum:   proposal.StartIndex,
+				EndBatchNum:     proposal.EndIndex,
+				BtcRevealTxHash: proposal.TxHash,
+				Winner:          proposal.Winner.String(),
+				Status:          uint64(proposal.Status),
+			}
+			err = ctx.DB.Create(&dbProposal).Error
+			if err != nil {
+				log.Errorf("[Handler.SyncProposal] db create error info:", errors.WithStack(err))
+			}
+		}
+
+		if dbProposal.ProposalID != 0 && dbProposal.Status != uint64(schema.ProposalVotingStatus) {
 			log.Infof("[Handler.SyncProposal] already voted :", ctx.B2NodeConfig.Address)
 			proposalID++
 			continue
@@ -62,27 +83,6 @@ func SyncProposal(ctx *svc.ServiceContext) {
 
 			_, err = ctx.NodeClient.SubmitProof(proposal.Id, verifyBatchInfo.proofRootHash, verifyBatchInfo.stateRootHash,
 				verifyBatchInfo.startBatchNum, verifyBatchInfo.endBatchNum)
-			if err != nil {
-				log.Errorf("[Handler.SyncProposal] vote proposal error info", errors.WithStack(err))
-				time.Sleep(3 * time.Second)
-				continue
-			}
-
-			dbProposal := &schema.Proposal{
-				Base: schema.Base{
-					CreatedAt: time.Now(),
-					UpdatedAt: time.Now(),
-				},
-				EndBatchNum:   verifyBatchInfo.endBatchNum,
-				ProposalID:    proposal.Id,
-				Status:        schema.ProposalVotingStatus,
-				StateRootHash: verifyBatchInfo.stateRootHash,
-				ProofRootHash: verifyBatchInfo.proofRootHash,
-				StartBatchNum: verifyBatchInfo.startBatchNum,
-			}
-
-			// store db
-			err = ctx.DB.Save(dbProposal).Error
 			if err != nil {
 				log.Errorf("[Handler.SyncProposal] vote proposal error info", errors.WithStack(err))
 				time.Sleep(3 * time.Second)

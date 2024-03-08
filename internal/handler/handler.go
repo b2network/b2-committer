@@ -18,10 +18,10 @@ func Run(ctx *svc.ServiceContext) {
 	go CheckStatus(ctx)
 	// check and inscribe
 	go Inscribe(ctx)
-	// check time out
+	//// check time out
 	go CheckStatusTimeOut(ctx)
-	// sync proposal
+	//// sync proposal
 	go SyncProposal(ctx)
-	// sequence batches
-	go SequenceBatches(ctx)
+	//// sequence batches
+	//go SequenceBatches(ctx)
 }

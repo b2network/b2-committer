@@ -16,7 +16,6 @@ type Proposal struct {
 	EndBatchNum     uint64 `json:"end_batch_num"`
 	BtcCommitTxHash string `json:"btc_commit_tx_hash"`
 	BtcRevealTxHash string `json:"btc_reveal_tx_hash"`
-	BlockHeight     uint64 `json:"block_height"`
 	Winner          string `json:"winner"`
 	Status          uint64 `json:"status"`
 }

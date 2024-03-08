@@ -10,14 +10,14 @@ type Config struct {
 	LogLevel string `env:"LOG_LEVEL" envDefault:"info"`
 	// "console","json"
 	LogFormat            string `env:"LOG_FORMAT" envDefault:"console"`
-	MySQLDataSource      string `env:"MYSQL_DATA_SOURCE" envDefault:"root:root@tcp(127.0.0.1:3306)/b2_committer3?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"`
+	MySQLDataSource      string `env:"MYSQL_DATA_SOURCE" envDefault:"root:root@tcp(127.0.0.1:3366)/b2_committer?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"`
 	MySQLMaxIdleConns    int    `env:"MYSQL_MAX_IDLE_CONNS" envDefault:"10"`
 	MySQLMaxOpenConns    int    `env:"MYSQL_MAX_OPEN_CONNS" envDefault:"20"`
 	MySQLConnMaxLifetime int    `env:"MYSQL_CONN_MAX_LIFETIME" envDefault:"3600"`
-	RPCUrl               string `env:"RPC_URL" envDefault:"https://habitat-b2-nodes.bsquared.network"`
+	RPCUrl               string `env:"RPC_URL" envDefault:"https://ethereum-goerli-rpc.publicnode.com"`
 	Blockchain           string `env:"BLOCKCHAIN" envDefault:"b2-node"`
-	InitBlockNumber      int64  `env:"INIT_BLOCK_NUMBER" envDefault:"70000"`
-	InitBlockHash        string `env:"INIT_BLOCK_HASH" envDefault:"0xb2fa3c8011ce25bb1d261403107b58b6aeda8a2af3827e86ad70ee081966d99c"`
+	InitBlockNumber      int64  `env:"INIT_BLOCK_NUMBER" envDefault:"10619156"`
+	InitBlockHash        string `env:"INIT_BLOCK_HASH" envDefault:"0x401b2ba6be4133f37485c9af320be4ca88b2972523d7d816b463fb772444de10"`
 	PolygonZKEVMAddress  string `env:"POLYGON_ZKEVM_ADDRESS" envDefault:"0xa997cfD539E703921fD1e3Cf25b4c241a27a4c7A"`
 	LimitNum             int    `evn:"PROPOSAL_BATCHES_LIMITNUM" envDefault:"10"`
 	InitProposalID       uint64 `evn:"INIT_PROPOSAL_ID" envDefault:"1"`
@@ -26,8 +26,8 @@ type Config struct {
 type B2NODEConfig struct {
 	ChainID          int64  `env:"B2NODE_CHAIN_ID" envDefault:"11155111"`
 	RPCUrl           string `env:"B2NODE_RPC_URL" envDefault:"https://eth-sepolia.g.alchemy.com/v2/lV2e-64nNnEMUA7UG0IT0uwjzlxEI512"`
-	CommitterAddress string `env:"B2NODE_COMMITTER_ADDRESS" envDefault:"0xBf0Fe27C50f7cf155888bf24Bf0a5104Db926661"`
-	Address          string `env:"B2NODE_CREATOR_ADDRESS" envDefault:"0x0DD3684F0C7e6b383C7bEc2901dCDa4b5360D893"`
+	CommitterAddress string `env:"B2NODE_COMMITTER_ADDRESS" envDefault:"0x9bb873a9772D2356192C6D299ABcfa1F69F5b3e4"`
+	Address          string `env:"B2NODE_CREATOR_ADDRESS" envDefault:"0xb634434CA448c39b05b460dEC51f458EaC1e2759"`
 	PrivateKey       string `env:"B2NODE_CREATOR_PRIVATE_KEY" envDefault:"0a81baab0ca0b65d406d68c79945054b092cbe77499ca55c57b3ecfd33f1d551"`
 }
 

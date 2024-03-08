@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/b2network/b2committer/internal/schema"
@@ -49,17 +48,17 @@ func CheckStatusTimeOut(ctx *svc.ServiceContext) {
 			log.Errorf("[Handler.CheckStatusTimeOut] QueryProposalByID err: %s\n", errors.WithStack(err))
 			continue
 		}
-		fmt.Println(proposal)
-		//if proposal.TxHash == "" && proposal.Status == schema.ProposalPendingStatus && proposal.Winner.String() != ctx.B2NodeConfig.Address {
-		//	num := uint64(ctx.LatestBlockNumber) - proposal.BlockHight
-		//	if num > 10000 {
-		//		err := ctx.NodeClient.TimeoutProposal(proposal.Id)
-		//		if err != nil {
-		//			log.Errorf("[Handler.CheckStatusTimeOut] TimeoutProposal err: %s\n", errors.WithStack(err))
-		//			continue
-		//		}
-		//	}
-		//	time.Sleep(2 * time.Second)
-		//}
+		if proposal.TxHash == "" && proposal.Status == schema.ProposalPendingStatus && proposal.Winner.String() != ctx.B2NodeConfig.Address {
+			res, err := ctx.NodeClient.IsProposalTimeout(proposal.Id)
+			if err != nil {
+				log.Errorf("[Handler.CheckStatusTimeOut] TimeoutProposal err: %s\n", errors.WithStack(err))
+				continue
+			}
+			if res {
+				dbProposal.Status = schema.ProposalTimeoutStatus
+				ctx.DB.Save(dbProposal)
+			}
+			time.Sleep(2 * time.Second)
+		}
 	}
 }
