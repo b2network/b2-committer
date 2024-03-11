@@ -51,14 +51,14 @@ func SyncProposal(ctx *svc.ServiceContext) {
 					CreatedAt: time.Now(),
 					UpdatedAt: time.Now(),
 				},
-				ProposalID:      proposal.Id,
-				StateRootHash:   proposal.StateRootHash,
-				ProofRootHash:   proposal.ProofHash,
-				StartBatchNum:   proposal.StartIndex,
-				EndBatchNum:     proposal.EndIndex,
-				BtcRevealTxHash: proposal.TxHash,
-				Winner:          proposal.Winner.String(),
-				Status:          uint64(proposal.Status),
+				ProposalID:    proposal.Id,
+				StateRootHash: proposal.StateRootHash,
+				ProofRootHash: proposal.ProofHash,
+				StartBatchNum: proposal.StartIndex,
+				EndBatchNum:   proposal.EndIndex,
+				BtcTxHash:     proposal.TxHash,
+				Winner:        proposal.Winner.String(),
+				Status:        uint64(proposal.Status),
 			}
 			err = ctx.DB.Create(&dbProposal).Error
 			if err != nil {

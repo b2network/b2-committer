@@ -19,7 +19,6 @@ func SyncBlock(ctx *svc.ServiceContext) {
 	time.Sleep(10 * time.Second)
 	var syncedBlock schema.SyncBlock
 	err := ctx.DB.Where("status = ? or status = ? ", schema.BlockValid, schema.BlockPending).Order("block_number desc").First(&syncedBlock).Error
-
 	if err != nil && err != gorm.ErrRecordNotFound {
 		panic(err)
 	}

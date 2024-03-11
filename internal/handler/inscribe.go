@@ -33,7 +33,7 @@ func Inscribe(ctx *svc.ServiceContext) {
 		if proposal.Status == schema.ProposalSucceedStatus {
 			dbProposal.Status = uint64(proposal.Status)
 			dbProposal.Winner = proposal.Winner.String()
-			dbProposal.BtcRevealTxHash = proposal.TxHash
+			dbProposal.BtcTxHash = proposal.TxHash
 			ctx.DB.Save(dbProposal)
 		}
 		if proposal.Status == schema.ProposalPendingStatus &&
@@ -57,9 +57,7 @@ func Inscribe(ctx *svc.ServiceContext) {
 				log.Errorf("[Handler.Inscribe] BitcoinTx err: %s\n", errors.WithStack(err).Error())
 				continue
 			}
-			dbProposal.BtcRevealTxHash = bitcoinTxHash
-			dbProposal.BtcCommitTxHash = rs.CommitTxHash.String()
-
+			dbProposal.BtcTxHash = bitcoinTxHash
 			ctx.DB.Save(dbProposal)
 		}
 		if proposal.Status == schema.ProposalPendingStatus && proposal.TxHash != "" && proposal.Winner.String() != ctx.B2NodeConfig.Address {

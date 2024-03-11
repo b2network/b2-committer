@@ -12,7 +12,22 @@ services:
       - ./mysql.sql:/docker-entrypoint-initdb.d/init.sql
       - ./mysql1/datadir:/var/lib/mysql
 
-#  mysql2:
+  postgres:
+    container_name: postgres
+    image: postgres:15.6
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./postgres1/datadir:/var/lib/postgresql/data
+      - ./mysql.sql:/docker-entrypoint-initdb.d/init.sql
+
+
+#   mysql2:
 #    image: mysql:8.0.28
 #    environment:
 #      MYSQL_ROOT_PASSWORD: "root"

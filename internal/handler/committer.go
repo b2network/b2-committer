@@ -44,7 +44,7 @@ type VerifyRangBatchInfo struct {
 // Committer find verifyBatchesTrustedAggregator event and commit stateRoot proof to b2node
 func Committer(ctx *svc.ServiceContext) {
 	for {
-		var proposals []schema.Proposal
+		//var proposals []schema.Proposal
 		proposal, err := ctx.NodeClient.QueryLastProposal()
 		lastProposalID, lastFinalBatchNum := proposal.Id, proposal.EndIndex
 		if err != nil {
@@ -52,16 +52,16 @@ func Committer(ctx *svc.ServiceContext) {
 			time.Sleep(10 * time.Second)
 			continue
 		}
-		err = ctx.DB.Where("end_batch_num > ?", lastFinalBatchNum).Find(&proposals).Error
-		if err != nil {
-			log.Errorf("[Handler.Committer][DB] error info: %s", errors.WithStack(err).Error())
-			time.Sleep(10 * time.Second)
-			continue
-		}
-		if len(proposals) > 0 {
-			log.Errorf("[Handler.Committer] proposal already is existed, lastFinalBatchNum: %s", lastFinalBatchNum)
-			continue
-		}
+		//err = ctx.DB.Where("end_batch_num > ?", lastFinalBatchNum).Find(&proposals).Error
+		//if err != nil {
+		//	log.Errorf("[Handler.Committer][DB] error info: %s", errors.WithStack(err).Error())
+		//	time.Sleep(10 * time.Second)
+		//	continue
+		//}
+		//if len(proposals) > 0 {
+		//	log.Errorf("[Handler.Committer] proposal already is existed, lastFinalBatchNum: %s", lastFinalBatchNum)
+		//	continue
+		//}
 		verifyBatchInfo, err := GetVerifyBatchInfoByLastBatchNum(ctx, lastFinalBatchNum)
 		if err != nil {
 			log.Errorf("[Handler.Committer] error info: %s", errors.WithStack(err).Error())
@@ -105,24 +105,6 @@ func committerProposal(ctx *svc.ServiceContext, verifyBatchInfo *VerifyRangBatch
 		verifyBatchInfo.startBatchNum, verifyBatchInfo.endBatchNum)
 	if err != nil {
 		return fmt.Errorf("[committerProposal] submit proof error info: %s", errors.WithStack(err))
-	}
-	dbProposal := &schema.Proposal{
-		Base: schema.Base{
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-		EndBatchNum:   verifyBatchInfo.endBatchNum,
-		ProposalID:    proposalID,
-		Status:        schema.ProposalVotingStatus,
-		StateRootHash: verifyBatchInfo.stateRootHash,
-		ProofRootHash: verifyBatchInfo.proofRootHash,
-		StartBatchNum: verifyBatchInfo.startBatchNum,
-	}
-
-	// store db
-	err = ctx.DB.Save(dbProposal).Error
-	if err != nil {
-		return fmt.Errorf("[committerProposal] save proposal error info: %s", errors.WithStack(err))
 	}
 	return nil
 }
@@ -213,7 +195,7 @@ func DecodeTransactionInputData(contractABI abi.ABI, data []byte) (map[string]in
 }
 
 func GetVerifyBatchesParamsByTxHash(ctx *svc.ServiceContext, txHash common.Hash) (*VerifyBatchesTrustedAggregatorParams, error) {
-	abiObject, err := abi.JSON(strings.NewReader(contract.ZkEVMMetaData.ABI))
+	abiObject, err := abi.JSON(strings.NewReader(contract.VerifyMetaData.ABI))
 	if err != nil {
 		return nil, fmt.Errorf("[GetVerifyBatchesParamsByTxHash] parse abi error: %s", errors.WithStack(err))
 	}

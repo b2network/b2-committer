@@ -11,11 +11,12 @@ import (
 var (
 	SequenceBatchesName = "sequenceBatches"
 
-	SequenceBatchesNameHash = crypto.Keccak256([]byte("SequenceBatches(uint64)"))
+	SequenceBatchesNameHash = crypto.Keccak256([]byte("SequenceBatches(uint64,bytes32)"))
 )
 
 type SequenceBatches struct {
-	BatchNum uint64 `json:"numBatch"`
+	BatchNum   uint64 `json:"numBatch"`
+	L1InfoRoot string `json:"l1InfoRoot"`
 }
 
 func (*SequenceBatches) Name() string {
@@ -36,7 +37,8 @@ func (t *SequenceBatches) ToObj(data string) error {
 
 func (*SequenceBatches) Data(log types.Log) (string, error) {
 	transfer := &SequenceBatches{
-		BatchNum: uint64(event.TopicToInt64(log, 1)),
+		BatchNum:   uint64(event.TopicToInt64(log, 1)),
+		L1InfoRoot: event.DataToHash(log, 0).Hex(),
 	}
 	data, err := event.ToJSON(transfer)
 	if err != nil {

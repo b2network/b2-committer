@@ -15,7 +15,7 @@ import (
 const (
 	creatorAddress    = "0xb634434CA448c39b05b460dEC51f458EaC1e2759"
 	creatorPrivateKey = "0a81baab0ca0b65d406d68c79945054b092cbe77499ca55c57b3ecfd33f1d551"
-	contractAddress   = "0x9bb873a9772D2356192C6D299ABcfa1F69F5b3e4"
+	contractAddress   = "0x12BBD3f7EF1ABEd6B9DB12A3dE77b00aE10618E0"
 	URL               = "https://eth-sepolia.g.alchemy.com/v2/lV2e-64nNnEMUA7UG0IT0uwjzlxEI512"
 	chainID           = 11155111
 )
@@ -143,7 +143,7 @@ func TestSubmitProof(t *testing.T) {
 	tx, err := committer.SubmitProof(&bind.TransactOpts{
 		From:   common.HexToAddress(creatorAddress),
 		Signer: auth.Signer,
-	}, 1, "proofHash", "stateRoot", 1, 718154)
+	}, 1, "proofHash", "stateRoot", 1, 53893)
 	require.NoError(t, err)
 	fmt.Println(tx.Hash())
 }

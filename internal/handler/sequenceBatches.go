@@ -93,7 +93,7 @@ func GetSequenceBatchesFromStartBatchNum(ctx *svc.ServiceContext, startBatchNum 
 }
 
 func GetSequenceBatchesDetails(ctx *svc.ServiceContext, sequenceBatches []*SequenceBatchesAndTxHash) (map[uint64]map[string]interface{}, error) {
-	abiObject, err := abi.JSON(strings.NewReader(contract.ZkEVMMetaData.ABI))
+	abiObject, err := abi.JSON(strings.NewReader(contract.SequenceMetaData.ABI))
 
 	if err != nil {
 		return nil, fmt.Errorf("[GetSequenceBatchesDetails] parse abi error: %s", errors.WithStack(err))
