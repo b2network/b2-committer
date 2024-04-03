@@ -24,7 +24,7 @@ services:
       - "5433:5432"
     volumes:
       - ./postgres1/datadir:/var/lib/postgresql/data
-      - ./mysql.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres.sql:/docker-entrypoint-initdb.d/init.sql
 
 
 #   mysql2:

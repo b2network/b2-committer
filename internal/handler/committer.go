@@ -44,7 +44,6 @@ type VerifyRangBatchInfo struct {
 // Committer find verifyBatchesTrustedAggregator event and commit stateRoot proof to b2node
 func Committer(ctx *svc.ServiceContext) {
 	for {
-		//var proposals []schema.Proposal
 		proposal, err := ctx.NodeClient.QueryLastProposal()
 		lastProposalID, lastFinalBatchNum := proposal.Id, proposal.EndIndex
 		if err != nil {
@@ -52,16 +51,19 @@ func Committer(ctx *svc.ServiceContext) {
 			time.Sleep(10 * time.Second)
 			continue
 		}
-		//err = ctx.DB.Where("end_batch_num > ?", lastFinalBatchNum).Find(&proposals).Error
-		//if err != nil {
-		//	log.Errorf("[Handler.Committer][DB] error info: %s", errors.WithStack(err).Error())
-		//	time.Sleep(10 * time.Second)
-		//	continue
-		//}
-		//if len(proposals) > 0 {
-		//	log.Errorf("[Handler.Committer] proposal already is existed, lastFinalBatchNum: %s", lastFinalBatchNum)
-		//	continue
-		//}
+
+		proposalLatest, err := ctx.NodeClient.QueryProposalByID(lastProposalID)
+		if err != nil {
+			log.Errorf("[Handler.Committer][QueryLastProposalID] error info: %s", errors.WithStack(err).Error())
+			return
+		}
+
+		if proposalLatest.Status != schema.ProposalTimeoutStatus {
+			log.Infof("[Handler.Committer] proposal status is processing, proposalID: %d, proposal status: %d", lastProposalID, proposalLatest.Status)
+			time.Sleep(10 * time.Second)
+			continue
+		}
+
 		verifyBatchInfo, err := GetVerifyBatchInfoByLastBatchNum(ctx, lastFinalBatchNum)
 		if err != nil {
 			log.Errorf("[Handler.Committer] error info: %s", errors.WithStack(err).Error())
@@ -104,7 +106,7 @@ func committerProposal(ctx *svc.ServiceContext, verifyBatchInfo *VerifyRangBatch
 	_, err := ctx.NodeClient.SubmitProof(proposalID, verifyBatchInfo.proofRootHash, verifyBatchInfo.stateRootHash,
 		verifyBatchInfo.startBatchNum, verifyBatchInfo.endBatchNum)
 	if err != nil {
-		return fmt.Errorf("[committerProposal] submit proof error info: %s", errors.WithStack(err))
+		return fmt.Errorf("[committerProposal] submit proof error info: %s, %d", errors.WithStack(err), verifyBatchInfo.startBatchNum)
 	}
 	return nil
 }

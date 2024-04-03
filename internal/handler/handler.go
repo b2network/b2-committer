@@ -10,18 +10,22 @@ func Run(ctx *svc.ServiceContext) {
 	go LatestBlackNumber(ctx)
 	// sync blocks
 	go SyncBlock(ctx)
-	//sync events
+	// sync events
 	go SyncEvent(ctx)
 	// execute committer
 	go Committer(ctx)
-	// check status
-	go CheckStatus(ctx)
 	// check and inscribe
 	go Inscribe(ctx)
+	// check status
+	go CheckStatusVoting(ctx)
+	// check pending
+	go CheckStatusPending(ctx)
 	// check time out
-	go CheckStatusTimeOut(ctx)
+	go CheckStatusPendingTimeOut(ctx)
 	// sync proposal
 	go SyncProposal(ctx)
-	//sequence batches
-	//go SequenceBatches(ctx)
+	// sequence batches
+	go SequenceBatches(ctx)
+	// upload batch detail to ar
+	go BatchDetailsToAr(ctx)
 }

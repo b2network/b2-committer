@@ -11,24 +11,27 @@ type Config struct {
 	// "console","json"
 	LogFormat                  string `env:"LOG_FORMAT" envDefault:"console"`
 	PostgresqlDataSource       string `env:"POSTGRESQL_DATA_SOURCE" envDefault:"host=localhost port=5433 user=postgres password=postgres dbname=b2_committer sslmode=disable"`
-	MySQLDataSource            string `env:"MYSQL_DATA_SOURCE" envDefault:"root:root@tcp(127.0.0.1:3366)/b2_committer?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"`
+	MySQLDataSource            string `env:"MYSQL_DATA_SOURCE" envDefault:"root:root@tcp(127.0.0.1:3366)/b2_committer2?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"`
 	MySQLMaxIdleConns          int    `env:"MYSQL_MAX_IDLE_CONNS" envDefault:"10"`
 	MySQLMaxOpenConns          int    `env:"MYSQL_MAX_OPEN_CONNS" envDefault:"20"`
 	MySQLConnMaxLifetime       int    `env:"MYSQL_CONN_MAX_LIFETIME" envDefault:"3600"`
-	RPCUrl                     string `env:"RPC_URL" envDefault:"https://sepolia.drpc.org"`
+	RPCUrl                     string `env:"RPC_URL" envDefault:"https://habitat-hub-rpc.bsquared.network"`
 	Blockchain                 string `env:"BLOCKCHAIN" envDefault:"b2-node"`
-	InitBlockNumber            int64  `env:"INIT_BLOCK_NUMBER" envDefault:"5158900"`
-	InitBlockHash              string `env:"INIT_BLOCK_HASH" envDefault:"0xc05e1c7dd54b60c5bc13ad09bad119f49a2fc82cc60215dd7eb9b1d68e147ab0"`
-	PolygonSequenceContract    string `env:"POLYGON_SEQUENCE_CONTRACT" envDefault:"0xA13Ddb14437A8F34897131367ad3ca78416d6bCa"`
-	PolygonVerifyBatchContract string `env:"POLYGON_VERIFY_BATCH_CONTRACT" envDefault:"0x32d33D5137a7cFFb54c5Bf8371172bcEc5f310ff"`
+	InitBlockNumber            int64  `env:"INIT_BLOCK_NUMBER" envDefault:"0"`
+	InitBlockHash              string `env:"INIT_BLOCK_HASH" envDefault:"0x49a34ca5e11dbcd56b4cad717a98efe5c76552a2dcfbdcd693a248e2fd5f8d51"`
+	PolygonSequenceContract    string `env:"POLYGON_SEQUENCE_CONTRACT" envDefault:"0xa6AAdA6845b2083ff6812bAc773038442e7f4dE6"`
+	PolygonVerifyBatchContract string `env:"POLYGON_VERIFY_BATCH_CONTRACT" envDefault:"0xDdee8ddfA81F5E36373637240038DCCC14529BF7"`
 	LimitNum                   int    `evn:"PROPOSAL_BATCHES_LIMITNUM" envDefault:"10"`
 	InitProposalID             uint64 `evn:"INIT_PROPOSAL_ID" envDefault:"1"`
+	BatchPath                  string `env:"BATCH_PATH" envDefault:"batchFile"`
+	ArweaveWallet              string `env:"B2NODE_ARWEAVE_WALLET" envDefault:"./wallet/account.json"`
+	ArweaveRPC                 string `env:"B2NODE_ARWEAVE_RPC" envDefault:"https://arweave.net"`
 }
 
 type B2NODEConfig struct {
-	ChainID          int64  `env:"B2NODE_CHAIN_ID" envDefault:"11155111"`
-	RPCUrl           string `env:"B2NODE_RPC_URL" envDefault:"https://eth-sepolia.g.alchemy.com/v2/lV2e-64nNnEMUA7UG0IT0uwjzlxEI512"`
-	CommitterAddress string `env:"B2NODE_COMMITTER_ADDRESS" envDefault:"0x12BBD3f7EF1ABEd6B9DB12A3dE77b00aE10618E0"`
+	ChainID          int64  `env:"B2NODE_CHAIN_ID" envDefault:"1113"`
+	RPCUrl           string `env:"B2NODE_RPC_URL" envDefault:"https://habitat-hub-rpc.bsquared.network"`
+	CommitterAddress string `env:"B2NODE_COMMITTER_ADDRESS" envDefault:"0x0DD3684F0C7e6b383C7bEc2901dCDa4b5360D893"`
 	Address          string `env:"B2NODE_CREATOR_ADDRESS" envDefault:"0xb634434CA448c39b05b460dEC51f458EaC1e2759"`
 	PrivateKey       string `env:"B2NODE_CREATOR_PRIVATE_KEY" envDefault:"0a81baab0ca0b65d406d68c79945054b092cbe77499ca55c57b3ecfd33f1d551"`
 }

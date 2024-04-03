@@ -56,13 +56,14 @@ func SyncProposal(ctx *svc.ServiceContext) {
 				ProofRootHash: proposal.ProofHash,
 				StartBatchNum: proposal.StartIndex,
 				EndBatchNum:   proposal.EndIndex,
-				BtcTxHash:     proposal.TxHash,
+				BtcTxHash:     proposal.BtcTxHash,
 				Winner:        proposal.Winner.String(),
 				Status:        uint64(proposal.Status),
+				ArTxHash:      proposal.ArweaveTxHash,
 			}
 			err = ctx.DB.Create(&dbProposal).Error
 			if err != nil {
-				log.Errorf("[Handler.SyncProposal] db create error info:", errors.WithStack(err))
+				log.Errorf("[Handler.SyncProposal] db create error info: %s", errors.WithStack(err).Error())
 			}
 		}
 

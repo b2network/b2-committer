@@ -26,11 +26,11 @@ type SyncEvent struct {
 }
 
 func (SyncEvent) TableName() string {
-	return "`sync_events`"
+	return "sync_events"
 }
 
 type SyncEventHistory SyncEvent
 
 func (SyncEventHistory) TableName() string {
-	return "`sync_events_history`"
+	return "sync_events_history"
 }

@@ -25,8 +25,8 @@ func init() {
 	register(&zkevm.VerifyBatches{})
 	register(&zkevm.SequenceBatches{})
 	cfg := config.GetConfig()
-	addContract(cfg.PolygonSequenceContract)
 	addContract(cfg.PolygonVerifyBatchContract)
+	addContract(cfg.PolygonSequenceContract)
 }
 
 func register(event Event) {

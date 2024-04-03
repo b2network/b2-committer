@@ -39,12 +39,13 @@ type CommitterProposal struct {
 	Winner        common.Address
 	ProofHash     string
 	StateRootHash string
-	TxHash        string
+	BtcTxHash     string
+	ArweaveTxHash string
 }
 
 // CommitterMetaData contains all meta data concerning the Committer contract.
 var CommitterMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"name\":\"AccessControlBadConfirmation\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"neededRole\",\"type\":\"bytes32\"}],\"name\":\"AccessControlUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"proposer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"proofHash\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"stateRootHash\",\"type\":\"string\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"startIndex\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"endIndex\",\"type\":\"uint256\"}],\"name\":\"ProposalSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"ProposalTimedOut\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"voter\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"phase\",\"type\":\"uint8\"}],\"name\":\"VoteProposal\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"proposer\",\"type\":\"address\"}],\"name\":\"addProposer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"}],\"name\":\"allCommitPhaseVotes\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"allProposers\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"}],\"name\":\"allTimeoutPhaseVotes\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"},{\"internalType\":\"string\",\"name\":\"txHash\",\"type\":\"string\"}],\"name\":\"bitcoinTx\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"commitPhaseVotes\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getLastProposal\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"startIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"endIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint8\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"timeout\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"proofHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"stateRootHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"txHash\",\"type\":\"string\"}],\"internalType\":\"structCommitter.Proposal\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"}],\"name\":\"isProposalTimeout\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"isProposer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"isVotedOnCommitPhase\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"isVotedOnTimeoutPhase\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"lastProposal\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"startIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"endIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint8\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"timeout\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"proofHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"stateRootHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"txHash\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"}],\"name\":\"proposal\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"startIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"endIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint8\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"timeout\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"proofHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"stateRootHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"txHash\",\"type\":\"string\"}],\"internalType\":\"structCommitter.Proposal\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"proposals\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"startIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"endIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint8\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"timeout\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"proofHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"stateRootHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"txHash\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"proposers\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"proposersList\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"proposer\",\"type\":\"address\"}],\"name\":\"removeProposer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"callerConfirmation\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"period\",\"type\":\"uint256\"}],\"name\":\"setTimeoutPeriod\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"},{\"internalType\":\"string\",\"name\":\"proofHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"stateRootHash\",\"type\":\"string\"},{\"internalType\":\"uint64\",\"name\":\"startIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"endIndex\",\"type\":\"uint64\"}],\"name\":\"submitProof\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"timeoutPeriod\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"timeoutPhaseVotes\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"}],\"name\":\"timeoutProposal\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[],\"name\":\"AccessControlBadConfirmation\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"neededRole\",\"type\":\"bytes32\"}],\"name\":\"AccessControlUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ProposalIsNotExist\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"proposer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"proofHash\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"stateRootHash\",\"type\":\"string\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"startIndex\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"endIndex\",\"type\":\"uint256\"}],\"name\":\"ProposalSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"}],\"name\":\"ProposalTimedOut\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"voter\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"phase\",\"type\":\"uint8\"}],\"name\":\"VoteProposal\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"}],\"name\":\"addChain\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"proposer\",\"type\":\"address\"}],\"name\":\"addProposer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"allChains\",\"outputs\":[{\"internalType\":\"uint64[]\",\"name\":\"\",\"type\":\"uint64[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"allProposers\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"}],\"name\":\"allSubmitBitcoinTxVotes\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"}],\"name\":\"allSubmitProofVotes\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"},{\"internalType\":\"string\",\"name\":\"txHash\",\"type\":\"string\"}],\"name\":\"arweaveTx\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"},{\"internalType\":\"string\",\"name\":\"txHash\",\"type\":\"string\"}],\"name\":\"bitcoinTx\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"chains\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"chainsList\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"a\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"b\",\"type\":\"string\"}],\"name\":\"compareStrings\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"}],\"name\":\"getLastProposal\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"startIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"endIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint8\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"timeout\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"proofHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"stateRootHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"btcTxHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"arweaveTxHash\",\"type\":\"string\"}],\"internalType\":\"structCommitter.Proposal\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"}],\"name\":\"isProposalTimeout\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"isProposer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"}],\"name\":\"isSupportedChain\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"isVotedOnBitcoinTxPhase\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"isVotedOnSubmitProofPhase\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"lastProposal\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"startIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"endIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint8\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"timeout\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"proofHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"stateRootHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"btcTxHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"arweaveTxHash\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"}],\"name\":\"proposal\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"startIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"endIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint8\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"timeout\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"proofHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"stateRootHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"btcTxHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"arweaveTxHash\",\"type\":\"string\"}],\"internalType\":\"structCommitter.Proposal\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"proposals\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"id\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"startIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"endIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint8\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"timeout\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"proofHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"stateRootHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"btcTxHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"arweaveTxHash\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"proposers\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"proposersList\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"}],\"name\":\"removeChain\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"proposer\",\"type\":\"address\"}],\"name\":\"removeProposer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"callerConfirmation\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"period\",\"type\":\"uint256\"}],\"name\":\"setTimeoutPeriod\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"submitBitcoinTxPhaseVotes\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"},{\"internalType\":\"string\",\"name\":\"proofHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"stateRootHash\",\"type\":\"string\"},{\"internalType\":\"uint64\",\"name\":\"startIndex\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"endIndex\",\"type\":\"uint64\"}],\"name\":\"submitProof\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"submitProofPhaseVotes\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"timeoutPeriod\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"proposalID\",\"type\":\"uint64\"}],\"name\":\"timeoutProposal\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
 }
 
 // CommitterABI is the input ABI used to generate the binding from.
@@ -255,35 +256,35 @@ func (_Committer *CommitterCallerSession) DEFAULTADMINROLE() ([32]byte, error) {
 	return _Committer.Contract.DEFAULTADMINROLE(&_Committer.CallOpts)
 }
 
-// AllCommitPhaseVotes is a free data retrieval call binding the contract method 0x80214794.
+// AllChains is a free data retrieval call binding the contract method 0x7f3f94b1.
 //
-// Solidity: function allCommitPhaseVotes(uint64 id) view returns(address[])
-func (_Committer *CommitterCaller) AllCommitPhaseVotes(opts *bind.CallOpts, id uint64) ([]common.Address, error) {
+// Solidity: function allChains() view returns(uint64[])
+func (_Committer *CommitterCaller) AllChains(opts *bind.CallOpts) ([]uint64, error) {
 	var out []interface{}
-	err := _Committer.contract.Call(opts, &out, "allCommitPhaseVotes", id)
+	err := _Committer.contract.Call(opts, &out, "allChains")
 
 	if err != nil {
-		return *new([]common.Address), err
+		return *new([]uint64), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new([]common.Address)).(*[]common.Address)
+	out0 := *abi.ConvertType(out[0], new([]uint64)).(*[]uint64)
 
 	return out0, err
 
 }
 
-// AllCommitPhaseVotes is a free data retrieval call binding the contract method 0x80214794.
+// AllChains is a free data retrieval call binding the contract method 0x7f3f94b1.
 //
-// Solidity: function allCommitPhaseVotes(uint64 id) view returns(address[])
-func (_Committer *CommitterSession) AllCommitPhaseVotes(id uint64) ([]common.Address, error) {
-	return _Committer.Contract.AllCommitPhaseVotes(&_Committer.CallOpts, id)
+// Solidity: function allChains() view returns(uint64[])
+func (_Committer *CommitterSession) AllChains() ([]uint64, error) {
+	return _Committer.Contract.AllChains(&_Committer.CallOpts)
 }
 
-// AllCommitPhaseVotes is a free data retrieval call binding the contract method 0x80214794.
+// AllChains is a free data retrieval call binding the contract method 0x7f3f94b1.
 //
-// Solidity: function allCommitPhaseVotes(uint64 id) view returns(address[])
-func (_Committer *CommitterCallerSession) AllCommitPhaseVotes(id uint64) ([]common.Address, error) {
-	return _Committer.Contract.AllCommitPhaseVotes(&_Committer.CallOpts, id)
+// Solidity: function allChains() view returns(uint64[])
+func (_Committer *CommitterCallerSession) AllChains() ([]uint64, error) {
+	return _Committer.Contract.AllChains(&_Committer.CallOpts)
 }
 
 // AllProposers is a free data retrieval call binding the contract method 0x239e1e3d.
@@ -317,12 +318,12 @@ func (_Committer *CommitterCallerSession) AllProposers() ([]common.Address, erro
 	return _Committer.Contract.AllProposers(&_Committer.CallOpts)
 }
 
-// AllTimeoutPhaseVotes is a free data retrieval call binding the contract method 0xd1264f6b.
+// AllSubmitBitcoinTxVotes is a free data retrieval call binding the contract method 0xbedc7561.
 //
-// Solidity: function allTimeoutPhaseVotes(uint64 id) view returns(address[])
-func (_Committer *CommitterCaller) AllTimeoutPhaseVotes(opts *bind.CallOpts, id uint64) ([]common.Address, error) {
+// Solidity: function allSubmitBitcoinTxVotes(uint64 chainID, uint64 proposalID) view returns(address[])
+func (_Committer *CommitterCaller) AllSubmitBitcoinTxVotes(opts *bind.CallOpts, chainID uint64, proposalID uint64) ([]common.Address, error) {
 	var out []interface{}
-	err := _Committer.contract.Call(opts, &out, "allTimeoutPhaseVotes", id)
+	err := _Committer.contract.Call(opts, &out, "allSubmitBitcoinTxVotes", chainID, proposalID)
 
 	if err != nil {
 		return *new([]common.Address), err
@@ -334,57 +335,150 @@ func (_Committer *CommitterCaller) AllTimeoutPhaseVotes(opts *bind.CallOpts, id 
 
 }
 
-// AllTimeoutPhaseVotes is a free data retrieval call binding the contract method 0xd1264f6b.
+// AllSubmitBitcoinTxVotes is a free data retrieval call binding the contract method 0xbedc7561.
 //
-// Solidity: function allTimeoutPhaseVotes(uint64 id) view returns(address[])
-func (_Committer *CommitterSession) AllTimeoutPhaseVotes(id uint64) ([]common.Address, error) {
-	return _Committer.Contract.AllTimeoutPhaseVotes(&_Committer.CallOpts, id)
+// Solidity: function allSubmitBitcoinTxVotes(uint64 chainID, uint64 proposalID) view returns(address[])
+func (_Committer *CommitterSession) AllSubmitBitcoinTxVotes(chainID uint64, proposalID uint64) ([]common.Address, error) {
+	return _Committer.Contract.AllSubmitBitcoinTxVotes(&_Committer.CallOpts, chainID, proposalID)
 }
 
-// AllTimeoutPhaseVotes is a free data retrieval call binding the contract method 0xd1264f6b.
+// AllSubmitBitcoinTxVotes is a free data retrieval call binding the contract method 0xbedc7561.
 //
-// Solidity: function allTimeoutPhaseVotes(uint64 id) view returns(address[])
-func (_Committer *CommitterCallerSession) AllTimeoutPhaseVotes(id uint64) ([]common.Address, error) {
-	return _Committer.Contract.AllTimeoutPhaseVotes(&_Committer.CallOpts, id)
+// Solidity: function allSubmitBitcoinTxVotes(uint64 chainID, uint64 proposalID) view returns(address[])
+func (_Committer *CommitterCallerSession) AllSubmitBitcoinTxVotes(chainID uint64, proposalID uint64) ([]common.Address, error) {
+	return _Committer.Contract.AllSubmitBitcoinTxVotes(&_Committer.CallOpts, chainID, proposalID)
 }
 
-// CommitPhaseVotes is a free data retrieval call binding the contract method 0xf5033e0d.
+// AllSubmitProofVotes is a free data retrieval call binding the contract method 0xea7d929a.
 //
-// Solidity: function commitPhaseVotes(uint64 , uint256 ) view returns(address)
-func (_Committer *CommitterCaller) CommitPhaseVotes(opts *bind.CallOpts, arg0 uint64, arg1 *big.Int) (common.Address, error) {
+// Solidity: function allSubmitProofVotes(uint64 chainID, uint64 proposalID) view returns(address[])
+func (_Committer *CommitterCaller) AllSubmitProofVotes(opts *bind.CallOpts, chainID uint64, proposalID uint64) ([]common.Address, error) {
 	var out []interface{}
-	err := _Committer.contract.Call(opts, &out, "commitPhaseVotes", arg0, arg1)
+	err := _Committer.contract.Call(opts, &out, "allSubmitProofVotes", chainID, proposalID)
 
 	if err != nil {
-		return *new(common.Address), err
+		return *new([]common.Address), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+	out0 := *abi.ConvertType(out[0], new([]common.Address)).(*[]common.Address)
 
 	return out0, err
 
 }
 
-// CommitPhaseVotes is a free data retrieval call binding the contract method 0xf5033e0d.
+// AllSubmitProofVotes is a free data retrieval call binding the contract method 0xea7d929a.
 //
-// Solidity: function commitPhaseVotes(uint64 , uint256 ) view returns(address)
-func (_Committer *CommitterSession) CommitPhaseVotes(arg0 uint64, arg1 *big.Int) (common.Address, error) {
-	return _Committer.Contract.CommitPhaseVotes(&_Committer.CallOpts, arg0, arg1)
+// Solidity: function allSubmitProofVotes(uint64 chainID, uint64 proposalID) view returns(address[])
+func (_Committer *CommitterSession) AllSubmitProofVotes(chainID uint64, proposalID uint64) ([]common.Address, error) {
+	return _Committer.Contract.AllSubmitProofVotes(&_Committer.CallOpts, chainID, proposalID)
 }
 
-// CommitPhaseVotes is a free data retrieval call binding the contract method 0xf5033e0d.
+// AllSubmitProofVotes is a free data retrieval call binding the contract method 0xea7d929a.
 //
-// Solidity: function commitPhaseVotes(uint64 , uint256 ) view returns(address)
-func (_Committer *CommitterCallerSession) CommitPhaseVotes(arg0 uint64, arg1 *big.Int) (common.Address, error) {
-	return _Committer.Contract.CommitPhaseVotes(&_Committer.CallOpts, arg0, arg1)
+// Solidity: function allSubmitProofVotes(uint64 chainID, uint64 proposalID) view returns(address[])
+func (_Committer *CommitterCallerSession) AllSubmitProofVotes(chainID uint64, proposalID uint64) ([]common.Address, error) {
+	return _Committer.Contract.AllSubmitProofVotes(&_Committer.CallOpts, chainID, proposalID)
 }
 
-// GetLastProposal is a free data retrieval call binding the contract method 0xf0ab3dd9.
+// Chains is a free data retrieval call binding the contract method 0xada8bcdc.
 //
-// Solidity: function getLastProposal() view returns((uint64,uint64,uint64,uint8,uint256,address,string,string,string))
-func (_Committer *CommitterCaller) GetLastProposal(opts *bind.CallOpts) (CommitterProposal, error) {
+// Solidity: function chains(uint64 ) view returns(bool)
+func (_Committer *CommitterCaller) Chains(opts *bind.CallOpts, arg0 uint64) (bool, error) {
 	var out []interface{}
-	err := _Committer.contract.Call(opts, &out, "getLastProposal")
+	err := _Committer.contract.Call(opts, &out, "chains", arg0)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// Chains is a free data retrieval call binding the contract method 0xada8bcdc.
+//
+// Solidity: function chains(uint64 ) view returns(bool)
+func (_Committer *CommitterSession) Chains(arg0 uint64) (bool, error) {
+	return _Committer.Contract.Chains(&_Committer.CallOpts, arg0)
+}
+
+// Chains is a free data retrieval call binding the contract method 0xada8bcdc.
+//
+// Solidity: function chains(uint64 ) view returns(bool)
+func (_Committer *CommitterCallerSession) Chains(arg0 uint64) (bool, error) {
+	return _Committer.Contract.Chains(&_Committer.CallOpts, arg0)
+}
+
+// ChainsList is a free data retrieval call binding the contract method 0x2bc3db0a.
+//
+// Solidity: function chainsList(uint256 ) view returns(uint64)
+func (_Committer *CommitterCaller) ChainsList(opts *bind.CallOpts, arg0 *big.Int) (uint64, error) {
+	var out []interface{}
+	err := _Committer.contract.Call(opts, &out, "chainsList", arg0)
+
+	if err != nil {
+		return *new(uint64), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
+
+	return out0, err
+
+}
+
+// ChainsList is a free data retrieval call binding the contract method 0x2bc3db0a.
+//
+// Solidity: function chainsList(uint256 ) view returns(uint64)
+func (_Committer *CommitterSession) ChainsList(arg0 *big.Int) (uint64, error) {
+	return _Committer.Contract.ChainsList(&_Committer.CallOpts, arg0)
+}
+
+// ChainsList is a free data retrieval call binding the contract method 0x2bc3db0a.
+//
+// Solidity: function chainsList(uint256 ) view returns(uint64)
+func (_Committer *CommitterCallerSession) ChainsList(arg0 *big.Int) (uint64, error) {
+	return _Committer.Contract.ChainsList(&_Committer.CallOpts, arg0)
+}
+
+// CompareStrings is a free data retrieval call binding the contract method 0xbed34bba.
+//
+// Solidity: function compareStrings(string a, string b) pure returns(bool)
+func (_Committer *CommitterCaller) CompareStrings(opts *bind.CallOpts, a string, b string) (bool, error) {
+	var out []interface{}
+	err := _Committer.contract.Call(opts, &out, "compareStrings", a, b)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// CompareStrings is a free data retrieval call binding the contract method 0xbed34bba.
+//
+// Solidity: function compareStrings(string a, string b) pure returns(bool)
+func (_Committer *CommitterSession) CompareStrings(a string, b string) (bool, error) {
+	return _Committer.Contract.CompareStrings(&_Committer.CallOpts, a, b)
+}
+
+// CompareStrings is a free data retrieval call binding the contract method 0xbed34bba.
+//
+// Solidity: function compareStrings(string a, string b) pure returns(bool)
+func (_Committer *CommitterCallerSession) CompareStrings(a string, b string) (bool, error) {
+	return _Committer.Contract.CompareStrings(&_Committer.CallOpts, a, b)
+}
+
+// GetLastProposal is a free data retrieval call binding the contract method 0xa2c732fd.
+//
+// Solidity: function getLastProposal(uint64 chainID) view returns((uint64,uint64,uint64,uint8,uint256,address,string,string,string,string))
+func (_Committer *CommitterCaller) GetLastProposal(opts *bind.CallOpts, chainID uint64) (CommitterProposal, error) {
+	var out []interface{}
+	err := _Committer.contract.Call(opts, &out, "getLastProposal", chainID)
 
 	if err != nil {
 		return *new(CommitterProposal), err
@@ -396,18 +490,18 @@ func (_Committer *CommitterCaller) GetLastProposal(opts *bind.CallOpts) (Committ
 
 }
 
-// GetLastProposal is a free data retrieval call binding the contract method 0xf0ab3dd9.
+// GetLastProposal is a free data retrieval call binding the contract method 0xa2c732fd.
 //
-// Solidity: function getLastProposal() view returns((uint64,uint64,uint64,uint8,uint256,address,string,string,string))
-func (_Committer *CommitterSession) GetLastProposal() (CommitterProposal, error) {
-	return _Committer.Contract.GetLastProposal(&_Committer.CallOpts)
+// Solidity: function getLastProposal(uint64 chainID) view returns((uint64,uint64,uint64,uint8,uint256,address,string,string,string,string))
+func (_Committer *CommitterSession) GetLastProposal(chainID uint64) (CommitterProposal, error) {
+	return _Committer.Contract.GetLastProposal(&_Committer.CallOpts, chainID)
 }
 
-// GetLastProposal is a free data retrieval call binding the contract method 0xf0ab3dd9.
+// GetLastProposal is a free data retrieval call binding the contract method 0xa2c732fd.
 //
-// Solidity: function getLastProposal() view returns((uint64,uint64,uint64,uint8,uint256,address,string,string,string))
-func (_Committer *CommitterCallerSession) GetLastProposal() (CommitterProposal, error) {
-	return _Committer.Contract.GetLastProposal(&_Committer.CallOpts)
+// Solidity: function getLastProposal(uint64 chainID) view returns((uint64,uint64,uint64,uint8,uint256,address,string,string,string,string))
+func (_Committer *CommitterCallerSession) GetLastProposal(chainID uint64) (CommitterProposal, error) {
+	return _Committer.Contract.GetLastProposal(&_Committer.CallOpts, chainID)
 }
 
 // GetRoleAdmin is a free data retrieval call binding the contract method 0x248a9ca3.
@@ -472,12 +566,12 @@ func (_Committer *CommitterCallerSession) HasRole(role [32]byte, account common.
 	return _Committer.Contract.HasRole(&_Committer.CallOpts, role, account)
 }
 
-// IsProposalTimeout is a free data retrieval call binding the contract method 0x6e06958d.
+// IsProposalTimeout is a free data retrieval call binding the contract method 0x1b77a930.
 //
-// Solidity: function isProposalTimeout(uint64 id) view returns(bool)
-func (_Committer *CommitterCaller) IsProposalTimeout(opts *bind.CallOpts, id uint64) (bool, error) {
+// Solidity: function isProposalTimeout(uint64 chainID, uint64 proposalID) view returns(bool)
+func (_Committer *CommitterCaller) IsProposalTimeout(opts *bind.CallOpts, chainID uint64, proposalID uint64) (bool, error) {
 	var out []interface{}
-	err := _Committer.contract.Call(opts, &out, "isProposalTimeout", id)
+	err := _Committer.contract.Call(opts, &out, "isProposalTimeout", chainID, proposalID)
 
 	if err != nil {
 		return *new(bool), err
@@ -489,18 +583,18 @@ func (_Committer *CommitterCaller) IsProposalTimeout(opts *bind.CallOpts, id uin
 
 }
 
-// IsProposalTimeout is a free data retrieval call binding the contract method 0x6e06958d.
+// IsProposalTimeout is a free data retrieval call binding the contract method 0x1b77a930.
 //
-// Solidity: function isProposalTimeout(uint64 id) view returns(bool)
-func (_Committer *CommitterSession) IsProposalTimeout(id uint64) (bool, error) {
-	return _Committer.Contract.IsProposalTimeout(&_Committer.CallOpts, id)
+// Solidity: function isProposalTimeout(uint64 chainID, uint64 proposalID) view returns(bool)
+func (_Committer *CommitterSession) IsProposalTimeout(chainID uint64, proposalID uint64) (bool, error) {
+	return _Committer.Contract.IsProposalTimeout(&_Committer.CallOpts, chainID, proposalID)
 }
 
-// IsProposalTimeout is a free data retrieval call binding the contract method 0x6e06958d.
+// IsProposalTimeout is a free data retrieval call binding the contract method 0x1b77a930.
 //
-// Solidity: function isProposalTimeout(uint64 id) view returns(bool)
-func (_Committer *CommitterCallerSession) IsProposalTimeout(id uint64) (bool, error) {
-	return _Committer.Contract.IsProposalTimeout(&_Committer.CallOpts, id)
+// Solidity: function isProposalTimeout(uint64 chainID, uint64 proposalID) view returns(bool)
+func (_Committer *CommitterCallerSession) IsProposalTimeout(chainID uint64, proposalID uint64) (bool, error) {
+	return _Committer.Contract.IsProposalTimeout(&_Committer.CallOpts, chainID, proposalID)
 }
 
 // IsProposer is a free data retrieval call binding the contract method 0x74ec29a0.
@@ -534,12 +628,12 @@ func (_Committer *CommitterCallerSession) IsProposer(sender common.Address) (boo
 	return _Committer.Contract.IsProposer(&_Committer.CallOpts, sender)
 }
 
-// IsVotedOnCommitPhase is a free data retrieval call binding the contract method 0x9cd80503.
+// IsSupportedChain is a free data retrieval call binding the contract method 0x8926f54f.
 //
-// Solidity: function isVotedOnCommitPhase(uint64 id, address voter) view returns(bool)
-func (_Committer *CommitterCaller) IsVotedOnCommitPhase(opts *bind.CallOpts, id uint64, voter common.Address) (bool, error) {
+// Solidity: function isSupportedChain(uint64 chainID) view returns(bool)
+func (_Committer *CommitterCaller) IsSupportedChain(opts *bind.CallOpts, chainID uint64) (bool, error) {
 	var out []interface{}
-	err := _Committer.contract.Call(opts, &out, "isVotedOnCommitPhase", id, voter)
+	err := _Committer.contract.Call(opts, &out, "isSupportedChain", chainID)
 
 	if err != nil {
 		return *new(bool), err
@@ -551,26 +645,26 @@ func (_Committer *CommitterCaller) IsVotedOnCommitPhase(opts *bind.CallOpts, id 
 
 }
 
-// IsVotedOnCommitPhase is a free data retrieval call binding the contract method 0x9cd80503.
+// IsSupportedChain is a free data retrieval call binding the contract method 0x8926f54f.
 //
-// Solidity: function isVotedOnCommitPhase(uint64 id, address voter) view returns(bool)
-func (_Committer *CommitterSession) IsVotedOnCommitPhase(id uint64, voter common.Address) (bool, error) {
-	return _Committer.Contract.IsVotedOnCommitPhase(&_Committer.CallOpts, id, voter)
+// Solidity: function isSupportedChain(uint64 chainID) view returns(bool)
+func (_Committer *CommitterSession) IsSupportedChain(chainID uint64) (bool, error) {
+	return _Committer.Contract.IsSupportedChain(&_Committer.CallOpts, chainID)
 }
 
-// IsVotedOnCommitPhase is a free data retrieval call binding the contract method 0x9cd80503.
+// IsSupportedChain is a free data retrieval call binding the contract method 0x8926f54f.
 //
-// Solidity: function isVotedOnCommitPhase(uint64 id, address voter) view returns(bool)
-func (_Committer *CommitterCallerSession) IsVotedOnCommitPhase(id uint64, voter common.Address) (bool, error) {
-	return _Committer.Contract.IsVotedOnCommitPhase(&_Committer.CallOpts, id, voter)
+// Solidity: function isSupportedChain(uint64 chainID) view returns(bool)
+func (_Committer *CommitterCallerSession) IsSupportedChain(chainID uint64) (bool, error) {
+	return _Committer.Contract.IsSupportedChain(&_Committer.CallOpts, chainID)
 }
 
-// IsVotedOnTimeoutPhase is a free data retrieval call binding the contract method 0xee253cf5.
+// IsVotedOnBitcoinTxPhase is a free data retrieval call binding the contract method 0x87c8eabd.
 //
-// Solidity: function isVotedOnTimeoutPhase(uint64 id, address voter) view returns(bool)
-func (_Committer *CommitterCaller) IsVotedOnTimeoutPhase(opts *bind.CallOpts, id uint64, voter common.Address) (bool, error) {
+// Solidity: function isVotedOnBitcoinTxPhase(uint64 chainID, uint64 proposalID, address voter) view returns(bool)
+func (_Committer *CommitterCaller) IsVotedOnBitcoinTxPhase(opts *bind.CallOpts, chainID uint64, proposalID uint64, voter common.Address) (bool, error) {
 	var out []interface{}
-	err := _Committer.contract.Call(opts, &out, "isVotedOnTimeoutPhase", id, voter)
+	err := _Committer.contract.Call(opts, &out, "isVotedOnBitcoinTxPhase", chainID, proposalID, voter)
 
 	if err != nil {
 		return *new(bool), err
@@ -582,24 +676,55 @@ func (_Committer *CommitterCaller) IsVotedOnTimeoutPhase(opts *bind.CallOpts, id
 
 }
 
-// IsVotedOnTimeoutPhase is a free data retrieval call binding the contract method 0xee253cf5.
+// IsVotedOnBitcoinTxPhase is a free data retrieval call binding the contract method 0x87c8eabd.
 //
-// Solidity: function isVotedOnTimeoutPhase(uint64 id, address voter) view returns(bool)
-func (_Committer *CommitterSession) IsVotedOnTimeoutPhase(id uint64, voter common.Address) (bool, error) {
-	return _Committer.Contract.IsVotedOnTimeoutPhase(&_Committer.CallOpts, id, voter)
+// Solidity: function isVotedOnBitcoinTxPhase(uint64 chainID, uint64 proposalID, address voter) view returns(bool)
+func (_Committer *CommitterSession) IsVotedOnBitcoinTxPhase(chainID uint64, proposalID uint64, voter common.Address) (bool, error) {
+	return _Committer.Contract.IsVotedOnBitcoinTxPhase(&_Committer.CallOpts, chainID, proposalID, voter)
 }
 
-// IsVotedOnTimeoutPhase is a free data retrieval call binding the contract method 0xee253cf5.
+// IsVotedOnBitcoinTxPhase is a free data retrieval call binding the contract method 0x87c8eabd.
 //
-// Solidity: function isVotedOnTimeoutPhase(uint64 id, address voter) view returns(bool)
-func (_Committer *CommitterCallerSession) IsVotedOnTimeoutPhase(id uint64, voter common.Address) (bool, error) {
-	return _Committer.Contract.IsVotedOnTimeoutPhase(&_Committer.CallOpts, id, voter)
+// Solidity: function isVotedOnBitcoinTxPhase(uint64 chainID, uint64 proposalID, address voter) view returns(bool)
+func (_Committer *CommitterCallerSession) IsVotedOnBitcoinTxPhase(chainID uint64, proposalID uint64, voter common.Address) (bool, error) {
+	return _Committer.Contract.IsVotedOnBitcoinTxPhase(&_Committer.CallOpts, chainID, proposalID, voter)
 }
 
-// LastProposal is a free data retrieval call binding the contract method 0xd6740cdb.
+// IsVotedOnSubmitProofPhase is a free data retrieval call binding the contract method 0x975a4ce7.
 //
-// Solidity: function lastProposal() view returns(uint64 id, uint64 startIndex, uint64 endIndex, uint8 status, uint256 timeout, address winner, string proofHash, string stateRootHash, string txHash)
-func (_Committer *CommitterCaller) LastProposal(opts *bind.CallOpts) (struct {
+// Solidity: function isVotedOnSubmitProofPhase(uint64 chainID, uint64 proposalID, address voter) view returns(bool)
+func (_Committer *CommitterCaller) IsVotedOnSubmitProofPhase(opts *bind.CallOpts, chainID uint64, proposalID uint64, voter common.Address) (bool, error) {
+	var out []interface{}
+	err := _Committer.contract.Call(opts, &out, "isVotedOnSubmitProofPhase", chainID, proposalID, voter)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// IsVotedOnSubmitProofPhase is a free data retrieval call binding the contract method 0x975a4ce7.
+//
+// Solidity: function isVotedOnSubmitProofPhase(uint64 chainID, uint64 proposalID, address voter) view returns(bool)
+func (_Committer *CommitterSession) IsVotedOnSubmitProofPhase(chainID uint64, proposalID uint64, voter common.Address) (bool, error) {
+	return _Committer.Contract.IsVotedOnSubmitProofPhase(&_Committer.CallOpts, chainID, proposalID, voter)
+}
+
+// IsVotedOnSubmitProofPhase is a free data retrieval call binding the contract method 0x975a4ce7.
+//
+// Solidity: function isVotedOnSubmitProofPhase(uint64 chainID, uint64 proposalID, address voter) view returns(bool)
+func (_Committer *CommitterCallerSession) IsVotedOnSubmitProofPhase(chainID uint64, proposalID uint64, voter common.Address) (bool, error) {
+	return _Committer.Contract.IsVotedOnSubmitProofPhase(&_Committer.CallOpts, chainID, proposalID, voter)
+}
+
+// LastProposal is a free data retrieval call binding the contract method 0x36a31476.
+//
+// Solidity: function lastProposal(uint64 ) view returns(uint64 id, uint64 startIndex, uint64 endIndex, uint8 status, uint256 timeout, address winner, string proofHash, string stateRootHash, string btcTxHash, string arweaveTxHash)
+func (_Committer *CommitterCaller) LastProposal(opts *bind.CallOpts, arg0 uint64) (struct {
 	Id            uint64
 	StartIndex    uint64
 	EndIndex      uint64
@@ -608,10 +733,11 @@ func (_Committer *CommitterCaller) LastProposal(opts *bind.CallOpts) (struct {
 	Winner        common.Address
 	ProofHash     string
 	StateRootHash string
-	TxHash        string
+	BtcTxHash     string
+	ArweaveTxHash string
 }, error) {
 	var out []interface{}
-	err := _Committer.contract.Call(opts, &out, "lastProposal")
+	err := _Committer.contract.Call(opts, &out, "lastProposal", arg0)
 
 	outstruct := new(struct {
 		Id            uint64
@@ -622,7 +748,8 @@ func (_Committer *CommitterCaller) LastProposal(opts *bind.CallOpts) (struct {
 		Winner        common.Address
 		ProofHash     string
 		StateRootHash string
-		TxHash        string
+		BtcTxHash     string
+		ArweaveTxHash string
 	})
 	if err != nil {
 		return *outstruct, err
@@ -636,16 +763,17 @@ func (_Committer *CommitterCaller) LastProposal(opts *bind.CallOpts) (struct {
 	outstruct.Winner = *abi.ConvertType(out[5], new(common.Address)).(*common.Address)
 	outstruct.ProofHash = *abi.ConvertType(out[6], new(string)).(*string)
 	outstruct.StateRootHash = *abi.ConvertType(out[7], new(string)).(*string)
-	outstruct.TxHash = *abi.ConvertType(out[8], new(string)).(*string)
+	outstruct.BtcTxHash = *abi.ConvertType(out[8], new(string)).(*string)
+	outstruct.ArweaveTxHash = *abi.ConvertType(out[9], new(string)).(*string)
 
 	return *outstruct, err
 
 }
 
-// LastProposal is a free data retrieval call binding the contract method 0xd6740cdb.
+// LastProposal is a free data retrieval call binding the contract method 0x36a31476.
 //
-// Solidity: function lastProposal() view returns(uint64 id, uint64 startIndex, uint64 endIndex, uint8 status, uint256 timeout, address winner, string proofHash, string stateRootHash, string txHash)
-func (_Committer *CommitterSession) LastProposal() (struct {
+// Solidity: function lastProposal(uint64 ) view returns(uint64 id, uint64 startIndex, uint64 endIndex, uint8 status, uint256 timeout, address winner, string proofHash, string stateRootHash, string btcTxHash, string arweaveTxHash)
+func (_Committer *CommitterSession) LastProposal(arg0 uint64) (struct {
 	Id            uint64
 	StartIndex    uint64
 	EndIndex      uint64
@@ -654,15 +782,16 @@ func (_Committer *CommitterSession) LastProposal() (struct {
 	Winner        common.Address
 	ProofHash     string
 	StateRootHash string
-	TxHash        string
+	BtcTxHash     string
+	ArweaveTxHash string
 }, error) {
-	return _Committer.Contract.LastProposal(&_Committer.CallOpts)
+	return _Committer.Contract.LastProposal(&_Committer.CallOpts, arg0)
 }
 
-// LastProposal is a free data retrieval call binding the contract method 0xd6740cdb.
+// LastProposal is a free data retrieval call binding the contract method 0x36a31476.
 //
-// Solidity: function lastProposal() view returns(uint64 id, uint64 startIndex, uint64 endIndex, uint8 status, uint256 timeout, address winner, string proofHash, string stateRootHash, string txHash)
-func (_Committer *CommitterCallerSession) LastProposal() (struct {
+// Solidity: function lastProposal(uint64 ) view returns(uint64 id, uint64 startIndex, uint64 endIndex, uint8 status, uint256 timeout, address winner, string proofHash, string stateRootHash, string btcTxHash, string arweaveTxHash)
+func (_Committer *CommitterCallerSession) LastProposal(arg0 uint64) (struct {
 	Id            uint64
 	StartIndex    uint64
 	EndIndex      uint64
@@ -671,17 +800,18 @@ func (_Committer *CommitterCallerSession) LastProposal() (struct {
 	Winner        common.Address
 	ProofHash     string
 	StateRootHash string
-	TxHash        string
+	BtcTxHash     string
+	ArweaveTxHash string
 }, error) {
-	return _Committer.Contract.LastProposal(&_Committer.CallOpts)
+	return _Committer.Contract.LastProposal(&_Committer.CallOpts, arg0)
 }
 
-// Proposal is a free data retrieval call binding the contract method 0x7afa0aa3.
+// Proposal is a free data retrieval call binding the contract method 0x0f93fa52.
 //
-// Solidity: function proposal(uint64 id) view returns((uint64,uint64,uint64,uint8,uint256,address,string,string,string))
-func (_Committer *CommitterCaller) Proposal(opts *bind.CallOpts, id uint64) (CommitterProposal, error) {
+// Solidity: function proposal(uint64 chainID, uint64 proposalID) view returns((uint64,uint64,uint64,uint8,uint256,address,string,string,string,string))
+func (_Committer *CommitterCaller) Proposal(opts *bind.CallOpts, chainID uint64, proposalID uint64) (CommitterProposal, error) {
 	var out []interface{}
-	err := _Committer.contract.Call(opts, &out, "proposal", id)
+	err := _Committer.contract.Call(opts, &out, "proposal", chainID, proposalID)
 
 	if err != nil {
 		return *new(CommitterProposal), err
@@ -693,24 +823,24 @@ func (_Committer *CommitterCaller) Proposal(opts *bind.CallOpts, id uint64) (Com
 
 }
 
-// Proposal is a free data retrieval call binding the contract method 0x7afa0aa3.
+// Proposal is a free data retrieval call binding the contract method 0x0f93fa52.
 //
-// Solidity: function proposal(uint64 id) view returns((uint64,uint64,uint64,uint8,uint256,address,string,string,string))
-func (_Committer *CommitterSession) Proposal(id uint64) (CommitterProposal, error) {
-	return _Committer.Contract.Proposal(&_Committer.CallOpts, id)
+// Solidity: function proposal(uint64 chainID, uint64 proposalID) view returns((uint64,uint64,uint64,uint8,uint256,address,string,string,string,string))
+func (_Committer *CommitterSession) Proposal(chainID uint64, proposalID uint64) (CommitterProposal, error) {
+	return _Committer.Contract.Proposal(&_Committer.CallOpts, chainID, proposalID)
 }
 
-// Proposal is a free data retrieval call binding the contract method 0x7afa0aa3.
+// Proposal is a free data retrieval call binding the contract method 0x0f93fa52.
 //
-// Solidity: function proposal(uint64 id) view returns((uint64,uint64,uint64,uint8,uint256,address,string,string,string))
-func (_Committer *CommitterCallerSession) Proposal(id uint64) (CommitterProposal, error) {
-	return _Committer.Contract.Proposal(&_Committer.CallOpts, id)
+// Solidity: function proposal(uint64 chainID, uint64 proposalID) view returns((uint64,uint64,uint64,uint8,uint256,address,string,string,string,string))
+func (_Committer *CommitterCallerSession) Proposal(chainID uint64, proposalID uint64) (CommitterProposal, error) {
+	return _Committer.Contract.Proposal(&_Committer.CallOpts, chainID, proposalID)
 }
 
-// Proposals is a free data retrieval call binding the contract method 0x31c5eec8.
+// Proposals is a free data retrieval call binding the contract method 0x7176d85d.
 //
-// Solidity: function proposals(uint64 ) view returns(uint64 id, uint64 startIndex, uint64 endIndex, uint8 status, uint256 timeout, address winner, string proofHash, string stateRootHash, string txHash)
-func (_Committer *CommitterCaller) Proposals(opts *bind.CallOpts, arg0 uint64) (struct {
+// Solidity: function proposals(uint64 , uint64 ) view returns(uint64 id, uint64 startIndex, uint64 endIndex, uint8 status, uint256 timeout, address winner, string proofHash, string stateRootHash, string btcTxHash, string arweaveTxHash)
+func (_Committer *CommitterCaller) Proposals(opts *bind.CallOpts, arg0 uint64, arg1 uint64) (struct {
 	Id            uint64
 	StartIndex    uint64
 	EndIndex      uint64
@@ -719,10 +849,11 @@ func (_Committer *CommitterCaller) Proposals(opts *bind.CallOpts, arg0 uint64) (
 	Winner        common.Address
 	ProofHash     string
 	StateRootHash string
-	TxHash        string
+	BtcTxHash     string
+	ArweaveTxHash string
 }, error) {
 	var out []interface{}
-	err := _Committer.contract.Call(opts, &out, "proposals", arg0)
+	err := _Committer.contract.Call(opts, &out, "proposals", arg0, arg1)
 
 	outstruct := new(struct {
 		Id            uint64
@@ -733,7 +864,8 @@ func (_Committer *CommitterCaller) Proposals(opts *bind.CallOpts, arg0 uint64) (
 		Winner        common.Address
 		ProofHash     string
 		StateRootHash string
-		TxHash        string
+		BtcTxHash     string
+		ArweaveTxHash string
 	})
 	if err != nil {
 		return *outstruct, err
@@ -747,16 +879,17 @@ func (_Committer *CommitterCaller) Proposals(opts *bind.CallOpts, arg0 uint64) (
 	outstruct.Winner = *abi.ConvertType(out[5], new(common.Address)).(*common.Address)
 	outstruct.ProofHash = *abi.ConvertType(out[6], new(string)).(*string)
 	outstruct.StateRootHash = *abi.ConvertType(out[7], new(string)).(*string)
-	outstruct.TxHash = *abi.ConvertType(out[8], new(string)).(*string)
+	outstruct.BtcTxHash = *abi.ConvertType(out[8], new(string)).(*string)
+	outstruct.ArweaveTxHash = *abi.ConvertType(out[9], new(string)).(*string)
 
 	return *outstruct, err
 
 }
 
-// Proposals is a free data retrieval call binding the contract method 0x31c5eec8.
+// Proposals is a free data retrieval call binding the contract method 0x7176d85d.
 //
-// Solidity: function proposals(uint64 ) view returns(uint64 id, uint64 startIndex, uint64 endIndex, uint8 status, uint256 timeout, address winner, string proofHash, string stateRootHash, string txHash)
-func (_Committer *CommitterSession) Proposals(arg0 uint64) (struct {
+// Solidity: function proposals(uint64 , uint64 ) view returns(uint64 id, uint64 startIndex, uint64 endIndex, uint8 status, uint256 timeout, address winner, string proofHash, string stateRootHash, string btcTxHash, string arweaveTxHash)
+func (_Committer *CommitterSession) Proposals(arg0 uint64, arg1 uint64) (struct {
 	Id            uint64
 	StartIndex    uint64
 	EndIndex      uint64
@@ -765,15 +898,16 @@ func (_Committer *CommitterSession) Proposals(arg0 uint64) (struct {
 	Winner        common.Address
 	ProofHash     string
 	StateRootHash string
-	TxHash        string
+	BtcTxHash     string
+	ArweaveTxHash string
 }, error) {
-	return _Committer.Contract.Proposals(&_Committer.CallOpts, arg0)
+	return _Committer.Contract.Proposals(&_Committer.CallOpts, arg0, arg1)
 }
 
-// Proposals is a free data retrieval call binding the contract method 0x31c5eec8.
+// Proposals is a free data retrieval call binding the contract method 0x7176d85d.
 //
-// Solidity: function proposals(uint64 ) view returns(uint64 id, uint64 startIndex, uint64 endIndex, uint8 status, uint256 timeout, address winner, string proofHash, string stateRootHash, string txHash)
-func (_Committer *CommitterCallerSession) Proposals(arg0 uint64) (struct {
+// Solidity: function proposals(uint64 , uint64 ) view returns(uint64 id, uint64 startIndex, uint64 endIndex, uint8 status, uint256 timeout, address winner, string proofHash, string stateRootHash, string btcTxHash, string arweaveTxHash)
+func (_Committer *CommitterCallerSession) Proposals(arg0 uint64, arg1 uint64) (struct {
 	Id            uint64
 	StartIndex    uint64
 	EndIndex      uint64
@@ -782,9 +916,10 @@ func (_Committer *CommitterCallerSession) Proposals(arg0 uint64) (struct {
 	Winner        common.Address
 	ProofHash     string
 	StateRootHash string
-	TxHash        string
+	BtcTxHash     string
+	ArweaveTxHash string
 }, error) {
-	return _Committer.Contract.Proposals(&_Committer.CallOpts, arg0)
+	return _Committer.Contract.Proposals(&_Committer.CallOpts, arg0, arg1)
 }
 
 // Proposers is a free data retrieval call binding the contract method 0x18177497.
@@ -849,6 +984,68 @@ func (_Committer *CommitterCallerSession) ProposersList(arg0 *big.Int) (common.A
 	return _Committer.Contract.ProposersList(&_Committer.CallOpts, arg0)
 }
 
+// SubmitBitcoinTxPhaseVotes is a free data retrieval call binding the contract method 0x9bfa86d3.
+//
+// Solidity: function submitBitcoinTxPhaseVotes(uint64 , uint64 , uint256 ) view returns(address)
+func (_Committer *CommitterCaller) SubmitBitcoinTxPhaseVotes(opts *bind.CallOpts, arg0 uint64, arg1 uint64, arg2 *big.Int) (common.Address, error) {
+	var out []interface{}
+	err := _Committer.contract.Call(opts, &out, "submitBitcoinTxPhaseVotes", arg0, arg1, arg2)
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// SubmitBitcoinTxPhaseVotes is a free data retrieval call binding the contract method 0x9bfa86d3.
+//
+// Solidity: function submitBitcoinTxPhaseVotes(uint64 , uint64 , uint256 ) view returns(address)
+func (_Committer *CommitterSession) SubmitBitcoinTxPhaseVotes(arg0 uint64, arg1 uint64, arg2 *big.Int) (common.Address, error) {
+	return _Committer.Contract.SubmitBitcoinTxPhaseVotes(&_Committer.CallOpts, arg0, arg1, arg2)
+}
+
+// SubmitBitcoinTxPhaseVotes is a free data retrieval call binding the contract method 0x9bfa86d3.
+//
+// Solidity: function submitBitcoinTxPhaseVotes(uint64 , uint64 , uint256 ) view returns(address)
+func (_Committer *CommitterCallerSession) SubmitBitcoinTxPhaseVotes(arg0 uint64, arg1 uint64, arg2 *big.Int) (common.Address, error) {
+	return _Committer.Contract.SubmitBitcoinTxPhaseVotes(&_Committer.CallOpts, arg0, arg1, arg2)
+}
+
+// SubmitProofPhaseVotes is a free data retrieval call binding the contract method 0x24ff16b3.
+//
+// Solidity: function submitProofPhaseVotes(uint64 , uint64 , uint256 ) view returns(address)
+func (_Committer *CommitterCaller) SubmitProofPhaseVotes(opts *bind.CallOpts, arg0 uint64, arg1 uint64, arg2 *big.Int) (common.Address, error) {
+	var out []interface{}
+	err := _Committer.contract.Call(opts, &out, "submitProofPhaseVotes", arg0, arg1, arg2)
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// SubmitProofPhaseVotes is a free data retrieval call binding the contract method 0x24ff16b3.
+//
+// Solidity: function submitProofPhaseVotes(uint64 , uint64 , uint256 ) view returns(address)
+func (_Committer *CommitterSession) SubmitProofPhaseVotes(arg0 uint64, arg1 uint64, arg2 *big.Int) (common.Address, error) {
+	return _Committer.Contract.SubmitProofPhaseVotes(&_Committer.CallOpts, arg0, arg1, arg2)
+}
+
+// SubmitProofPhaseVotes is a free data retrieval call binding the contract method 0x24ff16b3.
+//
+// Solidity: function submitProofPhaseVotes(uint64 , uint64 , uint256 ) view returns(address)
+func (_Committer *CommitterCallerSession) SubmitProofPhaseVotes(arg0 uint64, arg1 uint64, arg2 *big.Int) (common.Address, error) {
+	return _Committer.Contract.SubmitProofPhaseVotes(&_Committer.CallOpts, arg0, arg1, arg2)
+}
+
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
 // Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
@@ -911,35 +1108,25 @@ func (_Committer *CommitterCallerSession) TimeoutPeriod() (*big.Int, error) {
 	return _Committer.Contract.TimeoutPeriod(&_Committer.CallOpts)
 }
 
-// TimeoutPhaseVotes is a free data retrieval call binding the contract method 0xae223c04.
+// AddChain is a paid mutator transaction binding the contract method 0xe2947e54.
 //
-// Solidity: function timeoutPhaseVotes(uint64 , uint256 ) view returns(address)
-func (_Committer *CommitterCaller) TimeoutPhaseVotes(opts *bind.CallOpts, arg0 uint64, arg1 *big.Int) (common.Address, error) {
-	var out []interface{}
-	err := _Committer.contract.Call(opts, &out, "timeoutPhaseVotes", arg0, arg1)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
+// Solidity: function addChain(uint64 chainID) returns()
+func (_Committer *CommitterTransactor) AddChain(opts *bind.TransactOpts, chainID uint64) (*types.Transaction, error) {
+	return _Committer.contract.Transact(opts, "addChain", chainID)
 }
 
-// TimeoutPhaseVotes is a free data retrieval call binding the contract method 0xae223c04.
+// AddChain is a paid mutator transaction binding the contract method 0xe2947e54.
 //
-// Solidity: function timeoutPhaseVotes(uint64 , uint256 ) view returns(address)
-func (_Committer *CommitterSession) TimeoutPhaseVotes(arg0 uint64, arg1 *big.Int) (common.Address, error) {
-	return _Committer.Contract.TimeoutPhaseVotes(&_Committer.CallOpts, arg0, arg1)
+// Solidity: function addChain(uint64 chainID) returns()
+func (_Committer *CommitterSession) AddChain(chainID uint64) (*types.Transaction, error) {
+	return _Committer.Contract.AddChain(&_Committer.TransactOpts, chainID)
 }
 
-// TimeoutPhaseVotes is a free data retrieval call binding the contract method 0xae223c04.
+// AddChain is a paid mutator transaction binding the contract method 0xe2947e54.
 //
-// Solidity: function timeoutPhaseVotes(uint64 , uint256 ) view returns(address)
-func (_Committer *CommitterCallerSession) TimeoutPhaseVotes(arg0 uint64, arg1 *big.Int) (common.Address, error) {
-	return _Committer.Contract.TimeoutPhaseVotes(&_Committer.CallOpts, arg0, arg1)
+// Solidity: function addChain(uint64 chainID) returns()
+func (_Committer *CommitterTransactorSession) AddChain(chainID uint64) (*types.Transaction, error) {
+	return _Committer.Contract.AddChain(&_Committer.TransactOpts, chainID)
 }
 
 // AddProposer is a paid mutator transaction binding the contract method 0xb03cd418.
@@ -963,25 +1150,46 @@ func (_Committer *CommitterTransactorSession) AddProposer(proposer common.Addres
 	return _Committer.Contract.AddProposer(&_Committer.TransactOpts, proposer)
 }
 
-// BitcoinTx is a paid mutator transaction binding the contract method 0x4b6ea54e.
+// ArweaveTx is a paid mutator transaction binding the contract method 0xe0a9daf6.
 //
-// Solidity: function bitcoinTx(uint64 id, string txHash) returns()
-func (_Committer *CommitterTransactor) BitcoinTx(opts *bind.TransactOpts, id uint64, txHash string) (*types.Transaction, error) {
-	return _Committer.contract.Transact(opts, "bitcoinTx", id, txHash)
+// Solidity: function arweaveTx(uint64 chainID, uint64 proposalID, string txHash) returns()
+func (_Committer *CommitterTransactor) ArweaveTx(opts *bind.TransactOpts, chainID uint64, proposalID uint64, txHash string) (*types.Transaction, error) {
+	return _Committer.contract.Transact(opts, "arweaveTx", chainID, proposalID, txHash)
 }
 
-// BitcoinTx is a paid mutator transaction binding the contract method 0x4b6ea54e.
+// ArweaveTx is a paid mutator transaction binding the contract method 0xe0a9daf6.
 //
-// Solidity: function bitcoinTx(uint64 id, string txHash) returns()
-func (_Committer *CommitterSession) BitcoinTx(id uint64, txHash string) (*types.Transaction, error) {
-	return _Committer.Contract.BitcoinTx(&_Committer.TransactOpts, id, txHash)
+// Solidity: function arweaveTx(uint64 chainID, uint64 proposalID, string txHash) returns()
+func (_Committer *CommitterSession) ArweaveTx(chainID uint64, proposalID uint64, txHash string) (*types.Transaction, error) {
+	return _Committer.Contract.ArweaveTx(&_Committer.TransactOpts, chainID, proposalID, txHash)
 }
 
-// BitcoinTx is a paid mutator transaction binding the contract method 0x4b6ea54e.
+// ArweaveTx is a paid mutator transaction binding the contract method 0xe0a9daf6.
 //
-// Solidity: function bitcoinTx(uint64 id, string txHash) returns()
-func (_Committer *CommitterTransactorSession) BitcoinTx(id uint64, txHash string) (*types.Transaction, error) {
-	return _Committer.Contract.BitcoinTx(&_Committer.TransactOpts, id, txHash)
+// Solidity: function arweaveTx(uint64 chainID, uint64 proposalID, string txHash) returns()
+func (_Committer *CommitterTransactorSession) ArweaveTx(chainID uint64, proposalID uint64, txHash string) (*types.Transaction, error) {
+	return _Committer.Contract.ArweaveTx(&_Committer.TransactOpts, chainID, proposalID, txHash)
+}
+
+// BitcoinTx is a paid mutator transaction binding the contract method 0x54cab80e.
+//
+// Solidity: function bitcoinTx(uint64 chainID, uint64 proposalID, string txHash) returns()
+func (_Committer *CommitterTransactor) BitcoinTx(opts *bind.TransactOpts, chainID uint64, proposalID uint64, txHash string) (*types.Transaction, error) {
+	return _Committer.contract.Transact(opts, "bitcoinTx", chainID, proposalID, txHash)
+}
+
+// BitcoinTx is a paid mutator transaction binding the contract method 0x54cab80e.
+//
+// Solidity: function bitcoinTx(uint64 chainID, uint64 proposalID, string txHash) returns()
+func (_Committer *CommitterSession) BitcoinTx(chainID uint64, proposalID uint64, txHash string) (*types.Transaction, error) {
+	return _Committer.Contract.BitcoinTx(&_Committer.TransactOpts, chainID, proposalID, txHash)
+}
+
+// BitcoinTx is a paid mutator transaction binding the contract method 0x54cab80e.
+//
+// Solidity: function bitcoinTx(uint64 chainID, uint64 proposalID, string txHash) returns()
+func (_Committer *CommitterTransactorSession) BitcoinTx(chainID uint64, proposalID uint64, txHash string) (*types.Transaction, error) {
+	return _Committer.Contract.BitcoinTx(&_Committer.TransactOpts, chainID, proposalID, txHash)
 }
 
 // GrantRole is a paid mutator transaction binding the contract method 0x2f2ff15d.
@@ -1024,6 +1232,27 @@ func (_Committer *CommitterSession) Initialize() (*types.Transaction, error) {
 // Solidity: function initialize() returns()
 func (_Committer *CommitterTransactorSession) Initialize() (*types.Transaction, error) {
 	return _Committer.Contract.Initialize(&_Committer.TransactOpts)
+}
+
+// RemoveChain is a paid mutator transaction binding the contract method 0x39aa1335.
+//
+// Solidity: function removeChain(uint64 chainID) returns()
+func (_Committer *CommitterTransactor) RemoveChain(opts *bind.TransactOpts, chainID uint64) (*types.Transaction, error) {
+	return _Committer.contract.Transact(opts, "removeChain", chainID)
+}
+
+// RemoveChain is a paid mutator transaction binding the contract method 0x39aa1335.
+//
+// Solidity: function removeChain(uint64 chainID) returns()
+func (_Committer *CommitterSession) RemoveChain(chainID uint64) (*types.Transaction, error) {
+	return _Committer.Contract.RemoveChain(&_Committer.TransactOpts, chainID)
+}
+
+// RemoveChain is a paid mutator transaction binding the contract method 0x39aa1335.
+//
+// Solidity: function removeChain(uint64 chainID) returns()
+func (_Committer *CommitterTransactorSession) RemoveChain(chainID uint64) (*types.Transaction, error) {
+	return _Committer.Contract.RemoveChain(&_Committer.TransactOpts, chainID)
 }
 
 // RemoveProposer is a paid mutator transaction binding the contract method 0x09d632d3.
@@ -1110,46 +1339,46 @@ func (_Committer *CommitterTransactorSession) SetTimeoutPeriod(period *big.Int) 
 	return _Committer.Contract.SetTimeoutPeriod(&_Committer.TransactOpts, period)
 }
 
-// SubmitProof is a paid mutator transaction binding the contract method 0xbe091822.
+// SubmitProof is a paid mutator transaction binding the contract method 0x1f981c36.
 //
-// Solidity: function submitProof(uint64 id, string proofHash, string stateRootHash, uint64 startIndex, uint64 endIndex) returns()
-func (_Committer *CommitterTransactor) SubmitProof(opts *bind.TransactOpts, id uint64, proofHash string, stateRootHash string, startIndex uint64, endIndex uint64) (*types.Transaction, error) {
-	return _Committer.contract.Transact(opts, "submitProof", id, proofHash, stateRootHash, startIndex, endIndex)
+// Solidity: function submitProof(uint64 chainID, uint64 proposalID, string proofHash, string stateRootHash, uint64 startIndex, uint64 endIndex) returns()
+func (_Committer *CommitterTransactor) SubmitProof(opts *bind.TransactOpts, chainID uint64, proposalID uint64, proofHash string, stateRootHash string, startIndex uint64, endIndex uint64) (*types.Transaction, error) {
+	return _Committer.contract.Transact(opts, "submitProof", chainID, proposalID, proofHash, stateRootHash, startIndex, endIndex)
 }
 
-// SubmitProof is a paid mutator transaction binding the contract method 0xbe091822.
+// SubmitProof is a paid mutator transaction binding the contract method 0x1f981c36.
 //
-// Solidity: function submitProof(uint64 id, string proofHash, string stateRootHash, uint64 startIndex, uint64 endIndex) returns()
-func (_Committer *CommitterSession) SubmitProof(id uint64, proofHash string, stateRootHash string, startIndex uint64, endIndex uint64) (*types.Transaction, error) {
-	return _Committer.Contract.SubmitProof(&_Committer.TransactOpts, id, proofHash, stateRootHash, startIndex, endIndex)
+// Solidity: function submitProof(uint64 chainID, uint64 proposalID, string proofHash, string stateRootHash, uint64 startIndex, uint64 endIndex) returns()
+func (_Committer *CommitterSession) SubmitProof(chainID uint64, proposalID uint64, proofHash string, stateRootHash string, startIndex uint64, endIndex uint64) (*types.Transaction, error) {
+	return _Committer.Contract.SubmitProof(&_Committer.TransactOpts, chainID, proposalID, proofHash, stateRootHash, startIndex, endIndex)
 }
 
-// SubmitProof is a paid mutator transaction binding the contract method 0xbe091822.
+// SubmitProof is a paid mutator transaction binding the contract method 0x1f981c36.
 //
-// Solidity: function submitProof(uint64 id, string proofHash, string stateRootHash, uint64 startIndex, uint64 endIndex) returns()
-func (_Committer *CommitterTransactorSession) SubmitProof(id uint64, proofHash string, stateRootHash string, startIndex uint64, endIndex uint64) (*types.Transaction, error) {
-	return _Committer.Contract.SubmitProof(&_Committer.TransactOpts, id, proofHash, stateRootHash, startIndex, endIndex)
+// Solidity: function submitProof(uint64 chainID, uint64 proposalID, string proofHash, string stateRootHash, uint64 startIndex, uint64 endIndex) returns()
+func (_Committer *CommitterTransactorSession) SubmitProof(chainID uint64, proposalID uint64, proofHash string, stateRootHash string, startIndex uint64, endIndex uint64) (*types.Transaction, error) {
+	return _Committer.Contract.SubmitProof(&_Committer.TransactOpts, chainID, proposalID, proofHash, stateRootHash, startIndex, endIndex)
 }
 
-// TimeoutProposal is a paid mutator transaction binding the contract method 0x84237c46.
+// TimeoutProposal is a paid mutator transaction binding the contract method 0x04956a75.
 //
-// Solidity: function timeoutProposal(uint64 id) returns()
-func (_Committer *CommitterTransactor) TimeoutProposal(opts *bind.TransactOpts, id uint64) (*types.Transaction, error) {
-	return _Committer.contract.Transact(opts, "timeoutProposal", id)
+// Solidity: function timeoutProposal(uint64 chainID, uint64 proposalID) returns()
+func (_Committer *CommitterTransactor) TimeoutProposal(opts *bind.TransactOpts, chainID uint64, proposalID uint64) (*types.Transaction, error) {
+	return _Committer.contract.Transact(opts, "timeoutProposal", chainID, proposalID)
 }
 
-// TimeoutProposal is a paid mutator transaction binding the contract method 0x84237c46.
+// TimeoutProposal is a paid mutator transaction binding the contract method 0x04956a75.
 //
-// Solidity: function timeoutProposal(uint64 id) returns()
-func (_Committer *CommitterSession) TimeoutProposal(id uint64) (*types.Transaction, error) {
-	return _Committer.Contract.TimeoutProposal(&_Committer.TransactOpts, id)
+// Solidity: function timeoutProposal(uint64 chainID, uint64 proposalID) returns()
+func (_Committer *CommitterSession) TimeoutProposal(chainID uint64, proposalID uint64) (*types.Transaction, error) {
+	return _Committer.Contract.TimeoutProposal(&_Committer.TransactOpts, chainID, proposalID)
 }
 
-// TimeoutProposal is a paid mutator transaction binding the contract method 0x84237c46.
+// TimeoutProposal is a paid mutator transaction binding the contract method 0x04956a75.
 //
-// Solidity: function timeoutProposal(uint64 id) returns()
-func (_Committer *CommitterTransactorSession) TimeoutProposal(id uint64) (*types.Transaction, error) {
-	return _Committer.Contract.TimeoutProposal(&_Committer.TransactOpts, id)
+// Solidity: function timeoutProposal(uint64 chainID, uint64 proposalID) returns()
+func (_Committer *CommitterTransactorSession) TimeoutProposal(chainID uint64, proposalID uint64) (*types.Transaction, error) {
+	return _Committer.Contract.TimeoutProposal(&_Committer.TransactOpts, chainID, proposalID)
 }
 
 // CommitterInitializedIterator is returned from FilterInitialized and is used to iterate over the raw logs and unpacked data for Initialized events raised by the Committer contract.
@@ -1355,7 +1584,8 @@ func (it *CommitterProposalSubmittedIterator) Close() error {
 
 // CommitterProposalSubmitted represents a ProposalSubmitted event raised by the Committer contract.
 type CommitterProposalSubmitted struct {
-	Id            *big.Int
+	ChainID       uint64
+	ProposalID    uint64
 	Proposer      common.Address
 	ProofHash     string
 	StateRootHash string
@@ -1364,14 +1594,14 @@ type CommitterProposalSubmitted struct {
 	Raw           types.Log // Blockchain specific contextual infos
 }
 
-// FilterProposalSubmitted is a free log retrieval operation binding the contract event 0x410eb7d56800677f6951f80f562e7d42ad630918b0ff4645be6a4bc29930ef8e.
+// FilterProposalSubmitted is a free log retrieval operation binding the contract event 0x08db083a8474187b3aaed9068af476148cc1c18a272491f43b8a93c5ab91606a.
 //
-// Solidity: event ProposalSubmitted(uint256 indexed id, address indexed proposer, string proofHash, string stateRootHash, uint256 indexed startIndex, uint256 endIndex)
-func (_Committer *CommitterFilterer) FilterProposalSubmitted(opts *bind.FilterOpts, id []*big.Int, proposer []common.Address, startIndex []*big.Int) (*CommitterProposalSubmittedIterator, error) {
+// Solidity: event ProposalSubmitted(uint64 chainID, uint64 indexed proposalID, address indexed proposer, string proofHash, string stateRootHash, uint256 indexed startIndex, uint256 endIndex)
+func (_Committer *CommitterFilterer) FilterProposalSubmitted(opts *bind.FilterOpts, proposalID []uint64, proposer []common.Address, startIndex []*big.Int) (*CommitterProposalSubmittedIterator, error) {
 
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
+	var proposalIDRule []interface{}
+	for _, proposalIDItem := range proposalID {
+		proposalIDRule = append(proposalIDRule, proposalIDItem)
 	}
 	var proposerRule []interface{}
 	for _, proposerItem := range proposer {
@@ -1383,21 +1613,21 @@ func (_Committer *CommitterFilterer) FilterProposalSubmitted(opts *bind.FilterOp
 		startIndexRule = append(startIndexRule, startIndexItem)
 	}
 
-	logs, sub, err := _Committer.contract.FilterLogs(opts, "ProposalSubmitted", idRule, proposerRule, startIndexRule)
+	logs, sub, err := _Committer.contract.FilterLogs(opts, "ProposalSubmitted", proposalIDRule, proposerRule, startIndexRule)
 	if err != nil {
 		return nil, err
 	}
 	return &CommitterProposalSubmittedIterator{contract: _Committer.contract, event: "ProposalSubmitted", logs: logs, sub: sub}, nil
 }
 
-// WatchProposalSubmitted is a free log subscription operation binding the contract event 0x410eb7d56800677f6951f80f562e7d42ad630918b0ff4645be6a4bc29930ef8e.
+// WatchProposalSubmitted is a free log subscription operation binding the contract event 0x08db083a8474187b3aaed9068af476148cc1c18a272491f43b8a93c5ab91606a.
 //
-// Solidity: event ProposalSubmitted(uint256 indexed id, address indexed proposer, string proofHash, string stateRootHash, uint256 indexed startIndex, uint256 endIndex)
-func (_Committer *CommitterFilterer) WatchProposalSubmitted(opts *bind.WatchOpts, sink chan<- *CommitterProposalSubmitted, id []*big.Int, proposer []common.Address, startIndex []*big.Int) (event.Subscription, error) {
+// Solidity: event ProposalSubmitted(uint64 chainID, uint64 indexed proposalID, address indexed proposer, string proofHash, string stateRootHash, uint256 indexed startIndex, uint256 endIndex)
+func (_Committer *CommitterFilterer) WatchProposalSubmitted(opts *bind.WatchOpts, sink chan<- *CommitterProposalSubmitted, proposalID []uint64, proposer []common.Address, startIndex []*big.Int) (event.Subscription, error) {
 
-	var idRule []interface{}
-	for _, idItem := range id {
-		idRule = append(idRule, idItem)
+	var proposalIDRule []interface{}
+	for _, proposalIDItem := range proposalID {
+		proposalIDRule = append(proposalIDRule, proposalIDItem)
 	}
 	var proposerRule []interface{}
 	for _, proposerItem := range proposer {
@@ -1409,7 +1639,7 @@ func (_Committer *CommitterFilterer) WatchProposalSubmitted(opts *bind.WatchOpts
 		startIndexRule = append(startIndexRule, startIndexItem)
 	}
 
-	logs, sub, err := _Committer.contract.WatchLogs(opts, "ProposalSubmitted", idRule, proposerRule, startIndexRule)
+	logs, sub, err := _Committer.contract.WatchLogs(opts, "ProposalSubmitted", proposalIDRule, proposerRule, startIndexRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1441,9 +1671,9 @@ func (_Committer *CommitterFilterer) WatchProposalSubmitted(opts *bind.WatchOpts
 	}), nil
 }
 
-// ParseProposalSubmitted is a log parse operation binding the contract event 0x410eb7d56800677f6951f80f562e7d42ad630918b0ff4645be6a4bc29930ef8e.
+// ParseProposalSubmitted is a log parse operation binding the contract event 0x08db083a8474187b3aaed9068af476148cc1c18a272491f43b8a93c5ab91606a.
 //
-// Solidity: event ProposalSubmitted(uint256 indexed id, address indexed proposer, string proofHash, string stateRootHash, uint256 indexed startIndex, uint256 endIndex)
+// Solidity: event ProposalSubmitted(uint64 chainID, uint64 indexed proposalID, address indexed proposer, string proofHash, string stateRootHash, uint256 indexed startIndex, uint256 endIndex)
 func (_Committer *CommitterFilterer) ParseProposalSubmitted(log types.Log) (*CommitterProposalSubmitted, error) {
 	event := new(CommitterProposalSubmitted)
 	if err := _Committer.contract.UnpackLog(event, "ProposalSubmitted", log); err != nil {
@@ -1522,13 +1752,14 @@ func (it *CommitterProposalTimedOutIterator) Close() error {
 
 // CommitterProposalTimedOut represents a ProposalTimedOut event raised by the Committer contract.
 type CommitterProposalTimedOut struct {
-	Id  *big.Int
-	Raw types.Log // Blockchain specific contextual infos
+	ChainID    uint64
+	ProposalID uint64
+	Raw        types.Log // Blockchain specific contextual infos
 }
 
-// FilterProposalTimedOut is a free log retrieval operation binding the contract event 0x54b873b562a45d8ac963d9576955e8cffecb769f75cb8ac8db3fc7534b972537.
+// FilterProposalTimedOut is a free log retrieval operation binding the contract event 0xe81e592c2f9a76eb49a3b40a0a0f6955323a7ec31c08805d2c04a4eea8b558fd.
 //
-// Solidity: event ProposalTimedOut(uint256 id)
+// Solidity: event ProposalTimedOut(uint64 chainID, uint64 proposalID)
 func (_Committer *CommitterFilterer) FilterProposalTimedOut(opts *bind.FilterOpts) (*CommitterProposalTimedOutIterator, error) {
 
 	logs, sub, err := _Committer.contract.FilterLogs(opts, "ProposalTimedOut")
@@ -1538,9 +1769,9 @@ func (_Committer *CommitterFilterer) FilterProposalTimedOut(opts *bind.FilterOpt
 	return &CommitterProposalTimedOutIterator{contract: _Committer.contract, event: "ProposalTimedOut", logs: logs, sub: sub}, nil
 }
 
-// WatchProposalTimedOut is a free log subscription operation binding the contract event 0x54b873b562a45d8ac963d9576955e8cffecb769f75cb8ac8db3fc7534b972537.
+// WatchProposalTimedOut is a free log subscription operation binding the contract event 0xe81e592c2f9a76eb49a3b40a0a0f6955323a7ec31c08805d2c04a4eea8b558fd.
 //
-// Solidity: event ProposalTimedOut(uint256 id)
+// Solidity: event ProposalTimedOut(uint64 chainID, uint64 proposalID)
 func (_Committer *CommitterFilterer) WatchProposalTimedOut(opts *bind.WatchOpts, sink chan<- *CommitterProposalTimedOut) (event.Subscription, error) {
 
 	logs, sub, err := _Committer.contract.WatchLogs(opts, "ProposalTimedOut")
@@ -1575,9 +1806,9 @@ func (_Committer *CommitterFilterer) WatchProposalTimedOut(opts *bind.WatchOpts,
 	}), nil
 }
 
-// ParseProposalTimedOut is a log parse operation binding the contract event 0x54b873b562a45d8ac963d9576955e8cffecb769f75cb8ac8db3fc7534b972537.
+// ParseProposalTimedOut is a log parse operation binding the contract event 0xe81e592c2f9a76eb49a3b40a0a0f6955323a7ec31c08805d2c04a4eea8b558fd.
 //
-// Solidity: event ProposalTimedOut(uint256 id)
+// Solidity: event ProposalTimedOut(uint64 chainID, uint64 proposalID)
 func (_Committer *CommitterFilterer) ParseProposalTimedOut(log types.Log) (*CommitterProposalTimedOut, error) {
 	event := new(CommitterProposalTimedOut)
 	if err := _Committer.contract.UnpackLog(event, "ProposalTimedOut", log); err != nil {
@@ -2142,15 +2373,16 @@ func (it *CommitterVoteProposalIterator) Close() error {
 
 // CommitterVoteProposal represents a VoteProposal event raised by the Committer contract.
 type CommitterVoteProposal struct {
-	Id    *big.Int
-	Voter common.Address
-	Phase uint8
-	Raw   types.Log // Blockchain specific contextual infos
+	ChainID    uint64
+	ProposalID uint64
+	Voter      common.Address
+	Phase      uint8
+	Raw        types.Log // Blockchain specific contextual infos
 }
 
-// FilterVoteProposal is a free log retrieval operation binding the contract event 0xb3af8d0ccb8c5065b2daf8bb24b7a0ac9a8822fac445978a1524fb9a6f560e1f.
+// FilterVoteProposal is a free log retrieval operation binding the contract event 0xc488e7e4772e55cf4eb67cd1cc5a8a0169f7b08a7565742e419b88aac6744116.
 //
-// Solidity: event VoteProposal(uint256 id, address voter, uint8 phase)
+// Solidity: event VoteProposal(uint64 chainID, uint64 proposalID, address voter, uint8 phase)
 func (_Committer *CommitterFilterer) FilterVoteProposal(opts *bind.FilterOpts) (*CommitterVoteProposalIterator, error) {
 
 	logs, sub, err := _Committer.contract.FilterLogs(opts, "VoteProposal")
@@ -2160,9 +2392,9 @@ func (_Committer *CommitterFilterer) FilterVoteProposal(opts *bind.FilterOpts) (
 	return &CommitterVoteProposalIterator{contract: _Committer.contract, event: "VoteProposal", logs: logs, sub: sub}, nil
 }
 
-// WatchVoteProposal is a free log subscription operation binding the contract event 0xb3af8d0ccb8c5065b2daf8bb24b7a0ac9a8822fac445978a1524fb9a6f560e1f.
+// WatchVoteProposal is a free log subscription operation binding the contract event 0xc488e7e4772e55cf4eb67cd1cc5a8a0169f7b08a7565742e419b88aac6744116.
 //
-// Solidity: event VoteProposal(uint256 id, address voter, uint8 phase)
+// Solidity: event VoteProposal(uint64 chainID, uint64 proposalID, address voter, uint8 phase)
 func (_Committer *CommitterFilterer) WatchVoteProposal(opts *bind.WatchOpts, sink chan<- *CommitterVoteProposal) (event.Subscription, error) {
 
 	logs, sub, err := _Committer.contract.WatchLogs(opts, "VoteProposal")
@@ -2197,9 +2429,9 @@ func (_Committer *CommitterFilterer) WatchVoteProposal(opts *bind.WatchOpts, sin
 	}), nil
 }
 
-// ParseVoteProposal is a log parse operation binding the contract event 0xb3af8d0ccb8c5065b2daf8bb24b7a0ac9a8822fac445978a1524fb9a6f560e1f.
+// ParseVoteProposal is a log parse operation binding the contract event 0xc488e7e4772e55cf4eb67cd1cc5a8a0169f7b08a7565742e419b88aac6744116.
 //
-// Solidity: event VoteProposal(uint256 id, address voter, uint8 phase)
+// Solidity: event VoteProposal(uint64 chainID, uint64 proposalID, address voter, uint8 phase)
 func (_Committer *CommitterFilterer) ParseVoteProposal(log types.Log) (*CommitterVoteProposal, error) {
 	event := new(CommitterVoteProposal)
 	if err := _Committer.contract.UnpackLog(event, "VoteProposal", log); err != nil {

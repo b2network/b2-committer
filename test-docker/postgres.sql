@@ -110,22 +110,20 @@ CREATE TABLE IF NOT EXISTS sync_tasks
     status       VARCHAR(32) NOT NULL
 );
 
+drop table if exists proposal;
 -- Create proposal table
 CREATE TABLE IF NOT EXISTS proposal
 (
-    id                 bigserial PRIMARY KEY,
-    created_at         timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at         timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    proposal_id        bigint       NOT NULL,
-    proposer           varchar(128) NOT NULL,
-    state_root_hash    varchar(128) NOT NULL,
-    proof_root_hash    varchar(128) NOT NULL,
-    start_batch_num    bigint       NOT NULL,
-    end_batch_num      bigint       NOT NULL,
-    btc_commit_tx_hash varchar(128),
-    btc_reveal_tx_hash varchar(128),
-    block_height       bigint       NOT NULL DEFAULT 0,
-    winner             varchar(128),
-    status             bigint       NOT NULL DEFAULT 0
+    id              bigserial PRIMARY KEY,
+    created_at      timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    proposal_id     bigint       NOT NULL,
+    state_root_hash varchar(128) NOT NULL,
+    proof_root_hash varchar(128) NOT NULL,
+    start_batch_num bigint       NOT NULL,
+    end_batch_num   bigint       NOT NULL,
+    btc_tx_hash     varchar(128),
+    winner          varchar(128),
+    status          bigint       NOT NULL DEFAULT 0
 );
 CREATE INDEX if not exists proposal_id_index ON proposal (proposal_id);

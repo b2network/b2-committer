@@ -9,8 +9,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// CheckStatus check proposal vote status
-func CheckStatus(ctx *svc.ServiceContext) {
+// CheckStatusVoting check proposal vote status
+func CheckStatusVoting(ctx *svc.ServiceContext) {
 	for {
 		var dbProposal schema.Proposal
 		err := ctx.DB.Where("status=?", schema.ProposalVotingStatus).Order("end_batch_num asc").First(&dbProposal).Error
@@ -33,11 +33,10 @@ func CheckStatus(ctx *svc.ServiceContext) {
 	}
 }
 
-func CheckStatusTimeOut(ctx *svc.ServiceContext) {
+func CheckStatusPending(ctx *svc.ServiceContext) {
 	for {
-		time.Sleep(30 * time.Second)
 		var dbProposal schema.Proposal
-		err := ctx.DB.Where("status not in (? , ?)", schema.ProposalSucceedStatus, schema.ProposalTimeoutStatus).Order("end_batch_num asc").First(&dbProposal).Error
+		err := ctx.DB.Where("status = ?", schema.ProposalPendingStatus).Order("end_batch_num asc").First(&dbProposal).Error
 		if err != nil {
 			log.Errorf("[Handler.CheckStatusTimeOut] find Voting proposal err: %s\n", errors.WithStack(err))
 			time.Sleep(5 * time.Second)
@@ -48,7 +47,59 @@ func CheckStatusTimeOut(ctx *svc.ServiceContext) {
 			log.Errorf("[Handler.CheckStatusTimeOut] QueryProposalByID err: %s\n", errors.WithStack(err))
 			continue
 		}
-		if proposal.TxHash == "" && proposal.Status == schema.ProposalPendingStatus && proposal.Winner.String() != ctx.B2NodeConfig.Address {
+		if proposal.Status == schema.ProposalCommitting {
+			dbProposal.Status = uint64(proposal.Status)
+			dbProposal.Winner = proposal.Winner.String()
+			dbProposal.BtcTxHash = proposal.BtcTxHash
+			ctx.DB.Save(dbProposal)
+			continue
+		}
+		time.Sleep(2 * time.Second)
+	}
+}
+
+func CheckStatusCommitting(ctx *svc.ServiceContext) {
+	for {
+		var dbProposal schema.Proposal
+		err := ctx.DB.Where("status = ?", schema.ProposalCommitting).Order("end_batch_num asc").First(&dbProposal).Error
+		if err != nil {
+			log.Errorf("[Handler.CheckStatusTimeOut] find Voting proposal err: %s\n", errors.WithStack(err))
+			time.Sleep(5 * time.Second)
+			continue
+		}
+		proposal, err := ctx.NodeClient.QueryProposalByID(dbProposal.ProposalID)
+		if err != nil {
+			log.Errorf("[Handler.CheckStatusTimeOut] QueryProposalByID err: %s\n", errors.WithStack(err))
+			continue
+		}
+		if proposal.Status == schema.ProposalSucceedStatus {
+			dbProposal.Status = uint64(proposal.Status)
+			dbProposal.Winner = proposal.Winner.String()
+			dbProposal.ArTxHash = proposal.ArweaveTxHash
+			ctx.DB.Save(dbProposal)
+			continue
+		}
+		time.Sleep(2 * time.Second)
+	}
+}
+
+func CheckStatusPendingTimeOut(ctx *svc.ServiceContext) {
+	for {
+		time.Sleep(30 * time.Second)
+		var dbProposal schema.Proposal
+		err := ctx.DB.Where("status = ? or status = ?", schema.ProposalPendingStatus,
+			schema.ProposalCommitting).Order("end_batch_num asc").First(&dbProposal).Error
+		if err != nil {
+			log.Errorf("[Handler.CheckStatusTimeOut] find Voting proposal and Committing proposal err: %s\n", errors.WithStack(err).Error())
+			time.Sleep(5 * time.Second)
+			continue
+		}
+		proposal, err := ctx.NodeClient.QueryProposalByID(dbProposal.ProposalID)
+		if err != nil {
+			log.Errorf("[Handler.CheckStatusTimeOut] QueryProposalByID err: %s\n", errors.WithStack(err))
+			continue
+		}
+		if (proposal.BtcTxHash == "" || proposal.ArweaveTxHash == "") && proposal.Winner.String() != ctx.B2NodeConfig.Address {
 			res, err := ctx.NodeClient.IsProposalTimeout(proposal.Id)
 			if err != nil {
 				log.Errorf("[Handler.CheckStatusTimeOut] TimeoutProposal err: %s\n", errors.WithStack(err))
