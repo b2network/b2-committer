@@ -31,7 +31,7 @@ type Config struct {
 type B2NODEConfig struct {
 	ChainID          int64  `env:"B2NODE_CHAIN_ID" envDefault:"1113"`
 	RPCUrl           string `env:"B2NODE_RPC_URL" envDefault:"https://habitat-hub-rpc.bsquared.network"`
-	CommitterAddress string `env:"B2NODE_COMMITTER_ADDRESS" envDefault:"0x0DD3684F0C7e6b383C7bEc2901dCDa4b5360D893"`
+	CommitterAddress string `env:"B2NODE_COMMITTER_ADDRESS" envDefault:"0x85D40bDc724bcabF6D17d8343a74e0d916dfD40D"`
 	Address          string `env:"B2NODE_CREATOR_ADDRESS" envDefault:"0xb634434CA448c39b05b460dEC51f458EaC1e2759"`
 	PrivateKey       string `env:"B2NODE_CREATOR_PRIVATE_KEY" envDefault:"0a81baab0ca0b65d406d68c79945054b092cbe77499ca55c57b3ecfd33f1d551"`
 }

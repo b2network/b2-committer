@@ -35,7 +35,6 @@ func SyncProposal(ctx *svc.ServiceContext) {
 		}
 		if proposal == nil {
 			log.Infof("[Handler.SyncProposal] proposal is nil", proposalID)
-			proposalID++
 			continue
 		}
 		var dbProposal schema.Proposal
@@ -67,31 +66,10 @@ func SyncProposal(ctx *svc.ServiceContext) {
 			}
 		}
 
-		if dbProposal.ProposalID != 0 && dbProposal.Status != uint64(schema.ProposalVotingStatus) {
-			log.Infof("[Handler.SyncProposal] already voted :", ctx.B2NodeConfig.Address)
+		if dbProposal.ProposalID != 0 {
+			log.Infof("[Handler.SyncProposal] already sync :", ctx.B2NodeConfig.Address)
 			proposalID++
 			continue
 		}
-
-		if proposal.Status == schema.ProposalVotingStatus {
-			// voting
-			verifyBatchInfo, err := GetVerifyBatchInfoByLastBatchNum(ctx, proposal.StartIndex)
-			if err != nil {
-				log.Errorf("[Handler.SyncProposal] GetVerifyBatchInfoByLastBatchNum error info:", errors.WithStack(err))
-				time.Sleep(3 * time.Second)
-				continue
-			}
-
-			_, err = ctx.NodeClient.SubmitProof(proposal.Id, verifyBatchInfo.proofRootHash, verifyBatchInfo.stateRootHash,
-				verifyBatchInfo.startBatchNum, verifyBatchInfo.endBatchNum)
-			if err != nil {
-				log.Errorf("[Handler.SyncProposal] vote proposal error info", errors.WithStack(err))
-				time.Sleep(3 * time.Second)
-				continue
-			}
-			proposalID++
-			continue
-		}
-		time.Sleep(10 * time.Second)
 	}
 }

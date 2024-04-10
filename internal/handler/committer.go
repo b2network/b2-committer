@@ -51,17 +51,33 @@ func Committer(ctx *svc.ServiceContext) {
 			time.Sleep(10 * time.Second)
 			continue
 		}
-
-		proposalLatest, err := ctx.NodeClient.QueryProposalByID(lastProposalID)
-		if err != nil {
-			log.Errorf("[Handler.Committer][QueryLastProposalID] error info: %s", errors.WithStack(err).Error())
-			return
+		if lastProposalID == 0 {
+			lastProposalID = 1
 		}
 
-		if proposalLatest.Status != schema.ProposalTimeoutStatus {
-			log.Infof("[Handler.Committer] proposal status is processing, proposalID: %d, proposal status: %d", lastProposalID, proposalLatest.Status)
+		if proposal.Status == schema.ProposalSucceedStatus {
+			lastProposalID++
+			proposal, err = ctx.NodeClient.QueryProposalByID(lastProposalID)
+			if err != nil {
+				log.Errorf("[Handler.Committer][QueryProposalByID] error info: %s", errors.WithStack(err).Error())
+				time.Sleep(10 * time.Second)
+				continue
+			}
+		}
+
+		res, err := ctx.NodeClient.CheckProposalTimeout(lastProposalID)
+		if err != nil {
+			log.Errorf("[Handler.Committer][CheckProposalTimeout] error info: %s", errors.WithStack(err).Error())
+			continue
+		}
+
+		if !res && proposal.Status != schema.ProposalVotingStatus {
+			log.Infof("[Handler.Committer] proposal status is processing, proposalID: %d", lastProposalID)
 			time.Sleep(10 * time.Second)
 			continue
+		}
+		if res && lastProposalID == 1 {
+			lastFinalBatchNum = 0
 		}
 
 		verifyBatchInfo, err := GetVerifyBatchInfoByLastBatchNum(ctx, lastFinalBatchNum)
@@ -70,23 +86,24 @@ func Committer(ctx *svc.ServiceContext) {
 			time.Sleep(10 * time.Second)
 			continue
 		}
+
 		err = committerProposal(ctx, verifyBatchInfo, lastProposalID)
 		if err != nil {
 			log.Errorf("[Handler.Committer] error info: %s", errors.WithStack(err).Error())
 			time.Sleep(10 * time.Second)
 			continue
 		}
-		time.Sleep(3 * time.Second)
+		time.Sleep(30 * time.Second)
 	}
 }
 
 func GetVerifyBatchInfoByLastBatchNum(ctx *svc.ServiceContext, lastFinalBatchNum uint64) (*VerifyRangBatchInfo, error) {
-	verifyBatchesAndTxHashs, err := GetVerifyBatchesFromStartBatchNum(ctx, lastFinalBatchNum, ctx.Config.LimitNum)
-	if err != nil || len(verifyBatchesAndTxHashs) != ctx.Config.LimitNum {
+	verifyBatchesAndTxHashes, err := GetVerifyBatchesFromStartBatchNum(ctx, lastFinalBatchNum, ctx.Config.LimitNum)
+	if err != nil || len(verifyBatchesAndTxHashes) != ctx.Config.LimitNum {
 		return nil, fmt.Errorf("[GetVerifyBatchInfoByLastBatchNum] error info: %s", errors.WithStack(err))
 	}
 	verifyBatchesParams := make([]*VerifyBatchesTrustedAggregatorParams, 0, ctx.Config.LimitNum)
-	for _, verifyBatch := range verifyBatchesAndTxHashs {
+	for _, verifyBatch := range verifyBatchesAndTxHashes {
 		verifyBatchParam, err := GetVerifyBatchesParamsByTxHash(ctx, common.HexToHash(verifyBatch.txHash))
 		if err != nil {
 			return nil, fmt.Errorf("[GetVerifyBatchInfoByLastBatchNum] error info: %s", errors.WithStack(err))
@@ -102,8 +119,7 @@ func GetVerifyBatchInfoByLastBatchNum(ctx *svc.ServiceContext, lastFinalBatchNum
 
 // CommitterProposal committer transaction to b2-node
 func committerProposal(ctx *svc.ServiceContext, verifyBatchInfo *VerifyRangBatchInfo, lastProposalID uint64) error {
-	proposalID := lastProposalID + 1
-	_, err := ctx.NodeClient.SubmitProof(proposalID, verifyBatchInfo.proofRootHash, verifyBatchInfo.stateRootHash,
+	_, err := ctx.NodeClient.SubmitProof(lastProposalID, verifyBatchInfo.proofRootHash, verifyBatchInfo.stateRootHash,
 		verifyBatchInfo.startBatchNum, verifyBatchInfo.endBatchNum)
 	if err != nil {
 		return fmt.Errorf("[committerProposal] submit proof error info: %s, %d", errors.WithStack(err), verifyBatchInfo.startBatchNum)

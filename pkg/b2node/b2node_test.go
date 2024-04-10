@@ -15,7 +15,7 @@ import (
 const (
 	creatorAddress    = "0xb634434CA448c39b05b460dEC51f458EaC1e2759"
 	creatorPrivateKey = "0a81baab0ca0b65d406d68c79945054b092cbe77499ca55c57b3ecfd33f1d551"
-	contractAddress   = "0x0DD3684F0C7e6b383C7bEc2901dCDa4b5360D893"
+	contractAddress   = "0x85D40bDc724bcabF6D17d8343a74e0d916dfD40D"
 	URL               = "https://habitat-hub-rpc.bsquared.network"
 	chainID           = 1113
 )
@@ -46,7 +46,7 @@ func TestSetTimeoutPeriod(t *testing.T) {
 	tx, err := committer.SetTimeoutPeriod(&bind.TransactOpts{
 		From:   common.HexToAddress(creatorAddress),
 		Signer: auth.Signer,
-	}, big.NewInt(60*60*24))
+	}, big.NewInt(60*20))
 	require.NoError(t, err)
 	fmt.Println(tx.Hash())
 }
@@ -214,6 +214,19 @@ func TestAr(t *testing.T) {
 	}, chainID, 1, "arTxhash")
 	require.NoError(t, err)
 	fmt.Println(tx.Hash())
+}
+
+func TestIsProposalTimeout(t *testing.T) {
+	conn, err := ethclient.Dial(URL)
+	require.NoError(t, err)
+	defer conn.Close()
+
+	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	require.NoError(t, err)
+	res, err := committer.IsProposalTimeout(&bind.CallOpts{
+		From: common.HexToAddress(creatorAddress),
+	}, chainID, 2)
+	fmt.Println(res)
 }
 
 func TestTimeoutProposal(t *testing.T) {

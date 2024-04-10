@@ -3,6 +3,7 @@ package b2node
 import (
 	"crypto/ecdsa"
 	"fmt"
+	"github.com/b2network/b2committer/internal/schema"
 	"github.com/b2network/b2committer/pkg/contract"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -10,6 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"math/big"
+	"time"
 )
 
 type NodeClient struct {
@@ -141,6 +143,27 @@ func (n NodeClient) IsProposalTimeout(id uint64) (bool, error) {
 	}, uint64(n.ChainID), id)
 	if err != nil {
 		return false, fmt.Errorf("[IsProposalTimeout] err: %s", err)
+	}
+	return res, nil
+}
+
+func (n NodeClient) CheckProposalTimeout(id uint64) (bool, error) {
+	res, err := n.IsProposalTimeout(id)
+	if err != nil {
+		return false, err
+	}
+	if res {
+		proposalLatest, err := n.QueryProposalByID(id)
+		if err != nil {
+			return true, err
+		}
+		if proposalLatest.Status != schema.ProposalTimeoutStatus {
+			_, err := n.TimeoutProposal(id)
+			if err != nil {
+				return true, err
+			}
+			time.Sleep(5 * time.Second)
+		}
 	}
 	return res, nil
 }
