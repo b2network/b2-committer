@@ -25,7 +25,7 @@ func TestGetVerifyBatchesParamsByTxHash(t *testing.T) {
 	methodSigData := tx.Data()[:4]
 	inputsSigData := tx.Data()[4:]
 
-	abiObject, err := abi.JSON(strings.NewReader(contract.ZkEVMMetaData.ABI))
+	abiObject, err := abi.JSON(strings.NewReader(contract.VerifyMetaData.ABI))
 	require.NoError(t, err)
 	method, err := abiObject.MethodById(methodSigData)
 	require.NoError(t, err)

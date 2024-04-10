@@ -57,8 +57,8 @@ func SyncEvent(ctx *svc.ServiceContext) {
 
 func HandlePendingBlock(ctx *svc.ServiceContext, block schema.SyncBlock) error {
 	log.Infof("[Handler.SyncEvent.PendingBlock]Start: %d, %s \n", block.BlockNumber, block.BlockHash)
-	//log.Infof("[Handler.SyncEvent.PendingBlock]GetContracts: %v\n", blockchain.GetContracts())
-	//log.Infof("[Handler.SyncEvent.PendingBlock]GetEvents: %v\n", blockchain.GetEvents())
+	log.Infof("[Handler.SyncEvent.PendingBlock]GetContracts: %v\n", blockchain.GetContracts())
+	log.Infof("[Handler.SyncEvent.PendingBlock]GetEvents: %v\n", blockchain.GetEvents())
 	events, err := LogFilter(ctx, block, blockchain.GetContracts(), [][]common.Hash{blockchain.GetEvents()})
 	log.Infof("[Handler.SyncEvent.PendingBlock] block %d, events number is %d:", block.BlockNumber, len(events))
 	if err != nil {

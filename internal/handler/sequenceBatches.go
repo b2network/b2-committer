@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"github.com/b2network/b2committer/internal/schema"
 	"github.com/b2network/b2committer/internal/svc"
-	"github.com/b2network/b2committer/pkg/contract"
 	"github.com/b2network/b2committer/pkg/event/zkevm"
 	"github.com/b2network/b2committer/pkg/log"
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/everFinance/goar"
+	"github.com/everFinance/goar/types"
 	"github.com/pkg/errors"
 	"os"
-	"strings"
+	"strconv"
 	"time"
 )
 
@@ -30,30 +30,82 @@ type SequenceBatchesAndTxHash struct {
 }
 
 func SequenceBatches(ctx *svc.ServiceContext) {
+	time.Sleep(40 * time.Second)
 	for {
 		var dbProposal schema.Proposal
-		err := ctx.DB.Where("status = ?", schema.ProposalSucceedStatus).Order("proposal_id asc").First(&dbProposal).Error
-		//dbProposal.StartBatchNum
-		//dbProposal.EndBatchNum
-		//collectionSequenceBatches, err := GetSequenceBatchesFromStartBatchNum(ctx, 718506, 719063)
-		collectionSequenceBatches, err := GetSequenceBatchesFromStartBatchNum(ctx, dbProposal.StartBatchNum, dbProposal.EndBatchNum)
+		err := ctx.DB.Where("status = ? and ar_tx_hash=''", schema.ProposalCommitting).Order("proposal_id desc").First(&dbProposal).Error
 		if err != nil {
-			log.Errorf("[Handler.SequenceBatches][GetSequenceBatchesFromStartBatchNum] error info: %s", errors.WithStack(err).Error())
-			time.Sleep(10 * time.Second)
+			log.Errorf("[Handler.SequenceBatches]query proposal from db, error info: %s", errors.WithStack(err).Error())
+			time.Sleep(5 * time.Second)
 			continue
 		}
-		if !collectionSequenceBatches.IsCompleted {
-			log.Errorf("[Handler.SequenceBatches] sync batches not completed")
-			time.Sleep(10 * time.Second)
-			continue
-		}
-		sequenceBatchesMap, err := GetSequenceBatchesDetails(ctx, collectionSequenceBatches.SequenceBatches)
+		proposal, err := ctx.NodeClient.QueryProposalByID(dbProposal.ProposalID)
 		if err != nil {
-			log.Errorf("[Handler.SequenceBatches][GetSequenceBatchesDetails] error info: %s", errors.WithStack(err).Error())
+			log.Errorf("[Handler.SequenceBatches] QueryProposalByID err: %s\n", errors.WithStack(err).Error())
 			time.Sleep(3 * time.Second)
 			continue
 		}
-		WriteFile(ctx, sequenceBatchesMap)
+		if proposal.Status == schema.ProposalCommitting && proposal.Winner.String() == ctx.B2NodeConfig.Address &&
+			proposal.ArweaveTxHash == "" {
+			collectionSequenceBatches, err := GetSequenceBatchesFromStartBatchNum(ctx, dbProposal.StartBatchNum, dbProposal.EndBatchNum)
+			if err != nil {
+				log.Errorf("[Handler.SequenceBatches][GetSequenceBatchesFromStartBatchNum] error info: %s", errors.WithStack(err).Error())
+				time.Sleep(10 * time.Second)
+				continue
+			}
+			if !collectionSequenceBatches.IsCompleted {
+				log.Errorf("[Handler.SequenceBatches] sync batches not completed")
+				time.Sleep(10 * time.Second)
+				continue
+			}
+			sequenceBatchesMap, err := GetSequenceBatchesDetails(ctx, collectionSequenceBatches.SequenceBatches)
+			if err != nil {
+				log.Errorf("[Handler.SequenceBatches][GetSequenceBatchesDetails] error info: %s", errors.WithStack(err).Error())
+				time.Sleep(3 * time.Second)
+				continue
+			}
+			jsonData, err := json.Marshal(sequenceBatchesMap)
+			if err != nil {
+				log.Errorf("[WriteFile] json marshal error: %s", errors.WithStack(err))
+				continue
+			}
+			tags := []types.Tag{
+				{Name: "Content-Type", Value: "application/json"},
+				{Name: "title", Value: "b2-batch"},
+				{Name: "chainID", Value: strconv.FormatInt(ctx.B2NodeConfig.ChainID, 10)},
+			}
+			arNode := ctx.Config.ArweaveRPC
+			wallet := ctx.Config.ArweaveWallet
+			w, err := goar.NewWalletFromPath(wallet, arNode)
+			arTx, err := w.SendData(jsonData, tags)
+
+			_, err = ctx.NodeClient.ArweaveTx(dbProposal.ProposalID, arTx.ID)
+			if err != nil {
+				log.Errorf("[Handler.BatchDetailsToAr] get ar tx error: %s", errors.WithStack(err).Error())
+				continue
+			}
+			err = ctx.DB.Model(&dbProposal).Update("ar_tx_hash", arTx.ID).Error
+			if err != nil {
+				log.Errorf("[Handler.BatchDetailsToAr] update proposal error: %s", errors.WithStack(err).Error())
+				continue
+			}
+
+			res, err := WriteFile(ctx, dbProposal.StartBatchNum, dbProposal.EndBatchNum, sequenceBatchesMap)
+			if err != nil {
+				log.Errorf("[Handler.SequenceBatches][WriteFile] error info: %s", errors.WithStack(err).Error())
+				time.Sleep(3 * time.Second)
+				continue
+			}
+			if res {
+				err = ctx.DB.Model(&dbProposal).Update("generate_details_file", true).Error
+				if err != nil {
+					log.Errorf("[Handler.SequenceBatches][Update] error info: %s", errors.WithStack(err).Error())
+					time.Sleep(3 * time.Second)
+					continue
+				}
+			}
+		}
+		time.Sleep(3 * time.Second)
 	}
 }
 
@@ -92,48 +144,56 @@ func GetSequenceBatchesFromStartBatchNum(ctx *svc.ServiceContext, startBatchNum 
 	}, nil
 }
 
-func GetSequenceBatchesDetails(ctx *svc.ServiceContext, sequenceBatches []*SequenceBatchesAndTxHash) (map[uint64]map[string]interface{}, error) {
-	abiObject, err := abi.JSON(strings.NewReader(contract.ZkEVMMetaData.ABI))
-
-	if err != nil {
-		return nil, fmt.Errorf("[GetSequenceBatchesDetails] parse abi error: %s", errors.WithStack(err))
-	}
-	sequenceBatchesMap := make(map[uint64]map[string]interface{})
+func GetSequenceBatchesDetails(ctx *svc.ServiceContext, sequenceBatches []*SequenceBatchesAndTxHash) (map[uint64][]byte, error) {
+	sequenceBatchesMap := make(map[uint64][]byte)
 	for _, sequenceBatch := range sequenceBatches {
 		txHash := sequenceBatch.TxHash
 		tx, _, err := ctx.RPC.TransactionByHash(context.Background(), common.HexToHash(txHash))
 		if err != nil {
 			return nil, fmt.Errorf("[GetSequenceBatchesDetails] get tx error: %s", errors.WithStack(err))
 		}
-		inputsMap, methodName := DecodeTransactionInputData(abiObject, tx.Data())
-
-		if methodName != "sequenceBatches" {
-			return nil, fmt.Errorf("[GetSequenceBatchesDetails] methodName is :  %s parse method error: %s", methodName, errors.WithStack(err))
-		}
-		sequenceBatchesMap[sequenceBatch.NumBatch] = inputsMap
+		sequenceBatchesMap[sequenceBatch.NumBatch] = tx.Data()
 	}
 	return sequenceBatchesMap, nil
 }
 
-func WriteFile(ctx *svc.ServiceContext, sequenceBatchesMap map[uint64]map[string]interface{}) {
+func WriteFile(ctx *svc.ServiceContext, startBatchNum uint64, endBatchNum uint64, sequenceBatchesMap map[uint64][]byte) (bool, error) {
+	fileName := strconv.FormatUint(startBatchNum, 10) + "-" + strconv.FormatUint(endBatchNum, 10) + ".json"
 	jsonData, err := json.Marshal(sequenceBatchesMap)
 	if err != nil {
 		log.Errorf("[WriteFile] json marshal error: %s", errors.WithStack(err))
-		return
+		return false, err
 	}
-
-	file, err := os.Create("output.json")
+	path, err := os.Getwd()
 	if err != nil {
-		fmt.Println("create file error:", err)
-		return
+		log.Errorf("[WriteFile] get current path error: %s", errors.WithStack(err))
+		return false, err
 	}
-	defer file.Close()
+	filePath := path + "/" + ctx.Config.BatchPath
+	_, err2 := os.Stat(filePath)
+	if os.IsNotExist(err2) {
+		errDir := os.MkdirAll(filePath, os.ModePerm)
+		if errDir != nil {
+			log.Errorf("[WriteFile] create dir error: %s", errors.WithStack(errDir))
+			return false, errDir
+		}
+	}
+	file, err := os.Create(filePath + "/" + fileName)
+	if err != nil {
+		log.Errorf("[WriteFile] create file error: %s", errors.WithStack(err))
+		return false, err
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Errorf("[WriteFile] close file error: %s", errors.WithStack(err))
+		}
+	}(file)
 
 	_, err = file.Write(jsonData)
 	if err != nil {
-		fmt.Println("write file error:", err)
-		return
+		log.Errorf("[WriteFile] write file error: %s", errors.WithStack(err))
+		return false, nil
 	}
-
-	fmt.Println("map write file output.json success")
+	return true, nil
 }

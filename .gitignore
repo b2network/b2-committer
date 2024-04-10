@@ -4,3 +4,6 @@
 b2-committer
 test-docker/mysql1
 test-docker/mysql2
+test-docker/postgres1
+wallet
+batchFile

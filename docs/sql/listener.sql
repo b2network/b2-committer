@@ -1,5 +1,5 @@
-Create Database If Not Exists b2_committer Character Set UTF8;
-USE b2_committer;
+Create Database If Not Exists b2_committer2 Character Set UTF8;
+USE b2_committer2;
 
 
 SET NAMES utf8mb4;
@@ -145,11 +145,12 @@ CREATE TABLE `proposal` (
     `proof_root_hash` varchar(128) NOT NULL,
     `start_batch_num` bigint NOT NULL,
     `end_batch_num` bigint NOT NULL,
-    `btc_commit_tx_hash` varchar(128) ,
-    `btc_reveal_tx_hash` varchar(128) ,
+    `btc_tx_hash` varchar(128) ,
     `winner` varchar(128),
     `status` bigint NOT NULL DEFAULT 0,
-    `upload_details` tinyint(1) default 0,
+    `generate_details_file` tinyint default 0 comment '0:no generate details file 1:already generate details file for uploading',
+    `generate_details_file_time` datetime,
+    `ar_tx_hash`  varchar(128),
     PRIMARY KEY (`id`),
     KEY `proposal_id_index` (`proposal_id`)
 )

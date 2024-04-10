@@ -1,17 +1,15 @@
 package svc
 
 import (
-	"github.com/b2network/b2committer/pkg/b2node"
-	"time"
-
-	"github.com/b2network/b2committer/pkg/log"
-
 	"github.com/b2network/b2committer/internal/types"
+	"github.com/b2network/b2committer/pkg/b2node"
+	"github.com/b2network/b2committer/pkg/log"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"time"
 )
 
 var svc *ServiceContext
@@ -41,11 +39,11 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 	if err != nil {
 		log.Panicf("[svc]gorm get sqlDB panic: %s\n", err)
 	}
-	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
+	// SetMaxIdleConns
 	sqlDB.SetMaxIdleConns(cfg.MySQLMaxIdleConns)
-	// SetMaxOpenConns 设置打开数据库连接的最大数量。
+	// SetMaxOpenConns
 	sqlDB.SetMaxOpenConns(cfg.MySQLMaxOpenConns)
-	// SetConnMaxLifetime 设置了连接可复用的最大时间。
+	// SetConnMaxLifetime
 	sqlDB.SetConnMaxLifetime(time.Duration(cfg.MySQLConnMaxLifetime) * time.Second)
 
 	rpc, err := ethclient.Dial(cfg.RPCUrl)

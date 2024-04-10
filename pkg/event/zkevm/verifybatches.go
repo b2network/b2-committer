@@ -12,12 +12,14 @@ import (
 var (
 	VerifyBatchesName = "verifyBatchesTrustedAggregator"
 
-	VerifyBatchesHash = crypto.Keccak256([]byte("VerifyBatchesTrustedAggregator(uint64,bytes32,address)"))
+	VerifyBatchesHash = crypto.Keccak256([]byte("VerifyBatchesTrustedAggregator(uint32,uint64,bytes32,bytes32,address)"))
 )
 
 type VerifyBatches struct {
+	RollupID   uint32 `json:"rollupID"`
 	BatchNum   uint64 `json:"numBatch"`
 	StateRoot  string `json:"stateRoot"`
+	ExitRoot   string `json:"exitRoot"`
 	Aggregator string `json:"aggregator"`
 }
 
@@ -38,10 +40,13 @@ func (t *VerifyBatches) ToObj(data string) error {
 }
 
 func (*VerifyBatches) Data(log types.Log) (string, error) {
+
 	transfer := &VerifyBatches{
-		BatchNum:   uint64(event.TopicToInt64(log, 1)),
-		StateRoot:  event.DataToHash(log, 0).Hex(),
-		Aggregator: event.TopicToHash(log, 2).Hex(),
+		RollupID:   uint32(event.TopicToInt64(log, 1)),
+		Aggregator: event.TopicToAddress(log, 2).Hex(),
+		BatchNum:   uint64(event.DataToInt64(log, 0)),
+		StateRoot:  event.DataToHash(log, 1).Hex(),
+		ExitRoot:   event.DataToHash(log, 2).Hex(),
 	}
 	data, err := event.ToJSON(transfer)
 	if err != nil {
