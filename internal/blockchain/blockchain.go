@@ -2,7 +2,7 @@ package blockchain
 
 import (
 	config "github.com/b2network/b2committer/internal/types"
-	"github.com/b2network/b2committer/pkg/event/zkevm"
+	"github.com/b2network/b2committer/pkg/event/op"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 )
@@ -22,11 +22,9 @@ var (
 )
 
 func init() {
-	register(&zkevm.VerifyBatches{})
-	register(&zkevm.SequenceBatches{})
+	register(&op.OutputProposed{})
 	cfg := config.GetConfig()
-	addContract(cfg.PolygonVerifyBatchContract)
-	addContract(cfg.PolygonSequenceContract)
+	addContract(cfg.L2OutputOracleProxyContract)
 }
 
 func register(event Event) {

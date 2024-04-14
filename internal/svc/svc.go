@@ -3,28 +3,36 @@ package svc
 import (
 	"github.com/b2network/b2committer/internal/types"
 	"github.com/b2network/b2committer/pkg/b2node"
+	"github.com/b2network/b2committer/pkg/beacon"
+	"github.com/b2network/b2committer/pkg/client"
 	"github.com/b2network/b2committer/pkg/log"
+	"github.com/ethereum-optimism/optimism/op-service/sources"
 	"github.com/ethereum/go-ethereum/common"
+	ethTypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"math/big"
 	"time"
 )
 
 var svc *ServiceContext
 
 type ServiceContext struct {
-	Config               *types.Config
-	RPC                  *ethclient.Client
-	DB                   *gorm.DB
-	BTCConfig            *types.BitcoinRPCConfig
-	B2NodeConfig         *types.B2NODEConfig
-	LatestBlockNumber    int64
-	SyncedBlockNumber    int64
-	SyncedBlockHash      common.Hash
-	NodeClient           *b2node.NodeClient
-	LatestBTCBlockNumber int64
+	Config                *types.Config
+	RPC                   *ethclient.Client
+	DB                    *gorm.DB
+	BTCConfig             *types.BitcoinRPCConfig
+	B2NodeConfig          *types.B2NODEConfig
+	LatestBlockNumber     int64
+	SyncedBlockNumber     int64
+	SyncedBlockHash       common.Hash
+	NodeClient            *b2node.NodeClient
+	LatestBTCBlockNumber  int64
+	BlobDataSource        *beacon.BlobDataSource
+	SyncedBlobBlockNumber int64
+	SyncedBlobBlockHash   common.Hash
 }
 
 func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2nodeConfig *types.B2NODEConfig) *ServiceContext {
@@ -61,6 +69,11 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 	}
 	nodeClient := b2node.NewNodeClient(privateKeHex, chainID, address, contractAddress, b2rpc)
 
+	l1Signer := ethTypes.NewCancunSigner(big.NewInt(chainID))
+	l1Beacon := sources.NewBeaconHTTPClient(client.NewBasicHTTPClient(cfg.BeaconChainRPCUrl))
+	l1BlobFetcher := sources.NewL1BeaconClient(l1Beacon, sources.L1BeaconClientConfig{FetchAllSidecars: false})
+	bds := beacon.NewBlobDataSource(l1Signer, common.HexToAddress(cfg.BatcherInbox), common.HexToAddress(cfg.BatcherSender), l1BlobFetcher, rpc)
+
 	svc = &ServiceContext{
 		BTCConfig:         bitcoinCfg,
 		DB:                storage,
@@ -69,6 +82,7 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 		LatestBlockNumber: cfg.InitBlockNumber,
 		B2NodeConfig:      b2nodeConfig,
 		NodeClient:        nodeClient,
+		BlobDataSource:    bds,
 	}
 	return svc
 }

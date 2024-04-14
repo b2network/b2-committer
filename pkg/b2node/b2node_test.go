@@ -16,8 +16,11 @@ const (
 	creatorAddress    = "0xb634434CA448c39b05b460dEC51f458EaC1e2759"
 	creatorPrivateKey = "0a81baab0ca0b65d406d68c79945054b092cbe77499ca55c57b3ecfd33f1d551"
 	contractAddress   = "0x85D40bDc724bcabF6D17d8343a74e0d916dfD40D"
-	URL               = "https://habitat-hub-rpc.bsquared.network"
+	URL               = "https://quaint-white-season.ethereum-sepolia.quiknode.pro/b5c30cbb548d8743f08dd175fe50e3e923259d30/"
 	chainID           = 1113
+
+	SepoliaBatcherSender = "0x8F23BB38F531600e5d8FDDaAEC41F13FaB46E98c"
+	SepoliaBatcherInbox  = "0xff00000000000000000000000000000011155420"
 )
 
 func TestQueryTimeoutPeriod(t *testing.T) {
