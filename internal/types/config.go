@@ -21,6 +21,7 @@ type Config struct {
 	InitBlockHash               string `env:"INIT_BLOCK_HASH" envDefault:"0x9612534dc810c9c51211c77def2db781d7cc7979b0cb076a47c9fc6fb6dc475c"`
 	InitBlobBlockNumber         int64  `env:"INIT_BLOB_BLOCK_NUMBER" envDefault:"5687501"`
 	InitBlobBlockHash           string `env:"INIT_BLOB_BLOCK_HASH" envDefault:"0x6218666b40fce4153e8f5349ab2f9d2590a601e5a178e4b6d4580094d5c0c2ee"`
+	BlobIntervalTime            uint64 `env:"BLOB_INTERVAL_TIME" envDefault:"1800"`
 	PolygonSequenceContract     string `env:"POLYGON_SEQUENCE_CONTRACT" envDefault:"0xa6AAdA6845b2083ff6812bAc773038442e7f4dE6"`
 	PolygonVerifyBatchContract  string `env:"POLYGON_VERIFY_BATCH_CONTRACT" envDefault:"0xDdee8ddfA81F5E36373637240038DCCC14529BF7"`
 	L2OutputOracleProxyContract string `env:"L2_OUTPUT_ORACLE_PROXY_CONTRACT" envDefault:"0x90E9c4f8a994a250F6aEfd61CAFb4F2e895D458F"` //sepolia
@@ -34,17 +35,20 @@ type Config struct {
 }
 
 type B2NODEConfig struct {
-	ChainID          int64  `env:"B2NODE_CHAIN_ID" envDefault:"11155111"`
-	RPCUrl           string `env:"B2NODE_RPC_URL" envDefault:"https://1rpc.io/sepolia"`
-	CommitterAddress string `env:"B2NODE_COMMITTER_ADDRESS" envDefault:"0x85D40bDc724bcabF6D17d8343a74e0d916dfD40D"`
-	Address          string `env:"B2NODE_CREATOR_ADDRESS" envDefault:"0xb634434CA448c39b05b460dEC51f458EaC1e2759"`
-	PrivateKey       string `env:"B2NODE_CREATOR_PRIVATE_KEY" envDefault:"0a81baab0ca0b65d406d68c79945054b092cbe77499ca55c57b3ecfd33f1d551"`
+	ChainID                  int64  `env:"B2NODE_CHAIN_ID" envDefault:"11155111"`
+	RPCUrl                   string `env:"B2NODE_RPC_URL" envDefault:"https://1rpc.io/sepolia"`
+	CommitterAddress         string `env:"B2NODE_COMMITTER_ADDRESS" envDefault:"0x85D40bDc724bcabF6D17d8343a74e0d916dfD40D"`
+	OpCommitterAddress       string `env:"B2NODE_OP_COMMITTER_ADDRESS" envDefault:"0x0484fE0888684b39B2cce0a1644e44dDFCAA0054"`
+	OpProposersAddress       string `env:"B2NODE_OP_PROPOSERS_ADDRESS" envDefault:"0x6bA5d52CA1B931E89611995F53dde2E1f914b0a7"`
+	OpProposalManagerAddress string `env:"B2NODE_OP_PROPOSAL_MANAGER_ADDRESS" envDefault:"0x1A9Df4e0949a8699739B63F0155F41e0505df593"`
+	Address                  string `env:"B2NODE_CREATOR_ADDRESS" envDefault:"0xb634434CA448c39b05b460dEC51f458EaC1e2759"`
+	PrivateKey               string `env:"B2NODE_CREATOR_PRIVATE_KEY" envDefault:"0a81baab0ca0b65d406d68c79945054b092cbe77499ca55c57b3ecfd33f1d551"`
 }
 
 type BitcoinRPCConfig struct {
-	NetworkName        string `env:"BITCOIN_NETWORK_NAME" envDefault:"signet"`
-	PrivateKey         string `env:"BITCOIN_PRIVATE_KEY" envDefault:"c545a409ff7f2e66b4bc863a59dcccf0f4387668a92152a058446bcb58a57027"`
-	DestinationAddress string `env:"COMMITTER_DESTINATION_ADDRESS" envDefault:"tb1pvhr4e58yatk9uve22rr5umxs0jh9g0j0gtcj0ry2wf23lddhjptsf6c360"`
+	NetworkName        string `env:"BITCOIN_NETWORK_NAME" envDefault:"testnet3"`
+	PrivateKey         string `env:"BITCOIN_PRIVATE_KEY" envDefault:"55968c09fb90a496096bafdeaac0f791f527b17324d1d0e63d3550e68a7b0cc5"`
+	DestinationAddress string `env:"COMMITTER_DESTINATION_ADDRESS" envDefault:"tb1q6t5py7fqml8patll2jzfc26q7987xqthslyvj4"`
 }
 
 var (

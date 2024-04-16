@@ -5,6 +5,7 @@ import (
 	"github.com/b2network/b2committer/pkg/b2node"
 	"github.com/b2network/b2committer/pkg/beacon"
 	"github.com/b2network/b2committer/pkg/client"
+	"github.com/b2network/b2committer/pkg/contract/op"
 	"github.com/b2network/b2committer/pkg/log"
 	"github.com/ethereum-optimism/optimism/op-service/sources"
 	"github.com/ethereum/go-ethereum/common"
@@ -33,6 +34,7 @@ type ServiceContext struct {
 	BlobDataSource        *beacon.BlobDataSource
 	SyncedBlobBlockNumber int64
 	SyncedBlobBlockHash   common.Hash
+	OpCommitterClient     *b2node.OpCommitterClient
 }
 
 func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2nodeConfig *types.B2NODEConfig) *ServiceContext {
@@ -74,6 +76,20 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 	l1BlobFetcher := sources.NewL1BeaconClient(l1Beacon, sources.L1BeaconClientConfig{FetchAllSidecars: false})
 	bds := beacon.NewBlobDataSource(l1Signer, common.HexToAddress(cfg.BatcherInbox), common.HexToAddress(cfg.BatcherSender), l1BlobFetcher, rpc)
 
+	proposer, err := op.NewProposer(common.HexToAddress(b2nodeConfig.OpProposersAddress), b2rpc)
+	if err != nil {
+		log.Panicf("[svc] init proposer contract panic: %s\n", err)
+	}
+	proposalManager, err := op.NewOpProposalManager(common.HexToAddress(b2nodeConfig.OpProposalManagerAddress), b2rpc)
+	if err != nil {
+		log.Panicf("[svc] init proposal manager contract panic: %s\n", err)
+	}
+	committer, err := op.NewOpCommitter(common.HexToAddress(b2nodeConfig.OpCommitterAddress), b2rpc)
+	if err != nil {
+		log.Panicf("[svc] init committer contract panic: %s\n", err)
+	}
+	opCommitterClient := b2node.NewOpCommitterClient(b2nodeConfig.PrivateKey, b2nodeConfig.ChainID, proposer, committer, proposalManager)
+
 	svc = &ServiceContext{
 		BTCConfig:         bitcoinCfg,
 		DB:                storage,
@@ -83,6 +99,7 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 		B2NodeConfig:      b2nodeConfig,
 		NodeClient:        nodeClient,
 		BlobDataSource:    bds,
+		OpCommitterClient: opCommitterClient,
 	}
 	return svc
 }

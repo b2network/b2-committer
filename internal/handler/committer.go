@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"github.com/b2network/b2committer/pkg/contract"
+	"github.com/b2network/b2committer/pkg/contract/zk"
 	"strings"
 	"time"
 
@@ -213,7 +213,7 @@ func DecodeTransactionInputData(contractABI abi.ABI, data []byte) (map[string]in
 }
 
 func GetVerifyBatchesParamsByTxHash(ctx *svc.ServiceContext, txHash common.Hash) (*VerifyBatchesTrustedAggregatorParams, error) {
-	abiObject, err := abi.JSON(strings.NewReader(contract.VerifyMetaData.ABI))
+	abiObject, err := abi.JSON(strings.NewReader(zk.VerifyMetaData.ABI))
 	if err != nil {
 		return nil, fmt.Errorf("[GetVerifyBatchesParamsByTxHash] parse abi error: %s", errors.WithStack(err))
 	}

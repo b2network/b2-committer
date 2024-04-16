@@ -2,7 +2,7 @@ package b2node
 
 import (
 	"fmt"
-	"github.com/b2network/b2committer/pkg/contract"
+	"github.com/b2network/b2committer/pkg/contract/zk"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -28,7 +28,7 @@ func TestQueryTimeoutPeriod(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	require.NoError(t, err)
 	time, _ := committer.TimeoutPeriod(&bind.CallOpts{
 		From: common.HexToAddress(creatorAddress),
@@ -41,7 +41,7 @@ func TestSetTimeoutPeriod(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	require.NoError(t, err)
 	privateKey, _ := crypto.HexToECDSA(creatorPrivateKey)
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(chainID))
@@ -59,7 +59,7 @@ func TestAddChain(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	require.NoError(t, err)
 	privateKey, _ := crypto.HexToECDSA(creatorPrivateKey)
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(chainID))
@@ -77,7 +77,7 @@ func TestQueryAllChain(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	res, err := committer.AllChains(&bind.CallOpts{
 		From: common.HexToAddress(creatorAddress),
 	})
@@ -91,7 +91,7 @@ func TestAddCommitter(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	require.NoError(t, err)
 	privateKey, _ := crypto.HexToECDSA(creatorPrivateKey)
 
@@ -110,7 +110,7 @@ func TestQueryAllCommitter(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	res, err := committer.AllProposers(&bind.CallOpts{
 		From: common.HexToAddress(creatorAddress),
 	})
@@ -124,7 +124,7 @@ func TestRemoveCommitter(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	require.NoError(t, err)
 	privateKey, _ := crypto.HexToECDSA(creatorPrivateKey)
 
@@ -142,7 +142,7 @@ func TestQueryLastProposalID(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	require.NoError(t, err)
 	proposal, err := committer.GetLastProposal(&bind.CallOpts{
 		From: common.HexToAddress(creatorAddress),
@@ -156,7 +156,7 @@ func TestQueryProposalByID(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	require.NoError(t, err)
 	proposal, err := committer.Proposal(&bind.CallOpts{
 		From: common.HexToAddress(creatorAddress),
@@ -170,7 +170,7 @@ func TestSubmitProof(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	require.NoError(t, err)
 	privateKey, _ := crypto.HexToECDSA(creatorPrivateKey)
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(chainID))
@@ -188,7 +188,7 @@ func TestBitcoinTxHash(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	require.NoError(t, err)
 	privateKey, _ := crypto.HexToECDSA(creatorPrivateKey)
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(chainID))
@@ -206,7 +206,7 @@ func TestAr(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	require.NoError(t, err)
 	privateKey, _ := crypto.HexToECDSA(creatorPrivateKey)
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(chainID))
@@ -224,7 +224,7 @@ func TestIsProposalTimeout(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	require.NoError(t, err)
 	res, err := committer.IsProposalTimeout(&bind.CallOpts{
 		From: common.HexToAddress(creatorAddress),
@@ -237,7 +237,7 @@ func TestTimeoutProposal(t *testing.T) {
 	require.NoError(t, err)
 	defer conn.Close()
 
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	require.NoError(t, err)
 	privateKey, _ := crypto.HexToECDSA(creatorPrivateKey)
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(chainID))

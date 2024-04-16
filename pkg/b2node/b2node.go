@@ -4,7 +4,7 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	"github.com/b2network/b2committer/internal/schema"
-	"github.com/b2network/b2committer/pkg/contract"
+	"github.com/b2network/b2committer/pkg/contract/zk"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -15,13 +15,12 @@ import (
 )
 
 type NodeClient struct {
-	PrivateKey      *ecdsa.PrivateKey
-	ContractAddress string
-	Address         string
-	ChainID         int64
-	Conn            *ethclient.Client
-	Committer       *contract.Committer
-	Auth            *bind.TransactOpts
+	PrivateKey *ecdsa.PrivateKey
+	Address    string
+	ChainID    int64
+	Conn       *ethclient.Client
+	Committer  *zk.Committer
+	Auth       *bind.TransactOpts
 }
 
 func NewNodeClient(privateKeyStr string, chainID int64, address string, contractAddress string, conn *ethclient.Client) *NodeClient {
@@ -30,7 +29,7 @@ func NewNodeClient(privateKeyStr string, chainID int64, address string, contract
 		panic(err)
 	}
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(chainID))
-	committer, err := contract.NewCommitter(common.HexToAddress(contractAddress), conn)
+	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
 	return &NodeClient{
 		PrivateKey: privateKey,
 		Address:    address,
@@ -71,7 +70,7 @@ func (n NodeClient) RemoveProposers(address common.Address) (*types.Transaction,
 	return tx, nil
 }
 
-func (n NodeClient) QueryLastProposal() (*contract.CommitterProposal, error) {
+func (n NodeClient) QueryLastProposal() (*zk.CommitterProposal, error) {
 	proposal, err := n.Committer.GetLastProposal(&bind.CallOpts{
 		From: common.HexToAddress(n.Address),
 	}, uint64(n.ChainID))
@@ -81,7 +80,7 @@ func (n NodeClient) QueryLastProposal() (*contract.CommitterProposal, error) {
 	return &proposal, nil
 }
 
-func (n NodeClient) QueryProposalByID(id uint64) (*contract.CommitterProposal, error) {
+func (n NodeClient) QueryProposalByID(id uint64) (*zk.CommitterProposal, error) {
 	proposal, err := n.Committer.Proposal(&bind.CallOpts{
 		From: common.HexToAddress(n.Address),
 	}, uint64(n.ChainID), id)

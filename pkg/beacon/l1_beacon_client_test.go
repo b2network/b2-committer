@@ -2,15 +2,19 @@ package beacon
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"github.com/b2network/b2committer/pkg/client"
 	"github.com/b2network/b2committer/pkg/log"
+	"github.com/b2network/b2committer/pkg/merkle"
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 	"github.com/ethereum-optimism/optimism/op-service/sources"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/stretchr/testify/require"
+	mt "github.com/txaty/go-merkletree"
 	"math/big"
 	"testing"
 )
@@ -113,6 +117,18 @@ func TestGetBlobByBlockNum(t *testing.T) {
 	fmt.Println(blockBlobInfo[0].Hash.Index)
 	fmt.Println(blockBlobInfo[0].Hash.Hash)
 	fmt.Println(blockBlobInfo[0].BlobSidecar.KZGCommitment)
+	//fmt.Println(blockBlobInfo[0].BlobSidecar.Blob.String())
+
+	hash := sha256.Sum256([]byte(blockBlobInfo[0].BlobSidecar.Blob.String()))
+	fmt.Println(hex.EncodeToString(hash[:]))
+
+	newStateRoots := make([]string, 0)
+	newStateRoots = append(newStateRoots, hex.EncodeToString(hash[:]))
+	newStateRoots = append(newStateRoots, hex.EncodeToString(hash[:]))
+	stateBlocks := merkle.GenerateBlocks(newStateRoots)
+	stateTree, _ := mt.New(nil, stateBlocks)
+	stateRootHash := stateTree.Root
+	println("stateRootHash: ", hex.EncodeToString(stateRootHash))
 }
 
 func TestGetBlobByBlockNumMainNet(t *testing.T) {

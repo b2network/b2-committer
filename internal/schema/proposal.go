@@ -1,13 +1,5 @@
 package schema
 
-const (
-	ProposalVotingStatus  = 0
-	ProposalPendingStatus = 1
-	ProposalCommitting    = 2
-	ProposalSucceedStatus = 3
-	ProposalTimeoutStatus = 4
-)
-
 type Proposal struct {
 	Base
 	ProposalID          uint64 `json:"proposal_id"`
