@@ -21,7 +21,7 @@ func GetBlobsAndCommitProposal(ctx *svc.ServiceContext) {
 	// check address
 	res, err := ctx.OpCommitterClient.Proposer.IsProposer(&bind.CallOpts{}, common.HexToAddress(ctx.B2NodeConfig.Address))
 	if err != nil || !res {
-		panic(ctx.B2NodeConfig.Address + " has no right to processing, please contact admin")
+		panic(err)
 	}
 	for {
 		lastProposal, err := ctx.OpCommitterClient.ProposalManager.GetLastTxsRootProposal(&bind.CallOpts{})
