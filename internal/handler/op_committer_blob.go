@@ -33,7 +33,6 @@ func GetBlobsAndCommitProposal(ctx *svc.ServiceContext) {
 		latestProposalID := lastProposal.ProposalID
 		if lastProposal.Status == schema.ProposalSucceedStatus || lastProposal.ProposalID == 0 {
 			log.Infof("this proposal has been successful or just beginning : %d", latestProposalID)
-			latestProposalID = latestProposalID + 1
 			// submit new proposal
 			newTxsRootProposal, err := constructNewProposal(ctx, lastProposal)
 			if err != nil {
@@ -46,9 +45,10 @@ func GetBlobsAndCommitProposal(ctx *svc.ServiceContext) {
 			if err != nil {
 				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to submit new proposal: %s", err.Error())
 			}
+			continue
 		}
 
-		if lastProposal.Status == schema.ProposalVotingStatus {
+		if lastProposal.Status == schema.ProposalVotingStatus || lastProposal.Status == schema.ProposalTimeoutStatus {
 			voteAddress := ctx.B2NodeConfig.Address
 			// check address voted or not
 			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnTxsRootProposalPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(ctx.B2NodeConfig.Address))
@@ -61,29 +61,38 @@ func GetBlobsAndCommitProposal(ctx *svc.ServiceContext) {
 				log.Infof("[Handler.GetBlobsAndCommitProposal] address already voted: %s", voteAddress)
 				continue
 			}
-			// vote proposal return
-			_, err = verifyAndVotingProposal(ctx, lastProposal)
-			if err != nil {
-				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to find address voted or not: %s", err)
-			}
-		}
 
-		if lastProposal.Status == schema.ProposalTimeoutStatus {
-			proposal, err := resubmitTimeoutProposal(ctx, lastProposal)
+			tsp, err := constructTxsRootProposal(ctx, lastProposal.ProposalID, lastProposal.StartTimestamp, lastProposal.EndTimestamp)
 			if err != nil {
-				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to construct new proposal: %s", err.Error())
+				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to construct new proposal to vote: %s", err.Error())
 				time.Sleep(3 * time.Second)
 				continue
 			}
 
-			_, err = ctx.OpCommitterClient.SubmitTxsRoot(proposal)
+			_, err = ctx.OpCommitterClient.SubmitTxsRoot(tsp)
 			if err != nil {
-				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to submit new proposal: %s", err.Error())
+				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to submit new proposal to vote: %s", err.Error())
 			}
+			continue
 		}
+
 		time.Sleep(30 * time.Second)
 	}
+}
 
+func constructTxsRootProposal(ctx *svc.ServiceContext, proposalID uint64, startTimestamp uint64, endTimestamp uint64) (*types.TxsRootProposal, error) {
+	var blob schema.BlobInfo
+	err := ctx.DB.Where("block_time > ?", endTimestamp).Order("block_number").First(&blob).Error
+	if err != nil {
+		return nil, fmt.Errorf("sync blob blocks is not completed: %s", errors.WithStack(err))
+	}
+	var blobs []schema.BlobInfo
+	err = ctx.DB.Where("block_time between ? and ?", startTimestamp, endTimestamp).Order("block_number").Find(&blobs).Error
+	if err != nil {
+		return nil, fmt.Errorf("collecting the blob blocks of proposal is failed. err : %s", errors.WithStack(err))
+	}
+	blobMerkleRoot, err := GetBlobsMerkleRoot(blobs)
+	return types.NewTxsRootProposal(proposalID, blobMerkleRoot, blobs), nil
 }
 
 func constructNewProposal(ctx *svc.ServiceContext, lastProposal op.OpProposalTxsRootProposal) (*types.TxsRootProposal, error) {
@@ -102,62 +111,11 @@ func constructNewProposal(ctx *svc.ServiceContext, lastProposal op.OpProposalTxs
 		latestStartTimestamp = lastProposal.EndTimestamp + 1 // plus 1 to exclude the last proposal end blob block
 		latestEndTimestamp = lastProposal.EndTimestamp + ctx.Config.BlobIntervalTime
 	}
-
-	err := ctx.DB.Where("block_time > ?", latestEndTimestamp).Order("block_number").First(&blob).Error
+	tsp, err := constructTxsRootProposal(ctx, lastProposal.ProposalID+1, latestStartTimestamp, latestEndTimestamp)
 	if err != nil {
-		return nil, fmt.Errorf("sync blob blocks is not completed: %s", errors.WithStack(err))
+		return nil, fmt.Errorf("construct txs root proposal failed, err: %s", errors.WithStack(err))
 	}
-	var blobs []schema.BlobInfo
-	err = ctx.DB.Where("block_time between ? and ?", latestStartTimestamp, latestEndTimestamp).Order("block_number").Find(&blobs).Error
-	if err != nil {
-		return nil, fmt.Errorf("collecting the blob blocks of proposal is failed. err : %s", errors.WithStack(err))
-	}
-	blobMerkleRoot, err := GetBlobsMerkleRoot(blobs)
-	return types.NewTxsRootProposal(lastProposal.ProposalID+1, blobMerkleRoot, blobs), nil
-}
-
-func verifyAndVotingProposal(ctx *svc.ServiceContext, lastProposal op.OpProposalTxsRootProposal) (bool, error) {
-	var blob schema.BlobInfo
-	err := ctx.DB.Where("block_time >= ?", lastProposal.EndTimestamp).Order("block_number").First(&blob).Error
-	if err != nil {
-		return false, fmt.Errorf("[verifyAndVotingProposal]sync blob blocks is not completed: %s", errors.WithStack(err))
-	}
-	var blobs []schema.BlobInfo
-	err = ctx.DB.Where("block_time between ? and ?", lastProposal.StartTimestamp, lastProposal.EndTimestamp).Order("block_number").Find(&blobs).Error
-	if err != nil {
-		return false, fmt.Errorf("[verifyAndVotingProposal]collecting the blob blocks of proposal is failed. err : %s", errors.WithStack(err))
-	}
-	blobMerkleRoot, err := GetBlobsMerkleRoot(blobs)
-	if blobMerkleRoot != lastProposal.TxsRoot {
-		return false, fmt.Errorf("[verifyAndVotingProposal]blobMerkleRoot verify failed")
-	}
-	voteProposal := &types.TxsRootProposal{
-		ProposalID:       lastProposal.ProposalID,
-		StartBlockNumber: lastProposal.StartBlockNumber,
-		EndBlockNumber:   lastProposal.EndBlockNumber,
-		StartTimestamp:   lastProposal.StartTimestamp,
-		EndTimestamp:     lastProposal.EndTimestamp,
-		TxsRoot:          blobMerkleRoot,
-		BlockList:        lastProposal.BlockList,
-	}
-
-	_, err = ctx.OpCommitterClient.SubmitTxsRoot(voteProposal)
-	if err != nil {
-		return false, fmt.Errorf("[verifyAndVotingProposal]vote proposal error: %s", err.Error())
-	}
-	return true, nil
-}
-
-func resubmitTimeoutProposal(ctx *svc.ServiceContext, lastProposal op.OpProposalTxsRootProposal) (*types.TxsRootProposal, error) {
-	beforeLastProposal, err := ctx.OpCommitterClient.ProposalManager.GetTxsRootProposal(&bind.CallOpts{}, lastProposal.ProposalID-1)
-	if err != nil {
-		return nil, fmt.Errorf("[resubmitTimeoutProposal] Try to get last proposal from contract: %s", err.Error())
-	}
-	proposal, err := constructNewProposal(ctx, beforeLastProposal)
-	if err != nil {
-		return nil, fmt.Errorf("[resubmitTimeoutProposal] construct new proposal err: %s", err.Error())
-	}
-	return proposal, nil
+	return tsp, nil
 }
 
 func GetBlobsMerkleRoot(blobs []schema.BlobInfo) (string, error) {
