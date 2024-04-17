@@ -30,6 +30,7 @@ type Config struct {
 	LimitNum                    int    `evn:"PROPOSAL_BATCHES_LIMITNUM" envDefault:"10"`
 	InitProposalID              uint64 `evn:"INIT_PROPOSAL_ID" envDefault:"1"`
 	BatchPath                   string `env:"BATCH_PATH" envDefault:"batchFile"`
+	DSType                      string `env:"DSTYPE" envDefault:"arweave"`
 	ArweaveWallet               string `env:"B2NODE_ARWEAVE_WALLET" envDefault:"./wallet/account.json"`
 	ArweaveRPC                  string `env:"B2NODE_ARWEAVE_RPC" envDefault:"https://arweave.net"`
 }

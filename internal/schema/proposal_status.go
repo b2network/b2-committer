@@ -6,4 +6,8 @@ const (
 	ProposalCommitting    = 2 // 2 Proposer can submit bitcoin tx for the proposal
 	ProposalSucceedStatus = 3 // 3 Proposal is success
 	ProposalTimeoutStatus = 4 // 4 Proposal is timed out
+
+	ProposalTypeStateRoot = 0
+	ProposalTypeTxsRoot   = 1
+	DsTypeArWeave         = 0
 )

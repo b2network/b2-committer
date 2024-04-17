@@ -60,3 +60,14 @@ func (client *OpCommitterClient) SubmitTxsRoot(proposal *types.TxsRootProposal) 
 	}
 	return tx, nil
 }
+
+func (client *OpCommitterClient) DsHash(proposalID uint64, proposalType uint64, dsType uint64, txsHash string) (*ethTypes.Transaction, error) {
+	tx, err := client.Committer.DsTxHash(&bind.TransactOpts{
+		From:   client.Auth.From,
+		Signer: client.Auth.Signer,
+	}, proposalID, proposalType, dsType, txsHash)
+	if err != nil {
+		return nil, err
+	}
+	return tx, nil
+}

@@ -6,11 +6,13 @@ import (
 	"github.com/b2network/b2committer/pkg/beacon"
 	"github.com/b2network/b2committer/pkg/client"
 	"github.com/b2network/b2committer/pkg/contract/op"
+	"github.com/b2network/b2committer/pkg/ds"
 	"github.com/b2network/b2committer/pkg/log"
 	"github.com/ethereum-optimism/optimism/op-service/sources"
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/everFinance/goar"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -35,6 +37,7 @@ type ServiceContext struct {
 	SyncedBlobBlockNumber int64
 	SyncedBlobBlockHash   common.Hash
 	OpCommitterClient     *b2node.OpCommitterClient
+	DecentralizedStore    ds.DecentralizedStore
 }
 
 func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2nodeConfig *types.B2NODEConfig) *ServiceContext {
@@ -100,6 +103,21 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 		NodeClient:        nodeClient,
 		BlobDataSource:    bds,
 		OpCommitterClient: opCommitterClient,
+	}
+
+	dsType := cfg.DSType
+	if dsType == "" {
+		panic("Invalid dsType")
+	}
+	if dsType == "arweave" {
+		if cfg.ArweaveRPC == "" {
+			panic("Invalid arweave rpc")
+		}
+		if cfg.ArweaveWallet == "" {
+			panic("Invalid arweaveWallet path")
+		}
+		arClient := goar.NewClient(cfg.ArweaveRPC)
+		svc.DecentralizedStore = ds.NewArWeave(cfg.ArweaveWallet, cfg.ArweaveRPC, arClient)
 	}
 	return svc
 }

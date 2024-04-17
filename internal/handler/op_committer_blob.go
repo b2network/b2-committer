@@ -3,6 +3,7 @@ package handler
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"github.com/b2network/b2committer/internal/schema"
 	"github.com/b2network/b2committer/internal/svc"
@@ -31,10 +32,11 @@ func GetBlobsAndCommitProposal(ctx *svc.ServiceContext) {
 			continue
 		}
 		latestProposalID := lastProposal.ProposalID
+		voteAddress := ctx.B2NodeConfig.Address
 		if lastProposal.Status == schema.ProposalSucceedStatus || lastProposal.ProposalID == 0 {
 			log.Infof("this proposal has been successful or just beginning : %d", latestProposalID)
 			// submit new proposal
-			newTxsRootProposal, err := constructNewProposal(ctx, lastProposal)
+			newTxsRootProposal, err := constructNextProposal(ctx, lastProposal)
 			if err != nil {
 				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to construct new proposal: %s", err.Error())
 				time.Sleep(3 * time.Second)
@@ -49,26 +51,39 @@ func GetBlobsAndCommitProposal(ctx *svc.ServiceContext) {
 		}
 
 		if lastProposal.Status == schema.ProposalVotingStatus || lastProposal.Status == schema.ProposalTimeoutStatus {
-			voteAddress := ctx.B2NodeConfig.Address
 			// check address voted or not
-			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnTxsRootProposalPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(ctx.B2NodeConfig.Address))
+			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnTxsRootProposalPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
 			if err != nil {
 				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to find address voted or not: %s", err)
 				time.Sleep(3 * time.Second)
 				continue
 			}
 			if phase {
-				log.Infof("[Handler.GetBlobsAndCommitProposal] address already voted: %s", voteAddress)
+				log.Infof("[Handler.GetBlobsAndCommitProposal] address already voted in voting status: %s", voteAddress)
 				continue
 			}
+			var voteProposalStartTimestamp uint64
+			var voteProposalEndTimestamp uint64
+			if lastProposal.ProposalID == 1 {
+				voteProposalStartTimestamp = lastProposal.StartTimestamp
+				voteProposalEndTimestamp = voteProposalStartTimestamp + ctx.Config.BlobIntervalTime
+			} else {
+				beforeLastProposal, err := ctx.OpCommitterClient.ProposalManager.GetTxsRootProposal(&bind.CallOpts{}, lastProposal.ProposalID-1)
+				if err != nil {
+					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to get before last proposal: %s", err.Error())
+					time.Sleep(3 * time.Second)
+					continue
+				}
+				voteProposalStartTimestamp = beforeLastProposal.EndTimestamp + 1
+				voteProposalEndTimestamp = voteProposalStartTimestamp + ctx.Config.BlobIntervalTime
+			}
 
-			tsp, err := constructTxsRootProposal(ctx, lastProposal.ProposalID, lastProposal.StartTimestamp, lastProposal.EndTimestamp)
+			tsp, err := constructTxsRootProposal(ctx, lastProposal.ProposalID, voteProposalStartTimestamp, voteProposalEndTimestamp)
 			if err != nil {
 				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to construct new proposal to vote: %s", err.Error())
 				time.Sleep(3 * time.Second)
 				continue
 			}
-
 			_, err = ctx.OpCommitterClient.SubmitTxsRoot(tsp)
 			if err != nil {
 				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to submit new proposal to vote: %s", err.Error())
@@ -76,8 +91,88 @@ func GetBlobsAndCommitProposal(ctx *svc.ServiceContext) {
 			continue
 		}
 
+		if lastProposal.Status == schema.ProposalPendingStatus {
+
+			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOntxsRootDSTxPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
+			if err != nil {
+				log.Errorf("[Handler.GetBlobsAndCommitProposal][IsVotedOntxsRootDSTxPhase] is failed : %s", err)
+				time.Sleep(3 * time.Second)
+				continue
+			}
+			if phase {
+				log.Infof("[Handler.GetBlobsAndCommitProposal] address already voted in pending status: %s", voteAddress)
+				continue
+			}
+			if lastProposal.Winner == common.HexToAddress(ctx.B2NodeConfig.Address) {
+				blobs, err := GetBlobsByBlockListFromDB(ctx, lastProposal.BlockList)
+				if err != nil {
+					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to get blobs from db: %s", err.Error())
+					time.Sleep(3 * time.Second)
+					continue
+				}
+				blobMerkleRoot, err := GetBlobsMerkleRoot(blobs)
+				dsProposal := types.NewDsProposal(ctx.B2NodeConfig.ChainID, lastProposal.ProposalID, blobMerkleRoot, blobs)
+				dsJson, err := dsProposal.MarshalJson()
+				if err != nil {
+					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to marshal ds proposal: %s", err.Error())
+					time.Sleep(3 * time.Second)
+					continue
+				}
+				dsTxID, err := ctx.DecentralizedStore.StoreTxsOnChain(dsJson, ctx.B2NodeConfig.ChainID, lastProposal.ProposalID)
+				if err != nil {
+					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to store ds proposal: %s", err.Error())
+				}
+				_, err = ctx.OpCommitterClient.DsHash(lastProposal.ProposalID, schema.ProposalTypeTxsRoot, schema.DsTypeArWeave, dsTxID)
+				if err != nil {
+					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to send ds proposal: %s", err.Error())
+					continue
+				}
+			}
+			if lastProposal.Winner != common.HexToAddress(ctx.B2NodeConfig.Address) {
+				blobs, err := ctx.DecentralizedStore.QueryTxsByTxID(lastProposal.DsTxHash)
+				if err != nil {
+					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to get blobs from ds: %s", err.Error())
+					time.Sleep(3 * time.Second)
+					continue
+				}
+				var dsProposal types.DsProposal
+				err = json.Unmarshal(blobs, &dsProposal)
+				if err != nil {
+					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to unmarshal ds proposal: %s", err.Error())
+					continue
+				}
+				dbBlobs, err := dsProposal.GetDBBlobInfos()
+				if err != nil {
+					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to get blobs from ds: %s", err.Error())
+					continue
+				}
+				verifyTxsRootHash, err := GetBlobsMerkleRoot(dbBlobs)
+
+				if verifyTxsRootHash != lastProposal.TxsRoot {
+					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to verify blobs from ds: %s", err.Error())
+					continue
+				}
+				_, err = ctx.OpCommitterClient.DsHash(lastProposal.ProposalID, schema.ProposalTypeTxsRoot, schema.DsTypeArWeave, lastProposal.DsTxHash)
+				if err != nil {
+					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to send ds proposal: %s", err.Error())
+					continue
+				}
+			}
+		}
 		time.Sleep(30 * time.Second)
 	}
+}
+
+func GetBlobsByBlockListFromDB(ctx *svc.ServiceContext, blockList []uint64) ([]schema.BlobInfo, error) {
+	where := map[string]interface{}{}
+	where["block_number"] = blockList
+
+	var blobs []schema.BlobInfo
+	err := ctx.DB.Where(where).Find(&blobs).Error
+	if err != nil {
+		return nil, fmt.Errorf("[GetBlobsByBlockListFromDB] Try to get blobs from db: %s", err.Error())
+	}
+	return blobs, nil
 }
 
 func constructTxsRootProposal(ctx *svc.ServiceContext, proposalID uint64, startTimestamp uint64, endTimestamp uint64) (*types.TxsRootProposal, error) {
@@ -92,10 +187,13 @@ func constructTxsRootProposal(ctx *svc.ServiceContext, proposalID uint64, startT
 		return nil, fmt.Errorf("collecting the blob blocks of proposal is failed. err : %s", errors.WithStack(err))
 	}
 	blobMerkleRoot, err := GetBlobsMerkleRoot(blobs)
+	if err != nil {
+		return nil, fmt.Errorf("getting the blob merkle root is failed. err : %s", errors.WithStack(err))
+	}
 	return types.NewTxsRootProposal(proposalID, blobMerkleRoot, blobs), nil
 }
 
-func constructNewProposal(ctx *svc.ServiceContext, lastProposal op.OpProposalTxsRootProposal) (*types.TxsRootProposal, error) {
+func constructNextProposal(ctx *svc.ServiceContext, lastProposal op.OpProposalTxsRootProposal) (*types.TxsRootProposal, error) {
 	var blob schema.BlobInfo
 	var latestEndTimestamp uint64
 	var latestStartTimestamp uint64
@@ -105,8 +203,8 @@ func constructNewProposal(ctx *svc.ServiceContext, lastProposal op.OpProposalTxs
 		if err != nil {
 			return nil, fmt.Errorf("find original blob block error: %s", errors.WithStack(err))
 		}
-		latestEndTimestamp = blob.BlockTime + ctx.Config.BlobIntervalTime
 		latestStartTimestamp = blob.BlockTime
+		latestEndTimestamp = blob.BlockTime + ctx.Config.BlobIntervalTime
 	} else {
 		latestStartTimestamp = lastProposal.EndTimestamp + 1 // plus 1 to exclude the last proposal end blob block
 		latestEndTimestamp = lastProposal.EndTimestamp + ctx.Config.BlobIntervalTime
