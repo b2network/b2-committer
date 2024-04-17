@@ -15,7 +15,6 @@ import (
 
 func QueryBlobOnChainAndStoreInLocal(ctx *svc.ServiceContext) {
 	time.Sleep(10 * time.Second)
-	blobNum := ctx.Config.InitBlobBlockNumber
 	var dbBlob schema.BlobInfo
 	var count int64
 	err := ctx.DB.Order("block_number desc").First(&dbBlob).Error
@@ -39,10 +38,10 @@ func QueryBlobOnChainAndStoreInLocal(ctx *svc.ServiceContext) {
 		syncingBlobBlockNumber := ctx.SyncedBlobBlockNumber + 1
 		log.Infof("[Handler.QueryBlobOnChainAndStoreInLocal] Try to sync block number: %d\n", syncingBlobBlockNumber)
 
-		if syncingBlobBlockNumber > ctx.LatestBlockNumber {
-			time.Sleep(3 * time.Second)
-			continue
-		}
+		//if syncingBlobBlockNumber > ctx.LatestBlockNumber {
+		//	time.Sleep(3 * time.Second)
+		//	continue
+		//}
 
 		blockOnChain, err := ctx.RPC.BlockByNumber(context.Background(), big.NewInt(syncingBlobBlockNumber))
 		if err != nil {
@@ -57,8 +56,8 @@ func QueryBlobOnChainAndStoreInLocal(ctx *svc.ServiceContext) {
 
 		blobInfos, err1 := ctx.BlobDataSource.GetBlobByBlockNum(context.Background(), blockOnChain.Number())
 		if errors.Is(err1, errcode.ErrNoBlobFoundInBlock) {
-			log.Errorf("[Handler.QueryBlobOnChainAndStoreInLocal]", err1.Error())
-			ctx.SyncedBlobBlockNumber = syncingBlobBlockNumber
+			log.Errorf("[Handler.QueryBlobOnChainAndStoreInLocal] %s", blockOnChain.Number(), err1.Error())
+			ctx.SyncedBlobBlockNumber = blockOnChain.Number().Int64()
 			ctx.SyncedBlobBlockHash = blockOnChain.Hash()
 			continue
 		}
@@ -82,11 +81,11 @@ func QueryBlobOnChainAndStoreInLocal(ctx *svc.ServiceContext) {
 					time.Sleep(3 * time.Second)
 					continue
 				}
-				ctx.SyncedBlobBlockNumber = syncingBlobBlockNumber
-				ctx.SyncedBlobBlockHash = common.HexToHash(dbBlob.BlockHashHex)
+				ctx.SyncedBlobBlockNumber = blockOnChain.Number().Int64()
+				ctx.SyncedBlobBlockHash = blockOnChain.Hash()
 				continue
 			} else {
-				err := ctx.DB.Delete(&dbBlob, "block_number=?", blobNum).Error
+				err := ctx.DB.Delete(&dbBlob, "block_number=?", syncingBlobBlockNumber).Error
 				if err != nil {
 					log.Errorf("[Handler.QueryBlobOnChainAndStoreInLocal] DB Delete error: %s", err.Error())
 					time.Sleep(3 * time.Second)
@@ -96,7 +95,7 @@ func QueryBlobOnChainAndStoreInLocal(ctx *svc.ServiceContext) {
 		}
 
 		for _, bif := range blobInfos {
-			err := ctx.DB.Create(&schema.BlobInfo{
+			blob := &schema.BlobInfo{
 				BlockNumber:           blockOnChain.Number().Int64(),
 				BlockHashHex:          blockOnChain.Hash().String(),
 				BlockTime:             blockOnChain.Time(),
@@ -105,12 +104,16 @@ func QueryBlobOnChainAndStoreInLocal(ctx *svc.ServiceContext) {
 				BlobSideCarIndex:      uint64(bif.BlobSidecar.Index),
 				BlobSideCarCommitment: bif.BlobSidecar.KZGCommitment.String(),
 				Blob:                  bif.BlobSidecar.Blob.String(),
-			}).Error
+			}
+
+			err := ctx.DB.Save(blob).Error
 			if err != nil {
 				log.Errorf("[Handler.SyncBlock] DB Create SyncBlock error: %s\n", errors.WithStack(err))
 				time.Sleep(1 * time.Second)
 				continue
 			}
 		}
+		ctx.SyncedBlobBlockNumber = blockOnChain.Number().Int64()
+		ctx.SyncedBlobBlockHash = blockOnChain.Hash()
 	}
 }

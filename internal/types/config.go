@@ -14,7 +14,7 @@ type Config struct {
 	MySQLMaxIdleConns           int    `env:"MYSQL_MAX_IDLE_CONNS" envDefault:"10"`
 	MySQLMaxOpenConns           int    `env:"MYSQL_MAX_OPEN_CONNS" envDefault:"20"`
 	MySQLConnMaxLifetime        int    `env:"MYSQL_CONN_MAX_LIFETIME" envDefault:"3600"`
-	RPCUrl                      string `env:"RPC_URL" envDefault:"https://1rpc.io/sepolia"`
+	RPCUrl                      string `env:"RPC_URL" envDefault:"https://quaint-white-season.ethereum-sepolia.quiknode.pro/b5c30cbb548d8743f08dd175fe50e3e923259d30"`
 	BeaconChainRPCUrl           string `env:"BEACON_CHAIN_RPC_URL" envDefault:"https://quaint-white-season.ethereum-sepolia.quiknode.pro/b5c30cbb548d8743f08dd175fe50e3e923259d30"`
 	Blockchain                  string `env:"BLOCKCHAIN" envDefault:"b2-node"`
 	InitBlockNumber             int64  `env:"INIT_BLOCK_NUMBER" envDefault:"4102885"`
@@ -37,7 +37,7 @@ type Config struct {
 
 type B2NODEConfig struct {
 	ChainID                  int64  `env:"B2NODE_CHAIN_ID" envDefault:"11155111"`
-	RPCUrl                   string `env:"B2NODE_RPC_URL" envDefault:"https://1rpc.io/sepolia"`
+	RPCUrl                   string `env:"B2NODE_RPC_URL" envDefault:"https://quaint-white-season.ethereum-sepolia.quiknode.pro/b5c30cbb548d8743f08dd175fe50e3e923259d30"`
 	CommitterAddress         string `env:"B2NODE_COMMITTER_ADDRESS" envDefault:"0x85D40bDc724bcabF6D17d8343a74e0d916dfD40D"`
 	OpCommitterAddress       string `env:"B2NODE_OP_COMMITTER_ADDRESS" envDefault:"0x0484fE0888684b39B2cce0a1644e44dDFCAA0054"`
 	OpProposersAddress       string `env:"B2NODE_OP_PROPOSERS_ADDRESS" envDefault:"0x6bA5d52CA1B931E89611995F53dde2E1f914b0a7"`
