@@ -117,7 +117,14 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 			panic("Invalid arweaveWallet path")
 		}
 		arClient := goar.NewClient(cfg.ArweaveRPC)
-		svc.DecentralizedStore = ds.NewArWeave(cfg.ArweaveWallet, cfg.ArweaveRPC, arClient)
+		wallet := cfg.ArweaveWallet
+		arNode := cfg.ArweaveRPC
+		w, err := goar.NewWalletFromPath(wallet, arNode)
+		if err != nil {
+			log.Panicf("[svc] init arweave wallet panic: %s\n", err)
+		}
+
+		svc.DecentralizedStore = ds.NewArWeave(w, arClient)
 	}
 	return svc
 }

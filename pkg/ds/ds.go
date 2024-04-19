@@ -12,16 +12,14 @@ type DecentralizedStore interface {
 	QueryTxsByTxID(txID string) ([]byte, error)
 }
 type ArWeave struct {
-	URL        string //rpc url
-	WalletPath string
-	Client     *goar.Client
+	Client *goar.Client
+	Wallet *goar.Wallet
 }
 
-func NewArWeave(url, walletPath string, client *goar.Client) *ArWeave {
+func NewArWeave(wallet *goar.Wallet, client *goar.Client) *ArWeave {
 	return &ArWeave{
-		URL:        url,
-		WalletPath: walletPath,
-		Client:     client,
+		Wallet: wallet,
+		Client: client,
 	}
 }
 
@@ -32,11 +30,7 @@ func (ar *ArWeave) StoreTxsOnChain(txs []byte, chainID int64, proposalID uint64)
 		{Name: "chainID", Value: strconv.FormatInt(chainID, 10)},
 		{Name: "ProposalID", Value: strconv.FormatUint(proposalID, 10)},
 	}
-	w, err := goar.NewWalletFromPath(ar.WalletPath, ar.URL)
-	if err != nil {
-		return "", err
-	}
-	arTx, err := w.SendData(txs, tags)
+	arTx, err := ar.Wallet.SendData(txs, tags)
 	if err != nil {
 		return "", err
 	}

@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-func GetBlobsAndCommitProposal(ctx *svc.ServiceContext) {
+func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 	// check address
 	res, err := ctx.OpCommitterClient.Proposer.IsProposer(&bind.CallOpts{}, common.HexToAddress(ctx.B2NodeConfig.Address))
 	if err != nil || !res {
@@ -46,7 +46,11 @@ func GetBlobsAndCommitProposal(ctx *svc.ServiceContext) {
 			_, err = ctx.OpCommitterClient.SubmitTxsRoot(newTxsRootProposal)
 			if err != nil {
 				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to submit new proposal: %s", err.Error())
+				time.Sleep(3 * time.Second)
+				continue
 			}
+			log.Infof("[Handler.GetBlobsAndCommitProposal] submit new txs proposal: %s", newTxsRootProposal.ProposalID)
+			time.Sleep(10 * time.Second)
 			continue
 		}
 
@@ -87,7 +91,10 @@ func GetBlobsAndCommitProposal(ctx *svc.ServiceContext) {
 			_, err = ctx.OpCommitterClient.SubmitTxsRoot(tsp)
 			if err != nil {
 				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to submit new proposal to vote: %s", err.Error())
+				time.Sleep(3 * time.Second)
+				continue
 			}
+			log.Infof("[Handler.GetBlobsAndCommitProposal] vote txs proposal %s, %s ", tsp.ProposalID, voteAddress)
 			continue
 		}
 
@@ -121,12 +128,14 @@ func GetBlobsAndCommitProposal(ctx *svc.ServiceContext) {
 				dsTxID, err := ctx.DecentralizedStore.StoreTxsOnChain(dsJson, ctx.B2NodeConfig.ChainID, lastProposal.ProposalID)
 				if err != nil {
 					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to store ds proposal: %s", err.Error())
+					continue
 				}
 				_, err = ctx.OpCommitterClient.DsHash(lastProposal.ProposalID, schema.ProposalTypeTxsRoot, schema.DsTypeArWeave, dsTxID)
 				if err != nil {
 					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to send ds proposal: %s", err.Error())
 					continue
 				}
+				log.Infof("[Handler.GetBlobsAndCommitProposal] success submit txs to ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
 			}
 			if lastProposal.Winner != common.HexToAddress(ctx.B2NodeConfig.Address) {
 				blobs, err := ctx.DecentralizedStore.QueryTxsByTxID(lastProposal.DsTxHash)
@@ -157,6 +166,7 @@ func GetBlobsAndCommitProposal(ctx *svc.ServiceContext) {
 					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to send ds proposal: %s", err.Error())
 					continue
 				}
+				log.Infof("[Handler.GetBlobsAndCommitProposal] success verify and vote submit txs from ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
 			}
 		}
 		time.Sleep(30 * time.Second)

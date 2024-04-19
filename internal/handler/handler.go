@@ -7,14 +7,14 @@ import (
 func Run(ctx *svc.ServiceContext) {
 
 	// query last block number
-	//go LatestBlackNumber(ctx)
-	//// sync blocks
-	//go SyncBlock(ctx)
-	//// sync events
-	//go SyncEvent(ctx)
+	go LatestBlackNumber(ctx)
+	// sync blocks
+	go SyncBlock(ctx)
+	// sync events
+	go SyncEvent(ctx)
 	// query blob and store in local
-	go QueryBlobOnChainAndStoreInLocal(ctx)
+	//go QueryBlobOnChainAndStoreInLocal(ctx)
 	// commit and vote txs proposal
-	//go GetBlobsAndCommitProposal(ctx)
+	//go GetBlobsAndCommitTxsProposal(ctx)
 
 }
