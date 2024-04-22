@@ -7,9 +7,9 @@ import (
 )
 
 type DecentralizedStore interface {
-	StoreTxsOnChain(txs []byte, chainID int64, proposalID uint64) (string, error)
+	StoreDetailsOnChain(txs []byte, chainID int64, proposalID uint64) (string, error)
 
-	QueryTxsByTxID(txID string) ([]byte, error)
+	QueryDetailsByTxID(txID string) ([]byte, error)
 }
 type ArWeave struct {
 	Client *goar.Client
@@ -23,7 +23,7 @@ func NewArWeave(wallet *goar.Wallet, client *goar.Client) *ArWeave {
 	}
 }
 
-func (ar *ArWeave) StoreTxsOnChain(txs []byte, chainID int64, proposalID uint64) (string, error) {
+func (ar *ArWeave) StoreDetailsOnChain(txs []byte, chainID int64, proposalID uint64) (string, error) {
 	tags := []types.Tag{
 		{Name: "Content-Type", Value: "application/json"},
 		{Name: "title", Value: "b2-batch"},
@@ -37,7 +37,7 @@ func (ar *ArWeave) StoreTxsOnChain(txs []byte, chainID int64, proposalID uint64)
 	return arTx.ID, nil
 }
 
-func (ar *ArWeave) QueryTxsByTxID(txID string) ([]byte, error) {
+func (ar *ArWeave) QueryDetailsByTxID(txID string) ([]byte, error) {
 	txs, err := ar.Client.GetTransactionData(txID, "json")
 	if err != nil {
 		return nil, err

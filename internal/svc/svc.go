@@ -8,6 +8,7 @@ import (
 	"github.com/b2network/b2committer/pkg/contract/op"
 	"github.com/b2network/b2committer/pkg/ds"
 	"github.com/b2network/b2committer/pkg/log"
+	"github.com/b2network/b2committer/pkg/unisat"
 	"github.com/ethereum-optimism/optimism/op-service/sources"
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
@@ -38,6 +39,7 @@ type ServiceContext struct {
 	SyncedBlobBlockHash   common.Hash
 	OpCommitterClient     *b2node.OpCommitterClient
 	DecentralizedStore    ds.DecentralizedStore
+	UnisatHTTPClient      *unisat.UnisatHTTPClient
 }
 
 func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2nodeConfig *types.B2NODEConfig) *ServiceContext {
@@ -92,7 +94,7 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 		log.Panicf("[svc] init committer contract panic: %s\n", err)
 	}
 	opCommitterClient := b2node.NewOpCommitterClient(b2nodeConfig.PrivateKey, b2nodeConfig.ChainID, proposer, committer, proposalManager)
-
+	unisatClient := unisat.NewUnisatHTTPClient(client.NewBasicHTTPClient(cfg.UnisatURL), cfg.UnisatAuth)
 	svc = &ServiceContext{
 		BTCConfig:         bitcoinCfg,
 		DB:                storage,
@@ -103,6 +105,7 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 		NodeClient:        nodeClient,
 		BlobDataSource:    bds,
 		OpCommitterClient: opCommitterClient,
+		UnisatHTTPClient:  unisatClient,
 	}
 
 	dsType := cfg.DSType
@@ -126,5 +129,6 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 
 		svc.DecentralizedStore = ds.NewArWeave(w, arClient)
 	}
+
 	return svc
 }

@@ -5,11 +5,18 @@ import (
 	"github.com/b2network/b2committer/internal/schema"
 )
 
-type DsProposal struct {
+type DsTxsProposal struct {
 	ChainID    int64
 	ProposalID uint64
 	TxsRoot    string
 	Blobs      *[]DsBlob
+}
+
+type DsStateRootProposal struct {
+	ChainID      int64
+	ProposalID   uint64
+	OutputRoot   string
+	OutputEvents []OutputEvent
 }
 
 type DsBlob struct {
@@ -17,13 +24,26 @@ type DsBlob struct {
 	Blob    string
 }
 
-func NewDsProposal(chainID int64, proposalID uint64, txsRoot string, blobs []schema.BlobInfo) *DsProposal {
-	return &DsProposal{
+func NewDsTxsProposal(chainID int64, proposalID uint64, txsRoot string, blobs []schema.BlobInfo) *DsTxsProposal {
+	return &DsTxsProposal{
 		ChainID:    chainID,
 		ProposalID: proposalID,
 		TxsRoot:    txsRoot,
 		Blobs:      convertBlobToDsBlob(blobs),
 	}
+}
+
+func NewDsStateRootProposal(chainID int64, proposalID uint64, outputRoot string, events []schema.SyncEvent) (*DsStateRootProposal, error) {
+	outputEvents, err := ConvertEventDataToOutputEvent(events)
+	if err != nil {
+		return nil, err
+	}
+	return &DsStateRootProposal{
+		ChainID:      chainID,
+		ProposalID:   proposalID,
+		OutputRoot:   outputRoot,
+		OutputEvents: outputEvents,
+	}, nil
 }
 
 func convertBlobToDsBlob(blobs []schema.BlobInfo) *[]DsBlob {
@@ -37,7 +57,7 @@ func convertBlobToDsBlob(blobs []schema.BlobInfo) *[]DsBlob {
 	return &dsBlobs
 }
 
-func (b *DsProposal) GetDBBlobInfos() ([]schema.BlobInfo, error) {
+func (b *DsTxsProposal) GetDBBlobInfos() ([]schema.BlobInfo, error) {
 	var dbBlobs []schema.BlobInfo
 	for _, blob := range *b.Blobs {
 		dbBlobs = append(dbBlobs, schema.BlobInfo{
@@ -48,10 +68,23 @@ func (b *DsProposal) GetDBBlobInfos() ([]schema.BlobInfo, error) {
 	return dbBlobs, nil
 }
 
-func (b *DsProposal) MarshalJson() ([]byte, error) {
+func (b *DsTxsProposal) MarshalJson() ([]byte, error) {
 	marshal, err := json.Marshal(b)
 	if err != nil {
 		return nil, err
 	}
 	return marshal, nil
+}
+
+func (s *DsStateRootProposal) MarshalJson() ([]byte, error) {
+	marshal, err := json.Marshal(s)
+	if err != nil {
+		return nil, err
+	}
+	return marshal, nil
+}
+
+type BtcStateRootProposal struct {
+	Proposal *StateRootProposal
+	ChainID  int64
 }

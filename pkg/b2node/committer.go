@@ -84,6 +84,17 @@ func (client *OpCommitterClient) DsHash(proposalID uint64, proposalType uint64, 
 	return tx, nil
 }
 
+func (client *OpCommitterClient) BitcoinTxHash(proposalID uint64, btcTxHash string) (*ethTypes.Transaction, error) {
+	tx, err := client.Committer.BitcoinTxHash(&bind.TransactOpts{
+		From:   client.Auth.From,
+		Signer: client.Auth.Signer,
+	}, proposalID, btcTxHash)
+	if err != nil {
+		return nil, err
+	}
+	return tx, nil
+}
+
 func (client *OpCommitterClient) SetCommitter(committerContractAddress string) (*ethTypes.Transaction, error) {
 	tx, err := client.ProposalManager.SetCommitter(&bind.TransactOpts{
 		From:   client.Auth.From,

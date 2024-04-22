@@ -112,3 +112,30 @@ type OutputEvent struct {
 	L2blockNumber uint64 `json:"l2blockNumber"`
 	L2OutputIndex uint64 `json:"l2OutputIndex"`
 }
+
+func ConvertEventDataToOutputEvent(events []schema.SyncEvent) ([]OutputEvent, error) {
+	outputs := make([]OutputEvent, 0)
+	for _, event := range events {
+		var data OutputEvent
+		err := json.Unmarshal([]byte(event.Data), &data)
+		if err != nil {
+			return nil, err
+		}
+		outputs = append(outputs, data)
+	}
+	return outputs, nil
+}
+
+func ConvertOutputsToEventData(outputs []OutputEvent) ([]schema.SyncEvent, error) {
+	events := make([]schema.SyncEvent, 0)
+	for _, output := range outputs {
+		var event schema.SyncEvent
+		data, err := json.Marshal(output)
+		if err != nil {
+			return nil, err
+		}
+		event.Data = string(data)
+		events = append(events, event)
+	}
+	return events, nil
+}

@@ -33,8 +33,8 @@ func Inscribe(ctx *svc.ServiceContext) {
 
 		if proposal.Status == schema.ProposalPendingStatus &&
 			proposal.Winner.String() == ctx.B2NodeConfig.Address && proposal.BtcTxHash == "" {
-			rs, err := inscribe.Inscribe(ctx.BTCConfig.PrivateKey, proposal.StateRootHash,
-				proposal.ProofHash, ctx.BTCConfig.DestinationAddress, btcapi.ChainParams(ctx.BTCConfig.NetworkName))
+			rs, err := inscribe.Inscribe(ctx.BTCConfig.PrivateKey, []byte(proposal.StateRootHash+proposal.ProofHash),
+				ctx.BTCConfig.DestinationAddress, btcapi.ChainParams(ctx.BTCConfig.NetworkName))
 			if err != nil {
 				log.Errorf("[Handler.Inscribe] Inscribe err: %s\n", errors.WithStack(err).Error())
 				continue

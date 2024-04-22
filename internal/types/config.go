@@ -34,15 +34,17 @@ type Config struct {
 	DSType                      string `env:"DSTYPE" envDefault:"arweave"`
 	ArweaveWallet               string `env:"B2NODE_ARWEAVE_WALLET" envDefault:"/tmp/wallet/account.json"`
 	ArweaveRPC                  string `env:"B2NODE_ARWEAVE_RPC" envDefault:"https://arweave.net"`
+	UnisatURL                   string `env:"UNISAT_URL" envDefault:"https://open-api-testnet.unisat.io/"`
+	UnisatAuth                  string `env:"UNISAT_PRIVATE_KEY" envDefault:"4cb09e6eec9a0c3ebd07135b3817a3dcedcc9791d50fade4cb564e8ad68a7ac3"`
 }
 
 type B2NODEConfig struct {
 	ChainID                  int64  `env:"B2NODE_CHAIN_ID" envDefault:"11155111"`
 	RPCUrl                   string `env:"B2NODE_RPC_URL" envDefault:"https://quaint-white-season.ethereum-sepolia.quiknode.pro/b5c30cbb548d8743f08dd175fe50e3e923259d30"`
 	CommitterAddress         string `env:"B2NODE_COMMITTER_ADDRESS" envDefault:"0x85D40bDc724bcabF6D17d8343a74e0d916dfD40D"`
-	OpCommitterAddress       string `env:"B2NODE_OP_COMMITTER_ADDRESS" envDefault:"0x2D3F3B68eDb74a9665aC5394eC51881d54529aa5"`
-	OpProposersAddress       string `env:"B2NODE_OP_PROPOSERS_ADDRESS" envDefault:"0x8C1ceB039414204809a343C1145a26E4a927Ac0f"`
-	OpProposalManagerAddress string `env:"B2NODE_OP_PROPOSAL_MANAGER_ADDRESS" envDefault:"0x18465f258b51CfB576564791016152F583d1acD1"`
+	OpCommitterAddress       string `env:"B2NODE_OP_COMMITTER_ADDRESS" envDefault:"0x270794Fc3ca753CDE033D2AeF9D00EAf71EbC386"`
+	OpProposersAddress       string `env:"B2NODE_OP_PROPOSERS_ADDRESS" envDefault:"0xcbC418ce125d806087da0DAb15d6ad50E035a250"`
+	OpProposalManagerAddress string `env:"B2NODE_OP_PROPOSAL_MANAGER_ADDRESS" envDefault:"0x837596C1Aa783E3B06C7Efb10a51Fe6699208D1D"`
 	Address                  string `env:"B2NODE_CREATOR_ADDRESS" envDefault:"0xb634434CA448c39b05b460dEC51f458EaC1e2759"`
 	PrivateKey               string `env:"B2NODE_CREATOR_PRIVATE_KEY" envDefault:"0a81baab0ca0b65d406d68c79945054b092cbe77499ca55c57b3ecfd33f1d551"`
 }

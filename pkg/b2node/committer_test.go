@@ -16,9 +16,9 @@ const (
 	WalletPrivateKey         = "0a81baab0ca0b65d406d68c79945054b092cbe77499ca55c57b3ecfd33f1d551"
 	Sepolia_URL              = "https://quaint-white-season.ethereum-sepolia.quiknode.pro/b5c30cbb548d8743f08dd175fe50e3e923259d30/"
 	Sepolia_chainID          = 11155111
-	proposerContractAddress  = "0x8C1ceB039414204809a343C1145a26E4a927Ac0f"
-	proposalManagerContract  = "0x18465f258b51CfB576564791016152F583d1acD1"
-	committerContractAddress = "0x2D3F3B68eDb74a9665aC5394eC51881d54529aa5"
+	proposerContractAddress  = "0xcbC418ce125d806087da0DAb15d6ad50E035a250"
+	proposalManagerContract  = "0x837596C1Aa783E3B06C7Efb10a51Fe6699208D1D"
+	committerContractAddress = "0x270794Fc3ca753CDE033D2AeF9D00EAf71EbC386"
 )
 
 var opCommitterClient *OpCommitterClient

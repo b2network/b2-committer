@@ -118,14 +118,14 @@ func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 					continue
 				}
 				blobMerkleRoot, err := GetBlobsMerkleRoot(blobs)
-				dsProposal := types.NewDsProposal(ctx.B2NodeConfig.ChainID, lastProposal.ProposalID, blobMerkleRoot, blobs)
+				dsProposal := types.NewDsTxsProposal(ctx.B2NodeConfig.ChainID, lastProposal.ProposalID, blobMerkleRoot, blobs)
 				dsJson, err := dsProposal.MarshalJson()
 				if err != nil {
 					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to marshal ds proposal: %s", err.Error())
 					time.Sleep(3 * time.Second)
 					continue
 				}
-				dsTxID, err := ctx.DecentralizedStore.StoreTxsOnChain(dsJson, ctx.B2NodeConfig.ChainID, lastProposal.ProposalID)
+				dsTxID, err := ctx.DecentralizedStore.StoreDetailsOnChain(dsJson, ctx.B2NodeConfig.ChainID, lastProposal.ProposalID)
 				if err != nil {
 					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to store ds proposal: %s", err.Error())
 					continue
@@ -138,13 +138,13 @@ func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 				log.Infof("[Handler.GetBlobsAndCommitProposal] success submit txs to ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
 			}
 			if lastProposal.Winner != common.HexToAddress(ctx.B2NodeConfig.Address) {
-				blobs, err := ctx.DecentralizedStore.QueryTxsByTxID(lastProposal.DsTxHash)
+				blobs, err := ctx.DecentralizedStore.QueryDetailsByTxID(lastProposal.DsTxHash)
 				if err != nil {
 					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to get blobs from ds: %s", err.Error())
 					time.Sleep(3 * time.Second)
 					continue
 				}
-				var dsProposal types.DsProposal
+				var dsProposal types.DsTxsProposal
 				err = json.Unmarshal(blobs, &dsProposal)
 				if err != nil {
 					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to unmarshal ds proposal: %s", err.Error())
