@@ -10,7 +10,7 @@ type Config struct {
 	LogLevel string `env:"LOG_LEVEL" envDefault:"info"`
 	// "console","json"
 	LogFormat                   string `env:"LOG_FORMAT" envDefault:"console"`
-	MySQLDataSource             string `env:"MYSQL_DATA_SOURCE" envDefault:"root:root@tcp(127.0.0.1:3366)/b2_committer_op?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"`
+	MySQLDataSource             string `env:"MYSQL_DATA_SOURCE" envDefault:"root:root@tcp(127.0.0.1:3366)/b2_committer_main?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true"`
 	MySQLMaxIdleConns           int    `env:"MYSQL_MAX_IDLE_CONNS" envDefault:"10"`
 	MySQLMaxOpenConns           int    `env:"MYSQL_MAX_OPEN_CONNS" envDefault:"20"`
 	MySQLConnMaxLifetime        int    `env:"MYSQL_CONN_MAX_LIFETIME" envDefault:"3600"`
@@ -23,14 +23,11 @@ type Config struct {
 	InitBlobBlockHash           string `env:"INIT_BLOB_BLOCK_HASH" envDefault:"0x6218666b40fce4153e8f5349ab2f9d2590a601e5a178e4b6d4580094d5c0c2ee"`
 	BlobIntervalTime            uint64 `env:"BLOB_INTERVAL_TIME" envDefault:"1800"`
 	OutputIntervalTime          uint64 `env:"OUTPUT_INTERVAL_TIME" envDefault:"3600"`
-	PolygonSequenceContract     string `env:"POLYGON_SEQUENCE_CONTRACT" envDefault:"0xa6AAdA6845b2083ff6812bAc773038442e7f4dE6"`
-	PolygonVerifyBatchContract  string `env:"POLYGON_VERIFY_BATCH_CONTRACT" envDefault:"0xDdee8ddfA81F5E36373637240038DCCC14529BF7"`
 	L2OutputOracleProxyContract string `env:"L2_OUTPUT_ORACLE_PROXY_CONTRACT" envDefault:"0x90E9c4f8a994a250F6aEfd61CAFb4F2e895D458F"` //sepolia
 	BatcherInbox                string `env:"BATCHER_INBOX" envDefault:"0xff00000000000000000000000000000011155420"`
 	BatcherSender               string `env:"BATCHER_SENDER" envDefault:"0x8F23BB38F531600e5d8FDDaAEC41F13FaB46E98c"`
 	LimitNum                    int    `evn:"PROPOSAL_BATCHES_LIMITNUM" envDefault:"10"`
 	InitProposalID              uint64 `evn:"INIT_PROPOSAL_ID" envDefault:"1"`
-	BatchPath                   string `env:"BATCH_PATH" envDefault:"batchFile"`
 	DSType                      string `env:"DSTYPE" envDefault:"arweave"`
 	ArweaveWallet               string `env:"B2NODE_ARWEAVE_WALLET" envDefault:"/tmp/wallet/account.json"`
 	ArweaveRPC                  string `env:"B2NODE_ARWEAVE_RPC" envDefault:"https://arweave.net"`
