@@ -1,6 +1,9 @@
 package svc
 
 import (
+	"math/big"
+	"time"
+
 	"github.com/b2network/b2committer/internal/types"
 	"github.com/b2network/b2committer/pkg/b2node"
 	"github.com/b2network/b2committer/pkg/beacon"
@@ -17,8 +20,6 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"math/big"
-	"time"
 )
 
 var svc *ServiceContext
@@ -39,7 +40,7 @@ type ServiceContext struct {
 	SyncedBlobBlockHash   common.Hash
 	OpCommitterClient     *b2node.OpCommitterClient
 	DecentralizedStore    ds.DecentralizedStore
-	UnisatHTTPClient      *unisat.UnisatHTTPClient
+	UnisatHTTPClient      *unisat.UstHTTPClient
 }
 
 func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2nodeConfig *types.B2NODEConfig) *ServiceContext {

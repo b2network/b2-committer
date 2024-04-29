@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/b2network/b2committer/internal/schema"
 	"github.com/b2network/b2committer/internal/svc"
 	"github.com/b2network/b2committer/internal/types"
@@ -17,7 +19,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 	mt "github.com/txaty/go-merkletree"
-	"time"
 )
 
 func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
@@ -120,14 +121,14 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 				if err != nil {
 					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] constructing state root for ds is failed. err : %s", errors.WithStack(err))
 				}
-				dsJson, err := stateRoots.MarshalJson()
+				dsJSON, err := stateRoots.MarshalJSON()
 				if err != nil {
 					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to marshal ds proposal: %s", err.Error())
 					time.Sleep(3 * time.Second)
 					continue
 				}
 
-				dsTxID, err := ctx.DecentralizedStore.StoreDetailsOnChain(dsJson, ctx.B2NodeConfig.ChainID, lastProposal.ProposalID)
+				dsTxID, err := ctx.DecentralizedStore.StoreDetailsOnChain(dsJSON, ctx.B2NodeConfig.ChainID, lastProposal.ProposalID)
 				if err != nil {
 					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to store ds proposal: %s", err.Error())
 					continue
@@ -138,7 +139,6 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 					continue
 				}
 				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] success submit txs to ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
-
 			}
 			if lastProposal.Winner != common.HexToAddress(voteAddress) {
 				outputs, err := ctx.DecentralizedStore.QueryDetailsByTxID(lastProposal.DsTxHash)
@@ -176,7 +176,6 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 				}
 				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] success verify and vote submit output from ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
 			}
-
 		}
 
 		if lastProposal.Status == schema.ProposalCommitting {
@@ -236,12 +235,12 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 					time.Sleep(3 * time.Second)
 					continue
 				}
-				if len(outs.Data) <= 0 {
+				if len(outs.Data) == 0 {
 					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to get outputs from btc: no data")
 					time.Sleep(3 * time.Second)
 					continue
 				}
-				if len(outs.Data[0].Inscriptions) <= 0 {
+				if len(outs.Data[0].Inscriptions) == 0 {
 					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to get outputs from btc: no inscription")
 					time.Sleep(3 * time.Second)
 					continue
@@ -276,9 +275,7 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 				}
 				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] success verify and vote submit output from btc: %s, btcTxHash: %s", lastProposal.ProposalID, lastProposal.BitcoinTxHash)
 			}
-
 		}
-
 	}
 }
 

@@ -1,9 +1,10 @@
 package ds
 
 import (
+	"strconv"
+
 	"github.com/everFinance/goar"
 	"github.com/everFinance/goar/types"
-	"strconv"
 )
 
 type DecentralizedStore interface {

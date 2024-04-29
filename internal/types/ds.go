@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+
 	"github.com/b2network/b2committer/internal/schema"
 )
 
@@ -9,7 +10,7 @@ type DsTxsProposal struct {
 	ChainID    int64
 	ProposalID uint64
 	TxsRoot    string
-	Blobs      *[]DsBlob
+	Blobs      []*DsBlob
 }
 
 type DsStateRootProposal struct {
@@ -46,20 +47,20 @@ func NewDsStateRootProposal(chainID int64, proposalID uint64, outputRoot string,
 	}, nil
 }
 
-func convertBlobToDsBlob(blobs []schema.BlobInfo) *[]DsBlob {
-	var dsBlobs []DsBlob
+func convertBlobToDsBlob(blobs []schema.BlobInfo) []*DsBlob {
+	var dsBlobs []*DsBlob
 	for _, blob := range blobs {
-		dsBlobs = append(dsBlobs, DsBlob{
+		dsBlobs = append(dsBlobs, &DsBlob{
 			BlockID: blob.BlockNumber,
 			Blob:    blob.Blob,
 		})
 	}
-	return &dsBlobs
+	return dsBlobs
 }
 
 func (b *DsTxsProposal) GetDBBlobInfos() ([]schema.BlobInfo, error) {
 	var dbBlobs []schema.BlobInfo
-	for _, blob := range *b.Blobs {
+	for _, blob := range b.Blobs {
 		dbBlobs = append(dbBlobs, schema.BlobInfo{
 			BlockNumber: blob.BlockID,
 			Blob:        blob.Blob,
@@ -68,7 +69,7 @@ func (b *DsTxsProposal) GetDBBlobInfos() ([]schema.BlobInfo, error) {
 	return dbBlobs, nil
 }
 
-func (b *DsTxsProposal) MarshalJson() ([]byte, error) {
+func (b *DsTxsProposal) MarshalJSON() ([]byte, error) {
 	marshal, err := json.Marshal(b)
 	if err != nil {
 		return nil, err
@@ -76,7 +77,7 @@ func (b *DsTxsProposal) MarshalJson() ([]byte, error) {
 	return marshal, nil
 }
 
-func (s *DsStateRootProposal) MarshalJson() ([]byte, error) {
+func (s *DsStateRootProposal) MarshalJSON() ([]byte, error) {
 	marshal, err := json.Marshal(s)
 	if err != nil {
 		return nil, err

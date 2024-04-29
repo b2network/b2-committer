@@ -40,7 +40,6 @@ func (t *VerifyBatches) ToObj(data string) error {
 }
 
 func (*VerifyBatches) Data(log types.Log) (string, error) {
-
 	transfer := &VerifyBatches{
 		RollupID:   uint32(event.TopicToInt64(log, 1)),
 		Aggregator: event.TopicToAddress(log, 2).Hex(),

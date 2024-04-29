@@ -23,7 +23,7 @@ type Config struct {
 	InitBlobBlockHash           string `env:"INIT_BLOB_BLOCK_HASH" envDefault:"0x6218666b40fce4153e8f5349ab2f9d2590a601e5a178e4b6d4580094d5c0c2ee"`
 	BlobIntervalTime            uint64 `env:"BLOB_INTERVAL_TIME" envDefault:"1800"`
 	OutputIntervalTime          uint64 `env:"OUTPUT_INTERVAL_TIME" envDefault:"3600"`
-	L2OutputOracleProxyContract string `env:"L2_OUTPUT_ORACLE_PROXY_CONTRACT" envDefault:"0x90E9c4f8a994a250F6aEfd61CAFb4F2e895D458F"` //sepolia
+	L2OutputOracleProxyContract string `env:"L2_OUTPUT_ORACLE_PROXY_CONTRACT" envDefault:"0x90E9c4f8a994a250F6aEfd61CAFb4F2e895D458F"`
 	BatcherInbox                string `env:"BATCHER_INBOX" envDefault:"0xff00000000000000000000000000000011155420"`
 	BatcherSender               string `env:"BATCHER_SENDER" envDefault:"0x8F23BB38F531600e5d8FDDaAEC41F13FaB46E98c"`
 	LimitNum                    int    `evn:"PROPOSAL_BATCHES_LIMITNUM" envDefault:"10"`

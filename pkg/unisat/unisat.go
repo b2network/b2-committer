@@ -4,23 +4,24 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/b2network/b2committer/internal/types"
-	"github.com/b2network/b2committer/pkg/client"
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/b2network/b2committer/internal/types"
+	"github.com/b2network/b2committer/pkg/client"
 )
 
-type UnisatHTTPClient struct {
+type UstHTTPClient struct {
 	auth string
 	cl   client.HTTP
 }
 
-func NewUnisatHTTPClient(cl client.HTTP, auth string) *UnisatHTTPClient {
-	return &UnisatHTTPClient{auth, cl}
+func NewUnisatHTTPClient(cl client.HTTP, auth string) *UstHTTPClient {
+	return &UstHTTPClient{auth, cl}
 }
 
-func (cl *UnisatHTTPClient) apiReq(ctx context.Context, dest any, reqPath string, reqQuery url.Values) error {
+func (cl *UstHTTPClient) apiReq(ctx context.Context, dest any, reqPath string, reqQuery url.Values) error {
 	headers := http.Header{}
 	headers.Add("Accept", "application/json")
 	headers.Add("Authorization", "Bearer "+cl.auth)
@@ -43,7 +44,7 @@ func (cl *UnisatHTTPClient) apiReq(ctx context.Context, dest any, reqPath string
 	return nil
 }
 
-func (cl *UnisatHTTPClient) QueryAPIBTCTxOutputsByTxID(ctx context.Context, txID string) (*types.APIBTCTxOutputs, error) {
+func (cl *UstHTTPClient) QueryAPIBTCTxOutputsByTxID(ctx context.Context, txID string) (*types.APIBTCTxOutputs, error) {
 	var res types.APIBTCTxOutputs
 	err := cl.apiReq(ctx, &res, "/v1/indexer/tx/"+txID+"/outs", nil)
 	if err != nil {
@@ -52,7 +53,7 @@ func (cl *UnisatHTTPClient) QueryAPIBTCTxOutputsByTxID(ctx context.Context, txID
 	return &res, nil
 }
 
-func (cl *UnisatHTTPClient) QueryStateRootProposalByInsID(ctx context.Context, insID string) (*types.BtcStateRootProposal, error) {
+func (cl *UstHTTPClient) QueryStateRootProposalByInsID(ctx context.Context, insID string) (*types.BtcStateRootProposal, error) {
 	var res types.BtcStateRootProposal
 	err := cl.apiReq(ctx, &res, "/v1/indexer/inscription/content/"+insID, nil)
 	if err != nil {

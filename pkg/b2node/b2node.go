@@ -3,6 +3,9 @@ package b2node
 import (
 	"crypto/ecdsa"
 	"fmt"
+	"math/big"
+	"time"
+
 	"github.com/b2network/b2committer/internal/schema"
 	"github.com/b2network/b2committer/pkg/contract/zk"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -10,8 +13,6 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"math/big"
-	"time"
 )
 
 type NodeClient struct {
@@ -29,7 +30,13 @@ func NewNodeClient(privateKeyStr string, chainID int64, address string, contract
 		panic(err)
 	}
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(chainID))
+	if err != nil {
+		panic(err)
+	}
 	committer, err := zk.NewCommitter(common.HexToAddress(contractAddress), conn)
+	if err != nil {
+		panic(err)
+	}
 	return &NodeClient{
 		PrivateKey: privateKey,
 		Address:    address,

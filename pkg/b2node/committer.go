@@ -1,13 +1,14 @@
 package b2node
 
 import (
+	"math/big"
+
 	"github.com/b2network/b2committer/internal/types"
 	"github.com/b2network/b2committer/pkg/contract/op"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
-	"math/big"
 )
 
 type OpCommitterClient struct {
@@ -23,6 +24,9 @@ func NewOpCommitterClient(privateKeyStr string, chainID int64, proposer *op.Prop
 		panic(err)
 	}
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(chainID))
+	if nil != err {
+		panic(err)
+	}
 	return &OpCommitterClient{
 		Proposer:        proposer,
 		Committer:       committer,

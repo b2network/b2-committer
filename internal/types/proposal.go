@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+
 	"github.com/b2network/b2committer/internal/schema"
 )
 

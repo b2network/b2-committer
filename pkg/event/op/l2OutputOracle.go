@@ -40,7 +40,6 @@ func (t *OutputProposed) ToObj(data string) error {
 }
 
 func (*OutputProposed) Data(log types.Log) (string, error) {
-
 	transfer := &OutputProposed{
 		OutputRoot:    event.TopicToHash(log, 1).Hex(),
 		L2OutputIndex: big.NewInt(event.TopicToInt64(log, 2)),

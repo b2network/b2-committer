@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math/big"
+
 	"github.com/b2network/b2committer/pkg/errcode"
 	"github.com/b2network/b2committer/pkg/log"
 	"github.com/ethereum-optimism/optimism/op-service/eth"
@@ -12,7 +14,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"math/big"
 )
 
 type BlobDataSource struct {
@@ -25,7 +26,8 @@ type BlobDataSource struct {
 }
 
 func NewBlobDataSource(l1Signer types.Signer, batchInboxAddress common.Address, batchSenderAddress common.Address,
-	blobsFetcher *sources.L1BeaconClient, ethRPC *ethclient.Client) *BlobDataSource {
+	blobsFetcher *sources.L1BeaconClient, ethRPC *ethclient.Client,
+) *BlobDataSource {
 	return &BlobDataSource{
 		L1Signer:           l1Signer,
 		BatchInboxAddress:  batchInboxAddress,
@@ -35,7 +37,7 @@ func NewBlobDataSource(l1Signer types.Signer, batchInboxAddress common.Address, 
 	}
 }
 
-func (bds *BlobDataSource) GetBlobByBlockNum(ctx context.Context, blockNum *big.Int) ([]BlockBlobInfo, error) {
+func (bds *BlobDataSource) GetBlobByBlockNum(ctx context.Context, blockNum *big.Int) ([]*BlockBlobInfo, error) {
 	block, err := bds.EthRPC.BlockByNumber(ctx, blockNum)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get block %d: %v", blockNum, err)
@@ -44,7 +46,7 @@ func (bds *BlobDataSource) GetBlobByBlockNum(ctx context.Context, blockNum *big.
 	hashes := DataAndHashesFromTxs(txs, bds.L1Signer, bds.BatchInboxAddress, bds.BatchSenderAddress)
 	if len(hashes) == 0 {
 		// there are no blobs to fetch so we can return immediately
-		//return nil, fmt.Errorf("no blobs found in block %d", blockNum)
+
 		return nil, errcode.ErrNoBlobFoundInBlock
 	}
 	l1Block := eth.L1BlockRef{
@@ -53,24 +55,24 @@ func (bds *BlobDataSource) GetBlobByBlockNum(ctx context.Context, blockNum *big.
 		ParentHash: block.ParentHash(),
 		Time:       block.Time(),
 	}
-	//blobs, err := bds.BlobsFetcher.GetBlobs(context.Background(), l1Block, hashes)
+
 	blobSidecars, err := bds.BlobsFetcher.GetBlobSidecars(context.Background(), l1Block, hashes)
 
 	if errors.Is(err, ethereum.NotFound) {
 		// If the L1 block was available, then the blobs should be available too. The only
 		// exception is if the blob retention window has expired, which we will ultimately handle
 		// by failing over to a blob archival service.
-		return nil, fmt.Errorf("failed to fetch blobs: %w", err)
+		return nil, fmt.Errorf("failed to fetch blobs no record: %w", err)
 	} else if err != nil {
 		return nil, fmt.Errorf("failed to fetch blobs: %w", err)
 	}
-	var data []BlockBlobInfo
+	var data []*BlockBlobInfo
 	for i, hash := range hashes {
-		if &blobSidecars[i] == nil {
+		if blobSidecars[i] == nil {
 			log.Errorf("blob %d not found in block %d", hash.Index, blockNum)
 			continue
 		}
-		data = append(data, BlockBlobInfo{
+		data = append(data, &BlockBlobInfo{
 			BlobSidecar: blobSidecars[i],
 			Hash:        &hash,
 		})
@@ -103,7 +105,7 @@ func DataAndHashesFromTxs(txs types.Transactions, l1Signer types.Signer, batchIn
 				Hash:  h,
 			}
 			hashes = append(hashes, idh)
-			blobIndex += 1
+			blobIndex++
 		}
 	}
 	return hashes

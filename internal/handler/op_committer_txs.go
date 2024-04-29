@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/b2network/b2committer/internal/schema"
 	"github.com/b2network/b2committer/internal/svc"
 	"github.com/b2network/b2committer/internal/types"
@@ -15,7 +17,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 	mt "github.com/txaty/go-merkletree"
-	"time"
 )
 
 func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
@@ -99,7 +100,6 @@ func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 		}
 
 		if lastProposal.Status == schema.ProposalPendingStatus {
-
 			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOntxsRootDSTxPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
 			if err != nil {
 				log.Errorf("[Handler.GetBlobsAndCommitProposal][IsVotedOntxsRootDSTxPhase] is failed : %s", err)
@@ -118,14 +118,19 @@ func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 					continue
 				}
 				blobMerkleRoot, err := GetBlobsMerkleRoot(blobs)
+				if err != nil {
+					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to get blobs merkle root: %s", err.Error())
+					time.Sleep(3 * time.Second)
+					continue
+				}
 				dsProposal := types.NewDsTxsProposal(ctx.B2NodeConfig.ChainID, lastProposal.ProposalID, blobMerkleRoot, blobs)
-				dsJson, err := dsProposal.MarshalJson()
+				dsJSON, err := dsProposal.MarshalJSON()
 				if err != nil {
 					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to marshal ds proposal: %s", err.Error())
 					time.Sleep(3 * time.Second)
 					continue
 				}
-				dsTxID, err := ctx.DecentralizedStore.StoreDetailsOnChain(dsJson, ctx.B2NodeConfig.ChainID, lastProposal.ProposalID)
+				dsTxID, err := ctx.DecentralizedStore.StoreDetailsOnChain(dsJSON, ctx.B2NodeConfig.ChainID, lastProposal.ProposalID)
 				if err != nil {
 					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to store ds proposal: %s", err.Error())
 					continue

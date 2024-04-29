@@ -2,6 +2,7 @@ package zkevm
 
 import (
 	"encoding/json"
+
 	"github.com/b2network/b2committer/pkg/event"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"

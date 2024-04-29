@@ -2,6 +2,9 @@ package handler
 
 import (
 	"context"
+	"math/big"
+	"time"
+
 	"github.com/b2network/b2committer/internal/schema"
 	"github.com/b2network/b2committer/internal/svc"
 	"github.com/b2network/b2committer/pkg/errcode"
@@ -9,8 +12,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
-	"math/big"
-	"time"
 )
 
 func QueryBlobOnChainAndStoreInLocal(ctx *svc.ServiceContext) {
@@ -83,7 +84,6 @@ func QueryBlobOnChainAndStoreInLocal(ctx *svc.ServiceContext) {
 				}
 				ctx.SyncedBlobBlockNumber = blockOnChain.Number().Int64()
 				ctx.SyncedBlobBlockHash = blockOnChain.Hash()
-				continue
 			} else {
 				err := ctx.DB.Delete(&dbBlob, "block_number=?", syncingBlobBlockNumber).Error
 				if err != nil {
@@ -92,6 +92,7 @@ func QueryBlobOnChainAndStoreInLocal(ctx *svc.ServiceContext) {
 					continue
 				}
 			}
+			continue
 		}
 
 		for _, bif := range blobInfos {
