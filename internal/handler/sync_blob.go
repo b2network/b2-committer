@@ -38,14 +38,11 @@ func QueryBlobOnChainAndStoreInLocal(ctx *svc.ServiceContext) {
 	for {
 		syncingBlobBlockNumber := ctx.SyncedBlobBlockNumber + 1
 		log.Infof("[Handler.QueryBlobOnChainAndStoreInLocal] Try to sync block number: %d\n", syncingBlobBlockNumber)
-		if syncingBlobBlockNumber == 23373 {
-			log.Infof("debug")
-		}
 
-		// if syncingBlobBlockNumber > ctx.LatestBlockNumber {
-		//	time.Sleep(3 * time.Second)
-		//	continue
-		//}
+		if syncingBlobBlockNumber > ctx.LatestBlockNumber {
+			time.Sleep(3 * time.Second)
+			continue
+		}
 
 		blockOnChain, err := ctx.RPC.BlockByNumber(context.Background(), big.NewInt(syncingBlobBlockNumber))
 		if err != nil {

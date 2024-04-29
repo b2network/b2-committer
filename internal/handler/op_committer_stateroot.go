@@ -29,7 +29,6 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 	}
 	for {
 		lastProposal, err := ctx.OpCommitterClient.ProposalManager.GetLastStateRootProposal(&bind.CallOpts{})
-		fmt.Println(lastProposal.Winner.String())
 		if err != nil {
 			log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to get last state root proposal from contract: %s", err.Error())
 			time.Sleep(3 * time.Second)
@@ -48,17 +47,18 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 			}
 			_, err = ctx.OpCommitterClient.SubmitStateRoot(newStateRootProposal)
 			if err != nil {
-				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal]Try to submit new state root proposal: %s", err.Error())
+				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal]Try to submit new state root proposal: %s, proposalID: %s", err.Error(), newStateRootProposal.ProposalID)
 				time.Sleep(3 * time.Second)
 				continue
 			}
 			log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] submit new state root proposal: %s", newStateRootProposal.ProposalID)
-			time.Sleep(10 * time.Second)
+			time.Sleep(30 * time.Second)
 			continue
 		}
 
 		//nolint: dupl
 		if lastProposal.Status == schema.ProposalVotingStatus || lastProposal.Status == schema.ProposalTimeoutStatus {
+			time.Sleep(30 * time.Second)
 			// check address voted or not
 			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnStateRootProposalPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
 			if err != nil {
@@ -98,7 +98,7 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 				continue
 			}
 			log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] vote txs proposal %s, %s ", tsp.ProposalID, voteAddress)
-			continue
+			time.Sleep(30 * time.Second)
 		}
 
 		if lastProposal.Status == schema.ProposalPendingStatus {
@@ -109,7 +109,7 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 				continue
 			}
 			if phase {
-				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] address already voted in pending status: %s", voteAddress)
+				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] address already voted in pending status: %s, proposalID: %s", voteAddress, lastProposal.ProposalID)
 				continue
 			}
 			if lastProposal.Winner == common.HexToAddress(ctx.B2NodeConfig.Address) {
@@ -135,12 +135,14 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to store ds proposal: %s", err.Error())
 					continue
 				}
+				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] proposal %s, success data to ds %s", lastProposal.ProposalID, dsTxID)
 				_, err = ctx.OpCommitterClient.DsHash(lastProposal.ProposalID, schema.ProposalTypeStateRoot, schema.DsTypeArWeave, dsTxID)
 				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to send ds proposal: %s", err.Error())
+					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to send ds proposal by winner: %s", err.Error())
 					continue
 				}
-				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] success submit txs to ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
+				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] success submit txs to ds: %s, dsHash: %s", lastProposal.ProposalID, dsTxID)
+				time.Sleep(30 * time.Second)
 			}
 			if lastProposal.Winner != common.HexToAddress(voteAddress) {
 				outputs, err := ctx.DecentralizedStore.QueryDetailsByTxID(lastProposal.DsTxHash)
@@ -173,14 +175,17 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 				}
 				_, err = ctx.OpCommitterClient.DsHash(lastProposal.ProposalID, schema.ProposalTypeStateRoot, schema.DsTypeArWeave, lastProposal.DsTxHash)
 				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to send ds proposal: %s", err.Error())
+					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to send ds proposal by voter: %s", err.Error())
 					continue
 				}
 				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] success verify and vote submit output from ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
+				time.Sleep(30 * time.Second)
 			}
+
 		}
 
 		if lastProposal.Status == schema.ProposalCommitting {
+			time.Sleep(30 * time.Second)
 			isVotedBtcTx, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnSubmitBitcoinTxPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
 			if err != nil {
 				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal][IsVotedOnSubmitBitcoinTxPhase] is failed : %s", err)
@@ -188,7 +193,7 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 				continue
 			}
 			if isVotedBtcTx {
-				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] address already voted btc tx in committing status: %s", voteAddress)
+				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] address already voted btc tx in committing status: %s, proposalID: %s", voteAddress, lastProposal.ProposalID)
 				continue
 			}
 			if lastProposal.Winner == common.HexToAddress(voteAddress) {
