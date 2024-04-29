@@ -10,7 +10,7 @@ type DsTxsProposal struct {
 	ChainID    int64
 	ProposalID uint64
 	TxsRoot    string
-	Blobs      []*DsBlob
+	Blobs      []DsBlob
 }
 
 type DsStateRootProposal struct {
@@ -47,29 +47,31 @@ func NewDsStateRootProposal(chainID int64, proposalID uint64, outputRoot string,
 	}, nil
 }
 
-func convertBlobToDsBlob(blobs []schema.BlobInfo) []*DsBlob {
-	var dsBlobs []*DsBlob
-	for _, blob := range blobs {
-		dsBlobs = append(dsBlobs, &DsBlob{
+// nolint: unparam
+func convertBlobToDsBlob(blobs []schema.BlobInfo) []DsBlob {
+	var dsBlobs []DsBlob
+	for i, blob := range blobs {
+		dsBlobs[i] = DsBlob{
 			BlockID: blob.BlockNumber,
 			Blob:    blob.Blob,
-		})
+		}
 	}
 	return dsBlobs
 }
 
 func (b *DsTxsProposal) GetDBBlobInfos() ([]schema.BlobInfo, error) {
 	var dbBlobs []schema.BlobInfo
-	for _, blob := range b.Blobs {
-		dbBlobs = append(dbBlobs, schema.BlobInfo{
+	for i, blob := range b.Blobs {
+		dbBlobs[i] = schema.BlobInfo{
 			BlockNumber: blob.BlockID,
 			Blob:        blob.Blob,
-		})
+		}
 	}
 	return dbBlobs, nil
 }
 
-func (b *DsTxsProposal) MarshalJSON() ([]byte, error) {
+// nolint: revive,stylecheck
+func (b *DsTxsProposal) MarshalJson() ([]byte, error) {
 	marshal, err := json.Marshal(b)
 	if err != nil {
 		return nil, err
@@ -77,7 +79,8 @@ func (b *DsTxsProposal) MarshalJSON() ([]byte, error) {
 	return marshal, nil
 }
 
-func (s *DsStateRootProposal) MarshalJSON() ([]byte, error) {
+// nolint: revive,stylecheck
+func (s *DsStateRootProposal) MarshalJson() ([]byte, error) {
 	marshal, err := json.Marshal(s)
 	if err != nil {
 		return nil, err

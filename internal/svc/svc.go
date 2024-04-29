@@ -33,7 +33,6 @@ type ServiceContext struct {
 	LatestBlockNumber     int64
 	SyncedBlockNumber     int64
 	SyncedBlockHash       common.Hash
-	NodeClient            *b2node.NodeClient
 	LatestBTCBlockNumber  int64
 	BlobDataSource        *beacon.BlobDataSource
 	SyncedBlobBlockNumber int64
@@ -45,7 +44,7 @@ type ServiceContext struct {
 
 func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2nodeConfig *types.B2NODEConfig) *ServiceContext {
 	storage, err := gorm.Open(mysql.Open(cfg.MySQLDataSource), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logger.Error),
 	})
 	if err != nil {
 		log.Panicf("[svc]gorm get db panic: %s\n", err)
@@ -67,17 +66,12 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 		log.Panicf("[svc] get eth client panic: %s\n", err)
 	}
 
-	privateKeHex := b2nodeConfig.PrivateKey
-	chainID := b2nodeConfig.ChainID
-	address := b2nodeConfig.Address
-	contractAddress := b2nodeConfig.CommitterAddress
 	b2rpc, err := ethclient.Dial(b2nodeConfig.RPCUrl)
 	if err != nil {
 		log.Panicf("[svc] init b2node grpc panic: %s\n", err)
 	}
-	nodeClient := b2node.NewNodeClient(privateKeHex, chainID, address, contractAddress, b2rpc)
 
-	l1Signer := ethTypes.NewCancunSigner(big.NewInt(chainID))
+	l1Signer := ethTypes.NewCancunSigner(big.NewInt(cfg.BeaconChainID))
 	l1Beacon := sources.NewBeaconHTTPClient(client.NewBasicHTTPClient(cfg.BeaconChainRPCUrl))
 	l1BlobFetcher := sources.NewL1BeaconClient(l1Beacon, sources.L1BeaconClientConfig{FetchAllSidecars: false})
 	bds := beacon.NewBlobDataSource(l1Signer, common.HexToAddress(cfg.BatcherInbox), common.HexToAddress(cfg.BatcherSender), l1BlobFetcher, rpc)
@@ -103,7 +97,6 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 		RPC:               rpc,
 		LatestBlockNumber: cfg.InitBlockNumber,
 		B2NodeConfig:      b2nodeConfig,
-		NodeClient:        nodeClient,
 		BlobDataSource:    bds,
 		OpCommitterClient: opCommitterClient,
 		UnisatHTTPClient:  unisatClient,

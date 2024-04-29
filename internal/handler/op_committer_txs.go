@@ -55,6 +55,7 @@ func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 			continue
 		}
 
+		//nolint: dupl
 		if lastProposal.Status == schema.ProposalVotingStatus || lastProposal.Status == schema.ProposalTimeoutStatus {
 			// check address voted or not
 			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnTxsRootProposalPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
@@ -124,7 +125,7 @@ func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 					continue
 				}
 				dsProposal := types.NewDsTxsProposal(ctx.B2NodeConfig.ChainID, lastProposal.ProposalID, blobMerkleRoot, blobs)
-				dsJSON, err := dsProposal.MarshalJSON()
+				dsJSON, err := dsProposal.MarshalJson()
 				if err != nil {
 					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to marshal ds proposal: %s", err.Error())
 					time.Sleep(3 * time.Second)
@@ -192,14 +193,23 @@ func GetBlobsByBlockListFromDB(ctx *svc.ServiceContext, blockList []uint64) ([]s
 
 func constructTxsRootProposal(ctx *svc.ServiceContext, proposalID uint64, startTimestamp uint64, endTimestamp uint64) (*types.TxsRootProposal, error) {
 	var blob schema.BlobInfo
-	err := ctx.DB.Where("block_time > ?", endTimestamp).Order("block_number").First(&blob).Error
-	if err != nil {
-		return nil, fmt.Errorf("sync blob blocks is not completed: %s", errors.WithStack(err))
-	}
+
 	var blobs []schema.BlobInfo
-	err = ctx.DB.Where("block_time between ? and ?", startTimestamp, endTimestamp).Order("block_number").Find(&blobs).Error
-	if err != nil {
-		return nil, fmt.Errorf("collecting the blob blocks of proposal is failed. err : %s", errors.WithStack(err))
+	for {
+		blob = schema.BlobInfo{}
+		err := ctx.DB.Where("block_time > ?", endTimestamp).Order("block_number").First(&blob).Error
+		if err != nil {
+			return nil, fmt.Errorf("sync blob blocks is not completed: %s", errors.WithStack(err))
+		}
+		err = ctx.DB.Where("block_time between ? and ?", startTimestamp, endTimestamp).Order("block_number").Find(&blobs).Error
+		if err != nil {
+			return nil, fmt.Errorf("collecting the blob blocks of proposal is failed. err : %s", errors.WithStack(err))
+		}
+		if len(blobs) == 0 {
+			endTimestamp += ctx.Config.BlobIntervalTime
+		} else {
+			break
+		}
 	}
 	blobMerkleRoot, err := GetBlobsMerkleRoot(blobs)
 	if err != nil {

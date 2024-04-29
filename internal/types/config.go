@@ -15,6 +15,7 @@ type Config struct {
 	MySQLMaxOpenConns           int    `env:"MYSQL_MAX_OPEN_CONNS" envDefault:"20"`
 	MySQLConnMaxLifetime        int    `env:"MYSQL_CONN_MAX_LIFETIME" envDefault:"3600"`
 	RPCUrl                      string `env:"RPC_URL" envDefault:"https://quaint-white-season.ethereum-sepolia.quiknode.pro/b5c30cbb548d8743f08dd175fe50e3e923259d30"`
+	BeaconChainID               int64  `env:"BEACON_CHAIN_ID" envDefault:"11155111"`
 	BeaconChainRPCUrl           string `env:"BEACON_CHAIN_RPC_URL" envDefault:"https://quaint-white-season.ethereum-sepolia.quiknode.pro/b5c30cbb548d8743f08dd175fe50e3e923259d30"`
 	Blockchain                  string `env:"BLOCKCHAIN" envDefault:"b2-node"`
 	InitBlockNumber             int64  `env:"INIT_BLOCK_NUMBER" envDefault:"4102885"`
@@ -22,7 +23,7 @@ type Config struct {
 	InitBlobBlockNumber         int64  `env:"INIT_BLOB_BLOCK_NUMBER" envDefault:"5687501"`
 	InitBlobBlockHash           string `env:"INIT_BLOB_BLOCK_HASH" envDefault:"0x6218666b40fce4153e8f5349ab2f9d2590a601e5a178e4b6d4580094d5c0c2ee"`
 	BlobIntervalTime            uint64 `env:"BLOB_INTERVAL_TIME" envDefault:"1800"`
-	OutputIntervalTime          uint64 `env:"OUTPUT_INTERVAL_TIME" envDefault:"3600"`
+	OutputIntervalTime          uint64 `env:"OUTPUT_INTERVAL_TIME" envDefault:"1800"`
 	L2OutputOracleProxyContract string `env:"L2_OUTPUT_ORACLE_PROXY_CONTRACT" envDefault:"0x90E9c4f8a994a250F6aEfd61CAFb4F2e895D458F"`
 	BatcherInbox                string `env:"BATCHER_INBOX" envDefault:"0xff00000000000000000000000000000011155420"`
 	BatcherSender               string `env:"BATCHER_SENDER" envDefault:"0x8F23BB38F531600e5d8FDDaAEC41F13FaB46E98c"`
@@ -38,7 +39,6 @@ type Config struct {
 type B2NODEConfig struct {
 	ChainID                  int64  `env:"B2NODE_CHAIN_ID" envDefault:"11155111"`
 	RPCUrl                   string `env:"B2NODE_RPC_URL" envDefault:"https://quaint-white-season.ethereum-sepolia.quiknode.pro/b5c30cbb548d8743f08dd175fe50e3e923259d30"`
-	CommitterAddress         string `env:"B2NODE_COMMITTER_ADDRESS" envDefault:"0x85D40bDc724bcabF6D17d8343a74e0d916dfD40D"`
 	OpCommitterAddress       string `env:"B2NODE_OP_COMMITTER_ADDRESS" envDefault:"0x270794Fc3ca753CDE033D2AeF9D00EAf71EbC386"`
 	OpProposersAddress       string `env:"B2NODE_OP_PROPOSERS_ADDRESS" envDefault:"0xcbC418ce125d806087da0DAb15d6ad50E035a250"`
 	OpProposalManagerAddress string `env:"B2NODE_OP_PROPOSAL_MANAGER_ADDRESS" envDefault:"0x837596C1Aa783E3B06C7Efb10a51Fe6699208D1D"`

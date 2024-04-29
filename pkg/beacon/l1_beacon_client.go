@@ -20,9 +20,10 @@ type BlobDataSource struct {
 	L1Signer           types.Signer
 	BatchInboxAddress  common.Address
 	BatchSenderAddress common.Address
-	data               []BlockBlobInfo
-	BlobsFetcher       *sources.L1BeaconClient
-	EthRPC             *ethclient.Client
+	//nolint:unused
+	data         []BlockBlobInfo
+	BlobsFetcher *sources.L1BeaconClient
+	EthRPC       *ethclient.Client
 }
 
 func NewBlobDataSource(l1Signer types.Signer, batchInboxAddress common.Address, batchSenderAddress common.Address,
@@ -37,7 +38,7 @@ func NewBlobDataSource(l1Signer types.Signer, batchInboxAddress common.Address, 
 	}
 }
 
-func (bds *BlobDataSource) GetBlobByBlockNum(ctx context.Context, blockNum *big.Int) ([]*BlockBlobInfo, error) {
+func (bds *BlobDataSource) GetBlobByBlockNum(ctx context.Context, blockNum *big.Int) ([]BlockBlobInfo, error) {
 	block, err := bds.EthRPC.BlockByNumber(ctx, blockNum)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get block %d: %v", blockNum, err)
@@ -62,17 +63,19 @@ func (bds *BlobDataSource) GetBlobByBlockNum(ctx context.Context, blockNum *big.
 		// If the L1 block was available, then the blobs should be available too. The only
 		// exception is if the blob retention window has expired, which we will ultimately handle
 		// by failing over to a blob archival service.
-		return nil, fmt.Errorf("failed to fetch blobs no record: %w", err)
+		return nil, fmt.Errorf("failed to fetch blobs: %w", err)
 	} else if err != nil {
 		return nil, fmt.Errorf("failed to fetch blobs: %w", err)
 	}
-	var data []*BlockBlobInfo
+	//nolint:prealloc
+	var data []BlockBlobInfo
 	for i, hash := range hashes {
 		if blobSidecars[i] == nil {
 			log.Errorf("blob %d not found in block %d", hash.Index, blockNum)
 			continue
 		}
-		data = append(data, &BlockBlobInfo{
+		//nolint:gosec,exportloopref
+		data = append(data, BlockBlobInfo{
 			BlobSidecar: blobSidecars[i],
 			Hash:        &hash,
 		})

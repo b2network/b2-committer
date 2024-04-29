@@ -29,6 +29,7 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 	}
 	for {
 		lastProposal, err := ctx.OpCommitterClient.ProposalManager.GetLastStateRootProposal(&bind.CallOpts{})
+		fmt.Println(lastProposal.Winner.String())
 		if err != nil {
 			log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to get last state root proposal from contract: %s", err.Error())
 			time.Sleep(3 * time.Second)
@@ -56,6 +57,7 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 			continue
 		}
 
+		//nolint: dupl
 		if lastProposal.Status == schema.ProposalVotingStatus || lastProposal.Status == schema.ProposalTimeoutStatus {
 			// check address voted or not
 			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnStateRootProposalPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
@@ -72,7 +74,7 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 			var voteProposalEndL1Timestamp uint64
 			if lastProposal.ProposalID == 1 {
 				voteProposalStartL1Timestamp = lastProposal.StartL1Timestamp
-				voteProposalEndL1Timestamp = voteProposalStartL1Timestamp + ctx.Config.BlobIntervalTime
+				voteProposalEndL1Timestamp = voteProposalStartL1Timestamp + ctx.Config.OutputIntervalTime
 			} else {
 				beforeLastProposal, err := ctx.OpCommitterClient.ProposalManager.GetTxsRootProposal(&bind.CallOpts{}, lastProposal.ProposalID-1)
 				if err != nil {
@@ -81,7 +83,7 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 					continue
 				}
 				voteProposalStartL1Timestamp = beforeLastProposal.EndTimestamp + 1
-				voteProposalEndL1Timestamp = voteProposalStartL1Timestamp + ctx.Config.BlobIntervalTime
+				voteProposalEndL1Timestamp = voteProposalStartL1Timestamp + ctx.Config.OutputIntervalTime
 			}
 			tsp, err := constructStateRootProposal(ctx, lastProposal.ProposalID, voteProposalStartL1Timestamp, voteProposalEndL1Timestamp)
 			if err != nil {
@@ -121,7 +123,7 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 				if err != nil {
 					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] constructing state root for ds is failed. err : %s", errors.WithStack(err))
 				}
-				dsJSON, err := stateRoots.MarshalJSON()
+				dsJSON, err := stateRoots.MarshalJson()
 				if err != nil {
 					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to marshal ds proposal: %s", err.Error())
 					time.Sleep(3 * time.Second)
@@ -224,10 +226,11 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 				bitcoinTxHash := rs.RevealTxHashList[0].String()
 				_, err = ctx.OpCommitterClient.BitcoinTxHash(lastProposal.ProposalID, bitcoinTxHash)
 				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to send bitcoin tx hash: %s", err.Error())
+					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to send bitcoin tx hash: %s, winner:%s", err.Error(), lastProposal.Winner.String())
 					continue
 				}
 				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] success submit content to btc network. proposalID: %s, btcTxHash: %s", lastProposal.ProposalID, bitcoinTxHash)
+				time.Sleep(30 * time.Second)
 			} else {
 				outs, err := ctx.UnisatHTTPClient.QueryAPIBTCTxOutputsByTxID(context.Background(), lastProposal.BitcoinTxHash)
 				if err != nil {
@@ -304,14 +307,23 @@ func constructNextStateRootProposal(ctx *svc.ServiceContext, lastProposal op.OpP
 
 func constructStateRootProposal(ctx *svc.ServiceContext, proposalID uint64, startTimestamp uint64, endTimestamp uint64) (*types.StateRootProposal, error) {
 	var event schema.SyncEvent
-	err := ctx.DB.Where("block_time > ?", endTimestamp).Order("block_number").First(&event).Error
-	if err != nil {
-		return nil, fmt.Errorf("sync blob blocks is not completed: %s", errors.WithStack(err))
-	}
+
 	var events []schema.SyncEvent
-	err = ctx.DB.Where("block_time between ? and ?", startTimestamp, endTimestamp).Order("block_number").Find(&events).Error
-	if err != nil {
-		return nil, fmt.Errorf("collecting the blob blocks of proposal is failed. err : %s", errors.WithStack(err))
+	for {
+		event = schema.SyncEvent{}
+		err := ctx.DB.Where("block_time > ?", endTimestamp).Order("block_number").First(&event).Error
+		if err != nil {
+			return nil, fmt.Errorf("sync blob blocks is not completed: %s", errors.WithStack(err))
+		}
+		err = ctx.DB.Where("block_time between ? and ?", startTimestamp, endTimestamp).Order("block_number").Find(&events).Error
+		if err != nil {
+			return nil, fmt.Errorf("collecting the blob blocks of proposal is failed. err : %s", errors.WithStack(err))
+		}
+		if len(events) == 0 {
+			endTimestamp += ctx.Config.OutputIntervalTime
+		} else {
+			break
+		}
 	}
 	outputRoots, err := GetOutputRootMerkleRoot(events)
 	if err != nil {
