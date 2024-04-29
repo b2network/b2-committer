@@ -125,7 +125,7 @@ func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 					continue
 				}
 				dsProposal := types.NewDsTxsProposal(ctx.B2NodeConfig.ChainID, lastProposal.ProposalID, blobMerkleRoot, blobs)
-				dsJSON, err := dsProposal.MarshalJson()
+				dsJSON, err := dsProposal.ToJSONBytes()
 				if err != nil {
 					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to marshal ds proposal: %s", err.Error())
 					time.Sleep(3 * time.Second)

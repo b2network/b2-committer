@@ -47,9 +47,8 @@ func NewDsStateRootProposal(chainID int64, proposalID uint64, outputRoot string,
 	}, nil
 }
 
-// nolint: unparam
 func convertBlobToDsBlob(blobs []schema.BlobInfo) []DsBlob {
-	var dsBlobs []DsBlob
+	dsBlobs := make([]DsBlob, len(blobs))
 	for i, blob := range blobs {
 		dsBlobs[i] = DsBlob{
 			BlockID: blob.BlockNumber,
@@ -70,8 +69,7 @@ func (b *DsTxsProposal) GetDBBlobInfos() ([]schema.BlobInfo, error) {
 	return dbBlobs, nil
 }
 
-// nolint: revive,stylecheck
-func (b *DsTxsProposal) MarshalJson() ([]byte, error) {
+func (b *DsTxsProposal) ToJSONBytes() ([]byte, error) {
 	marshal, err := json.Marshal(b)
 	if err != nil {
 		return nil, err
@@ -79,8 +77,7 @@ func (b *DsTxsProposal) MarshalJson() ([]byte, error) {
 	return marshal, nil
 }
 
-// nolint: revive,stylecheck
-func (s *DsStateRootProposal) MarshalJson() ([]byte, error) {
+func (s *DsStateRootProposal) ToJSONBytes() ([]byte, error) {
 	marshal, err := json.Marshal(s)
 	if err != nil {
 		return nil, err

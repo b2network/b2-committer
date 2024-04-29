@@ -123,7 +123,7 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 				if err != nil {
 					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] constructing state root for ds is failed. err : %s", errors.WithStack(err))
 				}
-				dsJSON, err := stateRoots.MarshalJson()
+				dsJSON, err := stateRoots.ToJSONBytes()
 				if err != nil {
 					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to marshal ds proposal: %s", err.Error())
 					time.Sleep(3 * time.Second)
