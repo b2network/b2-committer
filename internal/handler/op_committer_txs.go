@@ -58,7 +58,6 @@ func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 
 		//nolint: dupl
 		if lastProposal.Status == schema.ProposalVotingStatus || lastProposal.Status == schema.ProposalTimeoutStatus {
-			time.Sleep(30 * time.Second)
 			// check address voted or not
 			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnTxsRootProposalPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
 			if err != nil {
@@ -99,11 +98,10 @@ func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 				continue
 			}
 			log.Infof("[Handler.GetBlobsAndCommitProposal] vote txs proposal %s, %s ", tsp.ProposalID, voteAddress)
-			continue
+			time.Sleep(30 * time.Second)
 		}
 
 		if lastProposal.Status == schema.ProposalPendingStatus {
-			time.Sleep(30 * time.Second)
 			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOntxsRootDSTxPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
 			if err != nil {
 				log.Errorf("[Handler.GetBlobsAndCommitProposal][IsVotedOntxsRootDSTxPhase] is failed : %s", err)
@@ -178,6 +176,7 @@ func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 					continue
 				}
 				log.Infof("[Handler.GetBlobsAndCommitProposal] success verify and vote submit txs from ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
+				time.Sleep(30 * time.Second)
 			}
 		}
 	}
