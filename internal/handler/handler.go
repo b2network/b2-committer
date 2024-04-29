@@ -5,7 +5,6 @@ import (
 )
 
 func Run(ctx *svc.ServiceContext) {
-
 	// query last block number
 	go LatestBlackNumber(ctx)
 	// sync blocks
@@ -18,5 +17,4 @@ func Run(ctx *svc.ServiceContext) {
 	go GetBlobsAndCommitTxsProposal(ctx)
 	// commit state root to ar and btc
 	go GetStateRootAndCommitStateRootProposal(ctx)
-
 }
