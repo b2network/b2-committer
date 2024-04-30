@@ -56,7 +56,6 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 			continue
 		}
 
-		//nolint: dupl
 		if lastProposal.Status == schema.ProposalVotingStatus || lastProposal.Status == schema.ProposalTimeoutStatus {
 			time.Sleep(30 * time.Second)
 			// check address voted or not
@@ -181,7 +180,6 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] success verify and vote submit output from ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
 				time.Sleep(30 * time.Second)
 			}
-
 		}
 
 		if lastProposal.Status == schema.ProposalCommitting {

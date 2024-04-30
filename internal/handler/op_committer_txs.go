@@ -56,7 +56,6 @@ func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 			continue
 		}
 
-		//nolint: dupl
 		if lastProposal.Status == schema.ProposalVotingStatus || lastProposal.Status == schema.ProposalTimeoutStatus {
 			// check address voted or not
 			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnTxsRootProposalPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
