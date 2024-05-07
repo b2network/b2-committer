@@ -3,7 +3,6 @@ package handler
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -33,151 +32,33 @@ func GetBlobsAndCommitTxsProposal(ctx *svc.ServiceContext) {
 			continue
 		}
 		latestProposalID := lastProposal.ProposalID
-		voteAddress := ctx.B2NodeConfig.Address
 		if lastProposal.Status == schema.ProposalSucceedStatus || lastProposal.ProposalID == 0 {
-			time.Sleep(30 * time.Second)
-			log.Infof("this proposal has been successful or just beginning : %d", latestProposalID)
-			// submit new proposal
-			newTxsRootProposal, err := constructNextProposal(ctx, lastProposal)
+			tx, newProposal, err := SubmitNextTxsProposal(ctx, lastProposal, latestProposalID)
 			if err != nil {
-				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to construct new proposal: %s", err.Error())
+				log.Errorf("[Handler.GetBlobsAndCommitProposal][SubmitNextTxsProposal] Try to submit proposal: %s", err.Error())
 				time.Sleep(3 * time.Second)
 				continue
 			}
-
-			_, err = ctx.OpCommitterClient.SubmitTxsRoot(newTxsRootProposal)
-			if err != nil {
-				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to submit new proposal: %s", err.Error())
-				time.Sleep(3 * time.Second)
-				continue
-			}
-			log.Infof("[Handler.GetBlobsAndCommitProposal] submit new txs proposal: %s", newTxsRootProposal.ProposalID)
-			time.Sleep(10 * time.Second)
-			continue
+			log.Infof("[Handler.GetBlobsAndCommitProposal][SubmitNextTxsProposal] submit new proposal success. proposalID: %s, transaction: %s", newProposal.ProposalID, tx.Hash())
 		}
-
 		if lastProposal.Status == schema.ProposalVotingStatus || lastProposal.Status == schema.ProposalTimeoutStatus {
-			// check address voted or not
-			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnTxsRootProposalPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
+			err = ProcessTxsVotingAndTimeoutState(ctx, lastProposal)
 			if err != nil {
-				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to find address voted or not: %s", err)
+				log.Errorf("[Handler.GetBlobsAndCommitProposal][ProcessVotingAndTimeoutState] Try to process voting and timeout state: %s", err.Error())
 				time.Sleep(3 * time.Second)
 				continue
 			}
-			if phase {
-				log.Infof("[Handler.GetBlobsAndCommitProposal] address already voted in voting status: %s", voteAddress)
-				continue
-			}
-			var voteProposalStartTimestamp uint64
-			var voteProposalEndTimestamp uint64
-			if lastProposal.ProposalID == 1 {
-				voteProposalStartTimestamp = lastProposal.StartTimestamp
-				voteProposalEndTimestamp = voteProposalStartTimestamp + ctx.Config.BlobIntervalTime
-			} else {
-				beforeLastProposal, err := ctx.OpCommitterClient.ProposalManager.GetTxsRootProposal(&bind.CallOpts{}, lastProposal.ProposalID-1)
-				if err != nil {
-					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to get before last proposal: %s", err.Error())
-					time.Sleep(3 * time.Second)
-					continue
-				}
-				voteProposalStartTimestamp = beforeLastProposal.EndTimestamp + 1
-				voteProposalEndTimestamp = voteProposalStartTimestamp + ctx.Config.BlobIntervalTime
-			}
-
-			tsp, err := constructTxsRootProposal(ctx, lastProposal.ProposalID, voteProposalStartTimestamp, voteProposalEndTimestamp)
-			if err != nil {
-				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to construct new proposal to vote: %s", err.Error())
-				time.Sleep(3 * time.Second)
-				continue
-			}
-			_, err = ctx.OpCommitterClient.SubmitTxsRoot(tsp)
-			if err != nil {
-				log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to submit new proposal to vote: %s", err.Error())
-				time.Sleep(3 * time.Second)
-				continue
-			}
-			log.Infof("[Handler.GetBlobsAndCommitProposal] vote txs proposal %s, %s ", tsp.ProposalID, voteAddress)
-			time.Sleep(30 * time.Second)
 		}
-
 		if lastProposal.Status == schema.ProposalPendingStatus {
-			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOntxsRootDSTxPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
+			err = ProcessTxsPendingStates(ctx, lastProposal)
 			if err != nil {
-				log.Errorf("[Handler.GetBlobsAndCommitProposal][IsVotedOntxsRootDSTxPhase] is failed : %s", err)
+				log.Errorf("[Handler.GetBlobsAndCommitProposal][ProcessPendingStates] Try to process pending state: %s", err.Error())
 				time.Sleep(3 * time.Second)
 				continue
 			}
-			if phase {
-				log.Infof("[Handler.GetBlobsAndCommitProposal] address already voted in pending status: %s", voteAddress)
-				continue
-			}
-			if lastProposal.Winner == common.HexToAddress(ctx.B2NodeConfig.Address) {
-				blobs, err := GetBlobsByBlockListFromDB(ctx, lastProposal.BlockList)
-				if err != nil {
-					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to get blobs from db: %s", err.Error())
-					time.Sleep(3 * time.Second)
-					continue
-				}
-				blobMerkleRoot, err := GetBlobsMerkleRoot(blobs)
-				if err != nil {
-					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to get blobs merkle root: %s", err.Error())
-					time.Sleep(3 * time.Second)
-					continue
-				}
-				dsProposal := types.NewDsTxsProposal(ctx.B2NodeConfig.ChainID, lastProposal.ProposalID, blobMerkleRoot, blobs)
-				dsJSON, err := dsProposal.ToJSONBytes()
-				if err != nil {
-					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to marshal ds proposal: %s", err.Error())
-					time.Sleep(3 * time.Second)
-					continue
-				}
-				dsTxID, err := ctx.DecentralizedStore.StoreDetailsOnChain(dsJSON, ctx.B2NodeConfig.ChainID, lastProposal.ProposalID)
-				if err != nil {
-					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to store ds proposal: %s", err.Error())
-					continue
-				}
-				log.Infof("[Handler.GetBlobsAndCommitProposal] proposal %s, success data to ds %s", lastProposal.ProposalID, dsTxID)
-				_, err = ctx.OpCommitterClient.DsHash(lastProposal.ProposalID, schema.ProposalTypeTxsRoot, schema.DsTypeArWeave, dsTxID)
-				if err != nil {
-					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to send ds proposal: %s", err.Error())
-					continue
-				}
-				log.Infof("[Handler.GetBlobsAndCommitProposal] success submit txs to ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
-				time.Sleep(30 * time.Second)
-			}
-			if lastProposal.Winner != common.HexToAddress(ctx.B2NodeConfig.Address) {
-				blobs, err := ctx.DecentralizedStore.QueryDetailsByTxID(lastProposal.DsTxHash)
-				if err != nil {
-					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to get blobs from ds: %s", err.Error())
-					time.Sleep(3 * time.Second)
-					continue
-				}
-				var dsProposal types.DsTxsProposal
-				err = json.Unmarshal(blobs, &dsProposal)
-				if err != nil {
-					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to unmarshal ds proposal: %s", err.Error())
-					continue
-				}
-				dbBlobs, err := dsProposal.GetDBBlobInfos()
-				if err != nil {
-					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to get blobs from ds: %s", err.Error())
-					continue
-				}
-				verifyTxsRootHash, err := GetBlobsMerkleRoot(dbBlobs)
-
-				if verifyTxsRootHash != lastProposal.TxsRoot {
-					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to verify blobs from ds: %s", err.Error())
-					continue
-				}
-				_, err = ctx.OpCommitterClient.DsHash(lastProposal.ProposalID, schema.ProposalTypeTxsRoot, schema.DsTypeArWeave, lastProposal.DsTxHash)
-				if err != nil {
-					log.Errorf("[Handler.GetBlobsAndCommitProposal] Try to send ds proposal: %s", err.Error())
-					continue
-				}
-				log.Infof("[Handler.GetBlobsAndCommitProposal] success verify and vote submit txs from ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
-				time.Sleep(30 * time.Second)
-			}
+			log.Infof("[Handler.GetBlobsAndCommitProposal] success verify and vote submit txs from ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
 		}
+		time.Sleep(15 * time.Second)
 	}
 }
 

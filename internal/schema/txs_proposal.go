@@ -16,7 +16,7 @@ type TxsProposal struct {
 	DsType           uint8
 	DsTxHash         string
 	Winner           common.Address
-	BlockList        []uint64
+	BlockList        string
 }
 
 func (TxsProposal) TableName() string {

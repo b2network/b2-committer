@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -10,9 +9,7 @@ import (
 	"github.com/b2network/b2committer/internal/schema"
 	"github.com/b2network/b2committer/internal/svc"
 	"github.com/b2network/b2committer/internal/types"
-	"github.com/b2network/b2committer/pkg/btcapi"
 	"github.com/b2network/b2committer/pkg/contract/op"
-	"github.com/b2network/b2committer/pkg/inscribe"
 	"github.com/b2network/b2committer/pkg/log"
 	"github.com/b2network/b2committer/pkg/merkle"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -35,253 +32,43 @@ func GetStateRootAndCommitStateRootProposal(ctx *svc.ServiceContext) {
 			continue
 		}
 		latestProposalID := lastProposal.ProposalID
-		voteAddress := ctx.B2NodeConfig.Address
 		if lastProposal.Status == schema.ProposalSucceedStatus || lastProposal.ProposalID == 0 {
-			log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] this proposal has been successful or just beginning : %d", latestProposalID)
-			// submit new proposal
-			newStateRootProposal, err := constructNextStateRootProposal(ctx, lastProposal)
+			tx, newStateRootProposal, err := SubmitNextStateRootProposal(ctx, lastProposal, latestProposalID)
 			if err != nil {
-				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to construct new state root proposal: %s", err.Error())
+				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to submit proposal: %s", err.Error())
 				time.Sleep(3 * time.Second)
 				continue
 			}
-			_, err = ctx.OpCommitterClient.SubmitStateRoot(newStateRootProposal)
-			if err != nil {
-				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal]Try to submit new state root proposal: %s, proposalID: %s", err.Error(), newStateRootProposal.ProposalID)
-				time.Sleep(3 * time.Second)
-				continue
-			}
-			log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] submit new state root proposal: %s", newStateRootProposal.ProposalID)
-			time.Sleep(30 * time.Second)
-			continue
+			log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] submit new proposal success. proposalID: %s, transaction: %s", newStateRootProposal.ProposalID, tx.Hash())
 		}
 
 		if lastProposal.Status == schema.ProposalVotingStatus || lastProposal.Status == schema.ProposalTimeoutStatus {
-			time.Sleep(30 * time.Second)
-			// check address voted or not
-			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnStateRootProposalPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
+			err = ProcessStateRootVotingAndTimeoutState(ctx, lastProposal)
 			if err != nil {
-				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to find address voted or not: %s", err)
+				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal][ProcessStateRootVotingAndTimeoutState] Try to process voting and timeout state: %s", err.Error())
 				time.Sleep(3 * time.Second)
 				continue
 			}
-			if phase {
-				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] address already voted in voting status: %s", voteAddress)
-				continue
-			}
-			var voteProposalStartL1Timestamp uint64
-			var voteProposalEndL1Timestamp uint64
-			if lastProposal.ProposalID == 1 {
-				voteProposalStartL1Timestamp = lastProposal.StartL1Timestamp
-				voteProposalEndL1Timestamp = voteProposalStartL1Timestamp + ctx.Config.OutputIntervalTime
-			} else {
-				beforeLastProposal, err := ctx.OpCommitterClient.ProposalManager.GetTxsRootProposal(&bind.CallOpts{}, lastProposal.ProposalID-1)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal]Try to get before last proposal: %s", err.Error())
-					time.Sleep(3 * time.Second)
-					continue
-				}
-				voteProposalStartL1Timestamp = beforeLastProposal.EndTimestamp + 1
-				voteProposalEndL1Timestamp = voteProposalStartL1Timestamp + ctx.Config.OutputIntervalTime
-			}
-			tsp, err := constructStateRootProposal(ctx, lastProposal.ProposalID, voteProposalStartL1Timestamp, voteProposalEndL1Timestamp)
-			if err != nil {
-				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to construct new proposal to vote: %s", err.Error())
-				time.Sleep(3 * time.Second)
-				continue
-			}
-			_, err = ctx.OpCommitterClient.SubmitStateRoot(tsp)
-			if err != nil {
-				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to submit new proposal to vote: %s", err.Error())
-				time.Sleep(3 * time.Second)
-				continue
-			}
-			log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] vote txs proposal %s, %s ", tsp.ProposalID, voteAddress)
-			time.Sleep(30 * time.Second)
 		}
 
 		if lastProposal.Status == schema.ProposalPendingStatus {
-			phase, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnStateRootDSTxPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
+			err = ProcessStateRootPendingStates(ctx, lastProposal)
 			if err != nil {
-				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal][IsVotedOnStateRootDSTxPhase] is failed : %s", err)
+				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal][ProcessStateRootPendingStates] Try to process pending state: %s", err.Error())
 				time.Sleep(3 * time.Second)
 				continue
-			}
-			if phase {
-				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] address already voted in pending status: %s, proposalID: %s", voteAddress, lastProposal.ProposalID)
-				continue
-			}
-			if lastProposal.Winner == common.HexToAddress(ctx.B2NodeConfig.Address) {
-				var events []schema.SyncEvent
-				err = ctx.DB.Where("block_time between ? and ?", lastProposal.StartL1Timestamp, lastProposal.EndL1Timestamp).Order("block_number").Find(&events).Error
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal]collecting the state root blocks of proposal is failed. err : %s", errors.WithStack(err))
-					continue
-				}
-				stateRoots, err := types.NewDsStateRootProposal(ctx.B2NodeConfig.ChainID, lastProposal.ProposalID, lastProposal.OutputRoot, events)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] constructing state root for ds is failed. err : %s", errors.WithStack(err))
-				}
-				dsJSON, err := stateRoots.ToJSONBytes()
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to marshal ds proposal: %s", err.Error())
-					time.Sleep(3 * time.Second)
-					continue
-				}
-
-				dsTxID, err := ctx.DecentralizedStore.StoreDetailsOnChain(dsJSON, ctx.B2NodeConfig.ChainID, lastProposal.ProposalID)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to store ds proposal: %s", err.Error())
-					continue
-				}
-				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] proposal %s, success data to ds %s", lastProposal.ProposalID, dsTxID)
-				_, err = ctx.OpCommitterClient.DsHash(lastProposal.ProposalID, schema.ProposalTypeStateRoot, schema.DsTypeArWeave, dsTxID)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to send ds proposal by winner: %s", err.Error())
-					continue
-				}
-				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] success submit txs to ds: %s, dsHash: %s", lastProposal.ProposalID, dsTxID)
-				time.Sleep(30 * time.Second)
-			}
-			if lastProposal.Winner != common.HexToAddress(voteAddress) {
-				outputs, err := ctx.DecentralizedStore.QueryDetailsByTxID(lastProposal.DsTxHash)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to get outputs from ds: %s", err.Error())
-					time.Sleep(3 * time.Second)
-					continue
-				}
-				var dsProposal types.DsStateRootProposal
-				err = json.Unmarshal(outputs, &dsProposal)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to unmarshal ds proposal: %s", err.Error())
-					continue
-				}
-
-				events, err := types.ConvertOutputsToEventData(dsProposal.OutputEvents)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to convert outputs to event data: %s", err.Error())
-					continue
-				}
-				verifyOutputRoots, err := GetOutputRootMerkleRoot(events)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to get outputs merkle root: %s", err.Error())
-					continue
-				}
-
-				if verifyOutputRoots != lastProposal.OutputRoot {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to verify output from ds: %s", err.Error())
-					continue
-				}
-				_, err = ctx.OpCommitterClient.DsHash(lastProposal.ProposalID, schema.ProposalTypeStateRoot, schema.DsTypeArWeave, lastProposal.DsTxHash)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to send ds proposal by voter: %s", err.Error())
-					continue
-				}
-				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] success verify and vote submit output from ds: %s, dsHash: %s", lastProposal.ProposalID, lastProposal.DsTxHash)
-				time.Sleep(30 * time.Second)
 			}
 		}
 
 		if lastProposal.Status == schema.ProposalCommitting {
-			time.Sleep(30 * time.Second)
-			isVotedBtcTx, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnSubmitBitcoinTxPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
+			err = ProcessStateRootCommittingStates(ctx, lastProposal)
 			if err != nil {
-				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal][IsVotedOnSubmitBitcoinTxPhase] is failed : %s", err)
+				log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal][ProcessStateRootCommittingStates] Try to process committing state: %s", err.Error())
 				time.Sleep(3 * time.Second)
 				continue
 			}
-			if isVotedBtcTx {
-				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] address already voted btc tx in committing status: %s, proposalID: %s", voteAddress, lastProposal.ProposalID)
-				continue
-			}
-			if lastProposal.Winner == common.HexToAddress(voteAddress) {
-				stateRoot := &types.StateRootProposal{
-					ProposalID:         lastProposal.ProposalID,
-					OutputRoot:         lastProposal.OutputRoot,
-					StartL1Timestamp:   lastProposal.StartL1Timestamp,
-					EndL1Timestamp:     lastProposal.EndL1Timestamp,
-					StartL2BlockNumber: lastProposal.StartL2BlockNumber,
-					EndL2BlockNumber:   lastProposal.EndL2BlockNumber,
-					OutputStartIndex:   lastProposal.OutputStartIndex,
-					OutputEndIndex:     lastProposal.OutputEndIndex,
-				}
-				btcStateRoot := &types.BtcStateRootProposal{
-					Proposal: stateRoot,
-					ChainID:  ctx.B2NodeConfig.ChainID,
-				}
-				content, err := json.Marshal(btcStateRoot)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Pending btcHash Try to marshal state root proposal: %s", err.Error())
-					continue
-				}
-				rs, err := inscribe.Inscribe(ctx.BTCConfig.PrivateKey, content,
-					ctx.BTCConfig.DestinationAddress, btcapi.ChainParams(ctx.BTCConfig.NetworkName))
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Inscribe state root err: %s\n", errors.WithStack(err).Error())
-					continue
-				}
-				str, err := json.Marshal(rs)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Marshal result err: %s\n", errors.WithStack(err).Error())
-					continue
-				}
-				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] inscribe result: %s", str)
-				bitcoinTxHash := rs.RevealTxHashList[0].String()
-				_, err = ctx.OpCommitterClient.BitcoinTxHash(lastProposal.ProposalID, bitcoinTxHash)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to send bitcoin tx hash: %s, winner:%s", err.Error(), lastProposal.Winner.String())
-					continue
-				}
-				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] success submit content to btc network. proposalID: %s, btcTxHash: %s", lastProposal.ProposalID, bitcoinTxHash)
-				time.Sleep(30 * time.Second)
-			} else {
-				outs, err := ctx.UnisatHTTPClient.QueryAPIBTCTxOutputsByTxID(context.Background(), lastProposal.BitcoinTxHash)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to get outputs from btc: %s", err.Error())
-					time.Sleep(3 * time.Second)
-					continue
-				}
-				if len(outs.Data) == 0 {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to get outputs from btc: no data")
-					time.Sleep(3 * time.Second)
-					continue
-				}
-				if len(outs.Data[0].Inscriptions) == 0 {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to get outputs from btc: no inscription")
-					time.Sleep(3 * time.Second)
-					continue
-				}
-				blockHeight := outs.Data[0].Height + 6
-				if uint64(ctx.LatestBTCBlockNumber) < blockHeight {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to get outputs from btc: block height is too low")
-					time.Sleep(3 * time.Second)
-					continue
-				}
-
-				insID := outs.Data[0].Inscriptions[0].InscriptionID
-				btcStateRootProposal, err := ctx.UnisatHTTPClient.QueryStateRootProposalByInsID(context.Background(), insID)
-				if lastProposal.ProposalID != btcStateRootProposal.Proposal.ProposalID ||
-					btcStateRootProposal.Proposal.OutputRoot != lastProposal.OutputRoot ||
-					btcStateRootProposal.Proposal.StartL1Timestamp != lastProposal.StartL1Timestamp ||
-					btcStateRootProposal.Proposal.EndL1Timestamp != lastProposal.EndL1Timestamp ||
-					btcStateRootProposal.Proposal.StartL2BlockNumber != lastProposal.StartL2BlockNumber ||
-					btcStateRootProposal.Proposal.EndL2BlockNumber != lastProposal.EndL2BlockNumber ||
-					btcStateRootProposal.Proposal.OutputStartIndex != lastProposal.OutputStartIndex ||
-					btcStateRootProposal.Proposal.OutputEndIndex != lastProposal.OutputEndIndex ||
-					btcStateRootProposal.ChainID != ctx.B2NodeConfig.ChainID {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to verify btc state root proposal: %s", err.Error())
-					time.Sleep(3 * time.Second)
-					continue
-				}
-
-				_, err = ctx.OpCommitterClient.BitcoinTxHash(lastProposal.ProposalID, lastProposal.BitcoinTxHash)
-				if err != nil {
-					log.Errorf("[Handler.GetStateRootAndCommitStateRootProposal] Try to vote bitcoin tx hash: %s", err.Error())
-					continue
-				}
-				log.Infof("[Handler.GetStateRootAndCommitStateRootProposal] success verify and vote submit output from btc: %s, btcTxHash: %s", lastProposal.ProposalID, lastProposal.BitcoinTxHash)
-			}
 		}
+		time.Sleep(15 * time.Second)
 	}
 }
 
@@ -310,7 +97,6 @@ func constructNextStateRootProposal(ctx *svc.ServiceContext, lastProposal op.OpP
 
 func constructStateRootProposal(ctx *svc.ServiceContext, proposalID uint64, startTimestamp uint64, endTimestamp uint64) (*types.StateRootProposal, error) {
 	var event schema.SyncEvent
-
 	var events []schema.SyncEvent
 	for {
 		event = schema.SyncEvent{}

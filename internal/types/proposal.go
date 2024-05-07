@@ -2,8 +2,9 @@ package types
 
 import (
 	"encoding/json"
-
 	"github.com/b2network/b2committer/internal/schema"
+	"strconv"
+	"strings"
 )
 
 type TxsRootProposal struct {
@@ -14,6 +15,36 @@ type TxsRootProposal struct {
 	EndBlockNumber   uint64
 	TxsRoot          string
 	BlockList        []uint64
+	BlockListStr     string
+}
+
+func convertBlockListToString(blockList []uint64) string {
+	strArr := make([]string, 0)
+	for _, block := range blockList {
+		number := strconv.FormatUint(block, 10)
+		if !stringExistsInSlice(strArr, number) {
+			strArr = append(strArr, number)
+		}
+	}
+	return strings.Join(strArr, ",")
+}
+
+func stringExistsInSlice(slice []string, target string) bool {
+	for _, element := range slice {
+		if element == target {
+			return true
+		}
+	}
+	return false
+}
+
+func uintExistsInSlice(slice []uint64, target uint64) bool {
+	for _, element := range slice {
+		if element == target {
+			return true
+		}
+	}
+	return false
 }
 
 func NewTxsRootProposal(proposalID uint64, txsRoot string, blobs []schema.BlobInfo) *TxsRootProposal {
@@ -26,6 +57,7 @@ func NewTxsRootProposal(proposalID uint64, txsRoot string, blobs []schema.BlobIn
 		TxsRoot:          txsRoot,
 	}
 	fillBlockListAndBlockInfo(blobs, proposal)
+	proposal.BlockListStr = convertBlockListToString(proposal.BlockList)
 	return proposal
 }
 
@@ -45,7 +77,9 @@ func fillBlockListAndBlockInfo(blobs []schema.BlobInfo, proposal *TxsRootProposa
 		if proposal.EndTimestamp < blob.BlockTime {
 			proposal.EndTimestamp = blob.BlockTime
 		}
-		blockList = append(blockList, uint64(blob.BlockNumber))
+		if !uintExistsInSlice(blockList, uint64(blob.BlockNumber)) {
+			blockList = append(blockList, uint64(blob.BlockNumber))
+		}
 	}
 	proposal.BlockList = blockList
 }

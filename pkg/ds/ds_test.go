@@ -11,8 +11,13 @@ import (
 
 func TestQueryTxsByTxID(t *testing.T) {
 	arClient := goar.NewClient("https://arweave.net")
-	txs, _ := arClient.GetTransactionData("5m16jdjzJpWAOrCd83CM9izkn8md1IYKcsOK2SMESDU", "json")
+	txs, _ := arClient.GetTransactionData("vKYQjEJIl2n8r6u_cmM5YMev8KAJ3DAwOMhsNI717Ws", "json")
+	//require.NoError(t, err)
 	fmt.Println(string(txs))
+
+	//state, err := arClient.GetTransactionStatus("tB0zc2qLAGsw8x2kNUUPqzOBQuRV1C5CFWEN5tfY2CY")
+	//require.NoError(t, err)
+	//fmt.Println(state)
 }
 
 func TestSendData(t *testing.T) {
