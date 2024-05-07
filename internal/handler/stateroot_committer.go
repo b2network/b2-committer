@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/b2network/b2committer/internal/schema"
 	"github.com/b2network/b2committer/internal/svc"
 	"github.com/b2network/b2committer/internal/types"
@@ -15,7 +17,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/pkg/errors"
-	"time"
 )
 
 func SubmitNextStateRootProposal(ctx *svc.ServiceContext, lastProposal op.OpProposalStateRootProposal, latestProposalID uint64) (*ethTypes.Transaction, *types.StateRootProposal, error) {
@@ -27,7 +28,7 @@ func SubmitNextStateRootProposal(ctx *svc.ServiceContext, lastProposal op.OpProp
 	}
 	tx, err := ctx.OpCommitterClient.SubmitStateRoot(newStateRootProposal)
 	if err != nil {
-		return nil, nil, fmt.Errorf("[SubmitNextStateRootProposal]Try to submit new state root proposal: %s, proposalID: %s", err.Error(), newStateRootProposal.ProposalID)
+		return nil, nil, fmt.Errorf("[SubmitNextStateRootProposal]Try to submit new state root proposal: %s, proposalID: %d", err.Error(), newStateRootProposal.ProposalID)
 	}
 	voteAddress := ctx.B2NodeConfig.Address
 	err = confirmSubmitStateRootProposal(ctx, newStateRootProposal.ProposalID, voteAddress)
@@ -178,7 +179,7 @@ func ProcessStateRootCommittingStates(ctx *svc.ServiceContext, lastProposal op.O
 		return fmt.Errorf("[ProcessStateRootCommittingStates][IsVotedOnSubmitBitcoinTxPhase] is failed : %s", err)
 	}
 	if isVotedBtcTx {
-		return fmt.Errorf("[ProcessStateRootCommittingStates] address already voted btc tx in committing status: %s, proposalID: %s", voteAddress, lastProposal.ProposalID)
+		return fmt.Errorf("[ProcessStateRootCommittingStates] address already voted btc tx in committing status: %s, proposalID: %d", voteAddress, lastProposal.ProposalID)
 	}
 	if lastProposal.Winner == common.HexToAddress(ctx.B2NodeConfig.Address) {
 		err = ProcessStateRootCommittingWinner(ctx, lastProposal, voteAddress)
@@ -216,11 +217,11 @@ func ProcessStateRootCommittingWinner(ctx *svc.ServiceContext, lastProposal op.O
 	rs, err := inscribe.Inscribe(ctx.BTCConfig.PrivateKey, content,
 		ctx.BTCConfig.DestinationAddress, btcapi.ChainParams(ctx.BTCConfig.NetworkName))
 	if err != nil {
-		return fmt.Errorf("[ProcessStateRootCommittingWinner] Inscribe state root err: %s\n", errors.WithStack(err).Error())
+		return fmt.Errorf("[ProcessStateRootCommittingWinner] Inscribe state root err: %s", errors.WithStack(err).Error())
 	}
 	str, err := json.Marshal(rs)
 	if err != nil {
-		return fmt.Errorf("[ProcessStateRootCommittingWinner] Marshal result err: %s\n", errors.WithStack(err).Error())
+		return fmt.Errorf("[ProcessStateRootCommittingWinner] Marshal result err: %s", errors.WithStack(err).Error())
 	}
 	log.Infof("[ProcessStateRootCommittingWinner] inscribe result: %s", str)
 	bitcoinTxHash := rs.RevealTxHashList[0].String()
@@ -279,10 +280,10 @@ func ProcessStateRootCommittingVoter(ctx *svc.ServiceContext, lastProposal op.Op
 }
 
 func confirmBitcoinTxHashPhase(ctx *svc.ServiceContext, lastProposal op.OpProposalStateRootProposal, voteAddress string) error {
-	var times uint64 = 0
+	var times uint64
 	for {
 		if times > 60 {
-			return fmt.Errorf("[confirmBitcoinTxHashPhase] confirmBitcoinTxHashPhase fail, proposalID: %s, voteAddress: %s", lastProposal.ProposalID, voteAddress)
+			return fmt.Errorf("[confirmBitcoinTxHashPhase] confirmBitcoinTxHashPhase fail, proposalID: %d, voteAddress: %s", lastProposal.ProposalID, voteAddress)
 		}
 		confirmBTCTx, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnSubmitBitcoinTxPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
 		if err != nil {
@@ -301,10 +302,10 @@ func confirmBitcoinTxHashPhase(ctx *svc.ServiceContext, lastProposal op.OpPropos
 }
 
 func confirmStateRootDSTxPhase(ctx *svc.ServiceContext, lastProposal op.OpProposalStateRootProposal, voteAddress string) error {
-	var times uint64 = 0
+	var times uint64
 	for {
 		if times > 60 {
-			return fmt.Errorf("[confirmDSTxPhase] confirmDSTxPhase fail, proposalID: %s, voteAddress: %s", lastProposal.ProposalID, voteAddress)
+			return fmt.Errorf("[confirmDSTxPhase] confirmDSTxPhase fail, proposalID: %d, voteAddress: %s", lastProposal.ProposalID, voteAddress)
 		}
 		res, err := ctx.OpCommitterClient.ProposalManager.IsVotedOnStateRootDSTxPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
 		if err != nil {
@@ -323,7 +324,7 @@ func confirmStateRootDSTxPhase(ctx *svc.ServiceContext, lastProposal op.OpPropos
 }
 
 func confirmSubmitStateRootProposal(ctx *svc.ServiceContext, proposalID uint64, voteAddress string) error {
-	var times uint64 = 0
+	var times uint64
 	for {
 		if times > 60 {
 			return fmt.Errorf("[confirmSubmitStateRootProposal] confirm SubmitStateRoot fail")

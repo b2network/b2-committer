@@ -3,6 +3,8 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/b2network/b2committer/internal/schema"
 	"github.com/b2network/b2committer/internal/svc"
 	"github.com/b2network/b2committer/internal/types"
@@ -12,7 +14,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/pkg/errors"
-	"time"
 )
 
 func SubmitNextTxsProposal(ctx *svc.ServiceContext, lastProposal op.OpProposalTxsRootProposal, latestProposalID uint64) (*ethTypes.Transaction, *types.TxsRootProposal, error) {
@@ -134,7 +135,6 @@ func ProcessTxsPendingWinner(ctx *svc.ServiceContext, lastProposal op.OpProposal
 	blobs, err := GetBlobsByBlockListFromDB(ctx, lastProposal.BlockList)
 	if err != nil {
 		return fmt.Errorf("[ProcessPendingWinner][GetBlobsByBlockListFromDB] Try to get blobs from db: %s", err.Error())
-
 	}
 	blobMerkleRoot, err := GetBlobsMerkleRoot(blobs)
 	if err != nil {
@@ -158,7 +158,6 @@ func ProcessTxsPendingWinner(ctx *svc.ServiceContext, lastProposal op.OpProposal
 	_, err = ctx.OpCommitterClient.DsHash(lastProposal.ProposalID, schema.ProposalTypeTxsRoot, schema.DsTypeArWeave, dsTxID)
 	if err != nil {
 		return fmt.Errorf("[OpCommitterClient.DsHash] Try to send ds proposal: %s", err.Error())
-
 	}
 	err = confirmTxsDSTxPhase(ctx, lastProposal, voteAddress)
 	if err != nil {
@@ -169,7 +168,7 @@ func ProcessTxsPendingWinner(ctx *svc.ServiceContext, lastProposal op.OpProposal
 }
 
 func confirmSubmitTxsProposal(ctx *svc.ServiceContext, proposalID uint64, voteAddress string) error {
-	var times uint64 = 0
+	var times uint64
 	for {
 		if times > 60 {
 			return fmt.Errorf("[confirmSubmitTxsProposal] confirm submitTxsRoot fail")
@@ -190,10 +189,10 @@ func confirmSubmitTxsProposal(ctx *svc.ServiceContext, proposalID uint64, voteAd
 }
 
 func confirmTxsDSTxPhase(ctx *svc.ServiceContext, lastProposal op.OpProposalTxsRootProposal, voteAddress string) error {
-	var times uint64 = 0
+	var times uint64
 	for {
 		if times > 60 {
-			return fmt.Errorf("[confirmDSTxPhase] confirmDSTxPhase fail, proposalID: %s, voteAddress: %s", lastProposal.ProposalID, voteAddress)
+			return fmt.Errorf("[confirmDSTxPhase] confirmDSTxPhase fail, proposalID: %d, voteAddress: %s", lastProposal.ProposalID, voteAddress)
 		}
 		res, err := ctx.OpCommitterClient.ProposalManager.IsVotedOntxsRootDSTxPhase(&bind.CallOpts{}, lastProposal.ProposalID, common.HexToAddress(voteAddress))
 		if err != nil {
@@ -212,7 +211,7 @@ func confirmTxsDSTxPhase(ctx *svc.ServiceContext, lastProposal op.OpProposalTxsR
 }
 
 func confirmDSTransaction(ctx *svc.ServiceContext, dsTxID string) error {
-	var times uint64 = 0
+	var times uint64
 	for {
 		if times > 60 {
 			return fmt.Errorf("[confirmDSTransaction] confirmDSTransaction fail, dsTxID: %s", dsTxID)

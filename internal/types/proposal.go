@@ -2,9 +2,10 @@ package types
 
 import (
 	"encoding/json"
-	"github.com/b2network/b2committer/internal/schema"
 	"strconv"
 	"strings"
+
+	"github.com/b2network/b2committer/internal/schema"
 )
 
 type TxsRootProposal struct {
