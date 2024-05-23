@@ -9,8 +9,8 @@ import (
 	"github.com/b2network/b2committer/pkg/beacon"
 	"github.com/b2network/b2committer/pkg/client"
 	"github.com/b2network/b2committer/pkg/contract/op"
-	"github.com/b2network/b2committer/pkg/ds"
 	"github.com/b2network/b2committer/pkg/log"
+	"github.com/b2network/b2committer/pkg/store"
 	"github.com/b2network/b2committer/pkg/unisat"
 	"github.com/ethereum-optimism/optimism/op-service/sources"
 	"github.com/ethereum/go-ethereum/common"
@@ -38,7 +38,7 @@ type ServiceContext struct {
 	SyncedBlobBlockNumber int64
 	SyncedBlobBlockHash   common.Hash
 	OpCommitterClient     *b2node.OpCommitterClient
-	DecentralizedStore    ds.DecentralizedStore
+	DecentralizedStore    store.DecentralizedStore
 	UnisatHTTPClient      *unisat.UstHTTPClient
 }
 
@@ -121,7 +121,7 @@ func NewServiceContext(cfg *types.Config, bitcoinCfg *types.BitcoinRPCConfig, b2
 			log.Panicf("[svc] init arweave wallet panic: %s\n", err)
 		}
 
-		svc.DecentralizedStore = ds.NewArWeave(w, arClient)
+		svc.DecentralizedStore = store.NewArWeave(w, arClient)
 	}
 
 	return svc

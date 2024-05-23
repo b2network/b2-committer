@@ -1,4 +1,4 @@
-package ds
+package store
 
 import (
 	"strconv"
@@ -7,10 +7,6 @@ import (
 	"github.com/everFinance/goar/types"
 )
 
-type DecentralizedStore interface {
-	StoreDetailsOnChain(txs []byte, chainID int64, proposalID uint64) (string, error)
-	QueryDetailsByTxID(txID string) ([]byte, error)
-}
 type ArWeave struct {
 	Client *goar.Client
 	Wallet *goar.Wallet
