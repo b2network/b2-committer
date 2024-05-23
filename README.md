@@ -1,6 +1,7 @@
 # b2-committer
 
 # Introduce
+
 Submit op txs to decentralized store(e.g arweave)
 ![img_1.png](img_1.png)
 
@@ -9,7 +10,6 @@ Submit op l2 state roots to decentralized store(e.g arweave)
 
 
 ## environment Variables
-
 | env                                | value                                                        | description                              | remarks                   |
 | ---------------------------------- | ------------------------------------------------------------ | ---------------------------------------- | ------------------------- |
 | LOG_LEVEL                          | info                                                         |                                          | warn、error、panic、fatal |
