@@ -22,11 +22,11 @@ type SyncBlock struct {
 }
 
 func (SyncBlock) TableName() string {
-	return "`sync_blocks`"
+	return "sync_blocks"
 }
 
 type SyncBlockHistory SyncBlock
 
 func (SyncBlockHistory) TableName() string {
-	return "`sync_blocks_history`"
+	return "sync_blocks_history"
 }

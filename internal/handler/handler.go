@@ -11,14 +11,10 @@ func Run(ctx *svc.ServiceContext) {
 	go SyncBlock(ctx)
 	// sync events
 	go SyncEvent(ctx)
-	// execute committer
-	go Committer(ctx)
-	// check status
-	go CheckStatus(ctx)
-	// check and inscribe
-	go Inscribe(ctx)
-	// check time out
-	go CheckStatusTimeOut(ctx)
-	// sync proposal
-	go SyncProposal(ctx)
+	// query blob and store in local
+	go QueryBlobOnChainAndStoreInLocal(ctx)
+	// commit and vote txs proposal
+	go GetBlobsAndCommitTxsProposal(ctx)
+	// commit state root to ar and btc
+	go GetStateRootAndCommitStateRootProposal(ctx)
 }

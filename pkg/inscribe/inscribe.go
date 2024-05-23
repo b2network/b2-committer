@@ -25,6 +25,7 @@ import (
 
 // InscriptionData is the data of an inscription
 type InscriptionData struct {
+	ContentType string
 	Body        []byte // The body of the inscription
 	Destination string // The destination of the inscription
 }
@@ -83,7 +84,7 @@ type Result struct {
 	Fees             int64
 }
 
-func Inscribe(privateKeyHex string, stateRootHash string, proofRootHash string, destination string, net *chaincfg.Params) (*Result, error) {
+func Inscribe(privateKeyHex string, content []byte, destination string, net *chaincfg.Params) (*Result, error) {
 	btcAPIClient := btcmempool.NewClient(net)
 	dataList := make([]InscriptionData, 0)
 	utxoPrivateKeyBytes, err := hex.DecodeString(privateKeyHex)
@@ -96,7 +97,8 @@ func Inscribe(privateKeyHex string, stateRootHash string, proofRootHash string, 
 		return nil, fmt.Errorf("private key generate address error: %w", err)
 	}
 	dataList = append(dataList, InscriptionData{
-		Body:        []byte(stateRootHash + proofRootHash),
+		ContentType: "text/plain;charset=utf-8",
+		Body:        content,
 		Destination: destination,
 	})
 	fmt.Println(utxoTaprootAddress.EncodeAddress())
@@ -205,7 +207,15 @@ func createInscriptionTxCtxData(net *chaincfg.Params, data InscriptionData) (*in
 		AddData(schnorr.SerializePubKey(privateKey.PubKey())).
 		AddOp(txscript.OP_CHECKSIG).
 		AddOp(txscript.OP_FALSE).
-		AddOp(txscript.OP_IF)
+		AddOp(txscript.OP_IF).
+		AddData([]byte("ord")).
+		// Two OP_DATA_1 should be OP_1. However, in the following link, it's not set as OP_1:
+		// https://github.com/casey/ord/blob/0.5.1/src/inscription.rs#L17
+		// Therefore, we use two OP_DATA_1 to maintain consistency with ord.
+		AddOp(txscript.OP_DATA_1).
+		AddOp(txscript.OP_DATA_1).
+		AddData([]byte(data.ContentType)).
+		AddOp(txscript.OP_0)
 	maxChunkSize := 520
 	bodySize := len(data.Body)
 	for i := 0; i < bodySize; i += maxChunkSize {

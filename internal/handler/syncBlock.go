@@ -19,7 +19,6 @@ func SyncBlock(ctx *svc.ServiceContext) {
 	time.Sleep(10 * time.Second)
 	var syncedBlock schema.SyncBlock
 	err := ctx.DB.Where("status = ? or status = ? ", schema.BlockValid, schema.BlockPending).Order("block_number desc").First(&syncedBlock).Error
-
 	if err != nil && err != gorm.ErrRecordNotFound {
 		panic(err)
 	}
@@ -53,9 +52,6 @@ func SyncBlock(ctx *svc.ServiceContext) {
 		}
 		block := rpc.ParseJSONBlock(string(blockJSON))
 		log.Infof("[Handler.SyncBlock] Syncing block number: %d, hash: %v, parent hash: %v \n", block.Number(), block.Hash(), block.ParentHash())
-		// 回滚判断
-		fmt.Println("block.ParentHash", block.ParentHash())
-		fmt.Println("SyncedBlockHash", ctx.SyncedBlockHash.String())
 
 		if common.HexToHash(block.ParentHash()) != ctx.SyncedBlockHash {
 			log.Errorf("[Handler.SyncBlock] ParentHash of the block being synchronized is inconsistent: %s \n", ctx.SyncedBlockHash)
