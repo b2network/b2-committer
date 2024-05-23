@@ -8,8 +8,8 @@ Submit op txs to decentralized store(e.g arweave)
 Submit op l2 state roots to decentralized store(e.g arweave)
 ![img_2.png](img_2.png)
 
-
 ## environment Variables
+
 | env                                | value                                                        | description                              | remarks                   |
 | ---------------------------------- | ------------------------------------------------------------ | ---------------------------------------- | ------------------------- |
 | LOG_LEVEL                          | info                                                         |                                          | warn、error、panic、fatal |
